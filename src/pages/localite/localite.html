@@ -1,0 +1,25 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>Localités
+        </ion-title>
+        <ion-buttons start="start">
+            <button ion-button="ion-button" (click)="dismiss()">
+                <ion-icon name="md-close" showwhen="android,windows"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content >
+    <ion-searchbar color="primary" [(ngModel)]="queryText" (ioninput)="search()" placeholder="search"></ion-searchbar>
+    <ion-list *ngIf="quartiers.length" inset="inset">
+        <ion-item *ngFor="let quartier of quartiers" (click)="dismiss(quartier.id)" [hidden]="quartier.hide">
+            {{quartier.id}}
+        </ion-item>
+    </ion-list>
+    <div padding>
+        <button ion-button (click)="newQuartier()" block>
+            Créer une localité
+            <ion-icon name="add"></ion-icon>
+        </button>
+    </div>
+</ion-content>

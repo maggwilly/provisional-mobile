@@ -1,0 +1,7 @@
+{
+  "name": "novartis-mobile",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}
