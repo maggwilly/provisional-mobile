@@ -1,0 +1,32 @@
+
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>produit</ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content padding>
+    <form #form="ngForm" novalidate="novalidate">
+        <ion-list>
+            <ion-item>
+                <ion-label color="primary" floating><span>Nom </span> </ion-label>
+                <ion-input [(ngModel)]="produit.nom" name="nom" type="text" placeholder="" #nom="ngModel"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-textarea rows="1" [(ngModel)]="produit.description" placeholder="Description ddu produit"
+                    name="description" #description="ngModel"></ion-textarea>
+            </ion-item>
+            <ion-item>
+                <ion-label color="primary"><span>Prix de vente </span> </ion-label>
+                <ion-input [(ngModel)]="produit.cout" name="cout" type="number" placeholder="" #nom="ngModel"></ion-input>
+            </ion-item>            
+        </ion-list>
+        <div padding="padding">
+            <button ion-button block icon-right [disabled]="isInvalid()" (click)="onSubmit()">
+                <span>Enrégistrer
+                    <ion-icon name="md-done-all"></ion-icon>
+                </span>
+            </button>
+        </div>
+    </form>
+</ion-content>

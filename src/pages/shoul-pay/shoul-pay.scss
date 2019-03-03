@@ -1,0 +1,82 @@
+page-shoul-pay{
+    .empty {
+ 
+        div {
+            color: #9c99a7;  
+            padding-top: 61px 0;
+            text-align: center;
+            align-content: center;
+            p {
+             font-size: 1.2em;
+      
+           }
+      }
+      
+      }
+
+ .inform{
+        background-color: map-get($colors, primary);
+  h2{
+    font-size: 1.4rem; 
+     color: color($colors,white);
+  } 
+  ion-icon{
+      color: color($colors,white);// #7F7F7F;
+  } 
+  .item-md,.label-md,{     
+    background-color: transparent !important; 
+   p{
+     color: rgb(224, 230, 230);
+  }            
+ }
+}
+
+.inform.abonne{
+   background-color: map-get($colors, orange);
+    p{
+     color: rgb(238, 245, 245);
+     font-size: 1.3rem; 
+  }
+}
+
+ion-item:active a {
+background-color: map-get($colors, primary) !important;
+}
+
+.item-0{
+  border-left: 5px solid color($colors, light);
+  span{
+     color:  color($colors,light);
+     font-weight: bold;
+  }
+}
+.item-1{
+  border-left: 5px solid color($colors, primary);
+  span{
+     color:  color($colors,primary);
+     font-weight: bold;
+  }
+}
+.item-2{
+ border-left: 5px solid color($colors, orange);
+ span{
+   color:  color($colors,orange);
+    font-weight: bold;
+}
+}
+
+.item-3{
+  border-left: 5px solid color($colors, secondary);
+  span{
+     color:  color($colors,primary);
+     font-weight: bold;
+  }
+}
+.item-4{
+ border-left: 5px solid color($colors, danger);
+ span{
+   color:  color($colors,orange);
+    font-weight: bold;
+}
+}
+}

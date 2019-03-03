@@ -5,14 +5,14 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import {AppNotify} from './app-notify';
 import { MyApp } from './app.component';
-import { HomePage } from '../pages/home/home';
 import { ManagerProvider } from '../providers/manager/manager';
 import { HttpModule }    from '@angular/http';
 import { IonicStorageModule } from '@ionic/storage';
+import { UserProvider } from '../providers/user/user';
+import { Firebase } from '@ionic-native/firebase/ngx';
 @NgModule({
   declarations: [
-    MyApp,
-    HomePage
+    MyApp
   ],
   imports: [
     BrowserModule,
@@ -22,8 +22,7 @@ import { IonicStorageModule } from '@ionic/storage';
   ],
   bootstrap: [IonicApp],
   entryComponents: [
-    MyApp,
-    HomePage
+    MyApp
   ],
   providers: [
     StatusBar,
@@ -31,7 +30,9 @@ import { IonicStorageModule } from '@ionic/storage';
 
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     ManagerProvider
-    , AppNotify
+    , AppNotify,
+    UserProvider,
+    Firebase
   ]
 })
 export class AppModule {}

@@ -1,24 +1,25 @@
 <ion-header>
   <ion-navbar>
-     <button menuToggle ion-button icon-only>
+    <button menuToggle ion-button icon-only>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Full Soldiers</ion-title>
+    <ion-title>les clients</ion-title>
     <ion-buttons end>
+
       <button ion-button icon-only (click)="loadRemoteData()">
         <ion-icon name="refresh"></ion-icon>
       </button>
+      <button ion-button icon-only (click)="add()">
+          <ion-icon name="add"></ion-icon>
+        </button>       
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 <ion-content>
-     <ion-searchbar color="primary"
-                   [(ngModel)]="queryText"
-                   (ionInput)="search()"
-                   placeholder="Recherchez un nom">
-    </ion-searchbar> 
+  <ion-searchbar color="primary" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un nom">
+  </ion-searchbar>
   <ion-list>
-    <ion-item  *ngFor="let pointVente of pointVentes" (click)="showCommende(pointVente)" [hidden]="pointVente.hide">
+    <ion-item *ngFor="let pointVente of pointVentes" (click)="showCommende(pointVente)" [hidden]="pointVente.hide">
       <h2>{{pointVente.nom}}</h2>
       <h3>{{pointVente.telephone}}</h3>
     </ion-item>

@@ -37,7 +37,7 @@ export class CommendeCreatePage {
   loadData(){    
     this.storage.get('_produits').then((data) => {
       this.produits = data;
-    this.manager.getProduits( ).then(data=>{
+    this.manager.get('produit').then(data=>{
       this.produits=data?data:[]
       this.storage.set('_produits',this.produits)    
     },error=>{
@@ -47,7 +47,7 @@ export class CommendeCreatePage {
   }
 
   save(){
-    this.manager.postCommende(this.commende).then(()=>{
+    this.manager.post('commende',this.commende).then(()=>{
         this.notify .onSuccess({message:"enregistrement effectué"})
       },error=>{
         this.notify.onError({message:"PROBLEME ! Verifiez votre connexion internet"})
@@ -64,7 +64,7 @@ export class CommendeCreatePage {
 
   addInCart(produit: any) {
     let confirm = this.alertCtrl.create({
-      title: 'AJOUTER UN PRODUIT',
+      title: 'Ajouter à la facture',
       inputs: [
         {
           name: 'quantite',

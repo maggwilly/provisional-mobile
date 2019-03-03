@@ -1,0 +1,50 @@
+
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Paiement</ion-title>
+  </ion-navbar>
+
+</ion-header>
+<ion-content padding>
+  <div padding>
+    <ion-segment [(ngModel)]="payement.duree" mode="ios" color="orange" (ionChange)="initPayement($event)" [disabled]="!payement.amount">
+      <ion-segment-button value="1" >
+        01 Mois
+      </ion-segment-button>
+      <ion-segment-button value="6" >
+        06 Mois
+      </ion-segment-button>      
+      <ion-segment-button value="12" >
+        12 Mois
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+  
+  <div  padding>
+    <h2 *ngIf="price">{{price.nom}}</h2>
+    <ion-row *ngIf="price" style="height: 80px">
+    <ion-col>
+        <p>{{price.description}}</p>
+    </ion-col>
+    <ion-col text-right>
+        <ion-grid  style="height: 100%;justify-content: center;">
+            <ion-row justify-content-center align-items-center>
+               <ion-spinner [hidden]="payement.amount"  name="ios"></ion-spinner>
+               <ion-note class="amount" [hidden]="!payement.amount">{{payement.amount}}<sup>FCFA</sup></ion-note>
+            </ion-row>
+          </ion-grid>
+   </ion-col>  
+  </ion-row>  
+  <br>
+  <div *ngIf="payement.amount">
+   <button ion-button block color="orange"  (click)="openUrl()" >Effectuer le paiement</button> 
+  </div>
+  </div>
+  <div ion-item text-wrap padding>
+    <p>
+      Payez votre abonnement en toute simplicité par Orange Money.
+      <button ion-button clear small (click)="help()">Obtenir de l'aide.</button>
+    </p>
+  </div>
+</ion-content>

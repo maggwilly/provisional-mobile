@@ -4,79 +4,71 @@
         <ion-title>Nouvelle structure</ion-title>
         <ion-buttons start="start">
             <button ion-button="ion-button" (click)="dismiss()">
-                <ion-icon name="md-close" showwhen="android,windows"></ion-icon>
+                <ion-icon name="md-close" showwhen="android,windows,core"></ion-icon>
             </button>
         </ion-buttons>
     </ion-navbar>
 </ion-header>
-<ion-content padding="padding">
+<ion-content>
     <form #form="ngForm" novalidate="novalidate">
-        <ion-list >
-            <ion-list-header>Identité de la structure</ion-list-header>    
-            <ion-item >
-                <ion-label color="primary" floating><span >Nom </span> </ion-label>
-                   <ion-input [(ngModel)]="pointVente.nom" name="nom" type="text" placeholder="" #nom="ngModel"></ion-input>
-                 </ion-item>                  
+        <ion-list>
             <ion-item>
-                <ion-label color="primary">Type
+                <ion-label color="primary" floating><span>Nom </span> </ion-label>
+                <ion-input [(ngModel)]="pointVente.nom" name="nom" type="text" placeholder="" #nom="ngModel"></ion-input>
+            </ion-item>
+            <ion-item >
+                <ion-label color="primary" floating>
+                    <span>Type</span>
                 </ion-label>
                 <ion-select [(ngModel)]="pointVente.type" name="type" #type="ngModel" required="required">
-                    <ion-option value="centre de santé intégré">centre de santé intégré</ion-option>
-                    <ion-option value="centre de santé">centre de santé</ion-option>
-                    <ion-option value="centre médical d'arrondissement">centre médical d'arrondissement</ion-option>
-                    <ion-option value="hopital de district">hopital de district</ion-option>
-                    <ion-option value="clinique">clinique</ion-option>
-                    <ion-option value="pharmacie">pharmacie</ion-option>
-                    <ion-option value="hôpital privé">hôpital privé</ion-option>
-                    <ion-option value="centre médical">centre médical</ion-option>
-                    <ion-option value="hôpital privé">hôpital privé</ion-option>
-                </ion-select>
+                        <ion-option value="Super-Marché">Super-Marché</ion-option>
+                        <ion-option value="Boutique-de-Quartier">Boutique-de-Quartier</ion-option>
+                        <ion-option value="Kiosque">Kiosque</ion-option>
+                        <ion-option value="Boulangerie">Boulangerie</ion-option>
+                        <ion-option value="Debit-de-boisson">Debit-de-boisson</ion-option>
+                        <ion-option value="Station-service">Station-service</ion-option>
+                        <ion-option value="Etalage-de-marché">Etalage-de-marché</ion-option>
+                    </ion-select>
             </ion-item>
-           <ion-item>  
-            <ion-label color="primary">
-                <span >Télephone</span>
-            </ion-label>
-            <ion-input [(ngModel)]="pointVente.tel" name="tel" type="tel" placeholder="" #tel="ngModel"></ion-input>
-        </ion-item>
-        <ion-item (click)="select()">
-            <ion-label color="primary">
-                <span >Localité</span>
-            </ion-label>
-            <ion-input [(ngModel)]="pointVente.quartier" name="quartier" type="text" placeholder="" #quartier="ngModel"></ion-input>
-        </ion-item>
-        <ion-list-header>Responsable</ion-list-header>
-        <ion-item >
-            <ion-label color="primary">
-                <span >Nom</span>
-            </ion-label>
-            <ion-input [(ngModel)]="pointVente.nomresponsable" name="nomresponsable" type="text" placeholder="" #tel="ngModel"></ion-input>
-        </ion-item>
-        <ion-item >
-            <ion-label color="primary">
-                <span >Télephone</span>
-            </ion-label>
-            <ion-input [(ngModel)]="pointVente.telresponsable" name="telresponsable" type="tel" placeholder="" #tel="ngModel"></ion-input>
-        </ion-item>        
-        <ion-list-header>Chargé de commende</ion-list-header>
-        <ion-item >
-            <ion-label color="primary">
-                <span >Nom</span>
-            </ion-label>
-            <ion-input [(ngModel)]="pointVente.nomchargecommende" name="nomchargecommende" type="text" placeholder="" #tel="ngModel"></ion-input>
-        </ion-item>
-        <ion-item >
-            <ion-label color="primary">
-                <span >Télephone</span>
-            </ion-label>
-            <ion-input [(ngModel)]="pointVente.telchargecommende" name="telchargecommende" type="tel" placeholder="" #tel="ngModel"></ion-input>
-        </ion-item>
-        <ion-item >
-            <ion-textarea rows="2" [(ngModel)]="pointVente.description" placeholder="Description du lieu par rapport à un endroit connu" name="description" #description="ngModel"></ion-textarea>
-        </ion-item>
+            <ion-item>
+                <ion-label color="primary" floating>
+                    <span>Télephone</span>
+                </ion-label>
+                <ion-input [(ngModel)]="pointVente.tel" name="tel" type="tel" placeholder="" #tel="ngModel"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label color="primary" floating><span>Responsqble </span> </ion-label>
+                <ion-input [(ngModel)]="pointVente.responsable" name="responsable" type="text" placeholder=""
+                    #responsable="ngModel"></ion-input>
+            </ion-item>
+            <ion-item >
+                <ion-label color="primary">
+                    <span>Ville</span>
+                </ion-label>
+                <ion-select [(ngModel)]="pointVente.type" name="type" #type="ngModel" required="required">
+                        <ion-option value="Yaoundé">Yaoundé</ion-option>
+                        <ion-option value="Douala">Douala</ion-option>
+                        <ion-option value="Bafoussam">Bafoussam</ion-option>
+                        <ion-option value="Bertoua">Bertoua</ion-option>
+                        <ion-option value="Bamenda">Bamenda</ion-option>
+                        <ion-option value="Dschang">Dschang</ion-option>
+                        <ion-option value="Autre">Autre</ion-option>
+                    </ion-select>
+            </ion-item>
+            <ion-item >
+                <ion-label color="primary">
+                    <span>Quartier</span>
+                </ion-label>
+                <ion-input [(ngModel)]="pointVente.quartier" name="quartier" type="text" placeholder="" #ville="ngModel"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-textarea rows="2" [(ngModel)]="pointVente.description" placeholder="Description du lieu par rapport à un endroit connu"
+                    name="description" #description="ngModel"></ion-textarea>
+            </ion-item>
         </ion-list>
         <div padding="padding">
-            <button ion-button block icon-right  [disabled]="isInvalid()" (click)="onSubmit()">
-                <span >Enrégistrer
+            <button ion-button block icon-right [disabled]="isInvalid()" (click)="onSubmit()">
+                <span>Enrégistrer
                     <ion-icon name="md-done-all"></ion-icon>
                 </span>
             </button>

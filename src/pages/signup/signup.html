@@ -1,0 +1,94 @@
+<ion-content center center-center class="transparent-header bgAuth" horizontal layout padding>
+    <ion-header>
+        <ion-navbar></ion-navbar>
+    </ion-header>
+    <div class="logo" padding>
+        <img class="logo" src="assets/img/logo/logo-instagram.png"/>
+    </div>
+    <section *ngIf="stape=='phone'">
+        <form [formGroup]="formPhone">
+            <div padding text-center>
+                <strong>NUMERO DE TELEPHONE</strong>
+                <p>Saisir votre numéro de télephone pour vous connecter à votre compte.</p>
+            </div>
+            <div padding>
+                <ion-item>
+                    <ion-input formControlName="login" placeholder="Numéro de télephone" type="tel"></ion-input>
+                </ion-item>
+                <div *ngIf="!phone.valid&&phone.touched">
+                    <small *ngIf="phone.errors.pattern&&phone.dirty" color="danger">Saisir un numéro de telephone valide de 09 chiffres.</small>
+                </div>
+                <button (click)="nextStape()"   [disabled]="submitted||isInvalid()" block class="login-button" color="secondary" ion-button outline>
+                    <span>
+                        <strong>Suivant</strong>
+                    </span>
+                </button>
+            </div>
+        </form>
+    </section>
+    <section *ngIf="stape=='code'">
+        <form [formGroup]="formCode">
+            <div padding text-center>
+                <strong>CODE DE VERIFICATION</strong>
+                <p>Saisir le code de vérification qui vous a été envoyé par SMS.</p>
+            </div>
+            <div padding>
+                <ion-item>
+                    <ion-input formControlName="value" placeholder="Code de vérification" type="tel"></ion-input>
+                </ion-item>
+                <button (click)="nextStape()"  [disabled]="submitted||isInvalid()" block class="login-button" color="danger" ion-button >
+                    <span>
+                        <ion-icon name="done"></ion-icon>
+                        <strong>Terminer</strong>
+                    </span>
+                </button>
+            </div>
+        </form>
+    </section>
+    <section *ngIf="stape=='user'">
+        <form [formGroup]="newUser">
+            <div text-center padding-left padding-right>
+                <strong>INFORMATIONS PERSONNELLES</strong>
+                <p>Saisir les informations de base sur votre entreprise.</p>
+            </div>
+            <div padding>
+                <ion-item>
+                    <ion-input formControlName="nom" placeholder="Votre nom" type="text"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-input formControlName="username" placeholder="Numéro de télephone" type="tel" disabled="true"></ion-input>
+                </ion-item>
+                <div *ngIf="!phone2.valid&&phone2.touched">
+                    <small *ngIf="phone2.errors.pattern&&phone2.dirty" color="danger">Saisir un numéro de telephone valide de 09 chiffres.</small>
+                </div>                              
+                <ion-item>
+                    <ion-input formControlName="email" placeholder="Adresse mail" type="text"></ion-input>
+                </ion-item>
+                <div *ngIf="!email.valid && email.touched">
+                    <div><small *ngIf="email.errors.pattern && email.dirty">Saisir une adresse mail valide.</small></div>
+                </div>                                
+                <button (click)="onSubmit()"   [disabled]="submitted||isInvalid()" block color="secondary" icon-left ion-button>
+                    <span >
+                        <ion-icon name="log-in"></ion-icon>
+                        <strong>Terminer</strong>
+                    </span>
+                </button>
+            </div>
+        </form>
+    </section>
+    <div class="spiner" horizontal layout center center-center padding [hidden]="!submitted">
+        <ion-grid>
+         <ion-row justify-content-center align-items-center>    
+       <ion-spinner color="white" name="ios"></ion-spinner>
+      </ion-row>    
+   </ion-grid> 
+    </div>
+</ion-content>
+<ion-footer no-border no-shadow>
+<button ion-item (click)="previewStape()" *ngIf="stape!='phone'" text-wrap class="goback">
+    <a>
+        <strong>Retourner</strong>
+    </a>
+    à la section précedente.
+</button>
+</ion-footer>

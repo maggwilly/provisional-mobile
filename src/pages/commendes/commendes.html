@@ -1,10 +1,7 @@
 <ion-header>
   <ion-navbar>
-    <ion-title *ngIf="pointVente">Rapports - {{pointVente.nom}}</ion-title>
+    <ion-title>Factures</ion-title>
     <ion-buttons end>
-        <button ion-button icon-only (click)="addCommende()">
-        <ion-icon name="add"></ion-icon>
-      </button>
       <button ion-button icon-only (click)="loadRemoteData()">
         <ion-icon name="refresh"></ion-icon>
       </button>
@@ -18,7 +15,4 @@
     <p>{{TotalQuantity(commende)}} souscriptions</p>
   </ion-item>
 </ion-list>
-<ion-fab right bottom>
-  <button ion-fab color="primary" (click)="addCommende()"><ion-icon name="add" ></ion-icon></button>
-</ion-fab>
 </ion-content>

@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Limitations</ion-title>
+      <ion-buttons start>
+      </ion-buttons>
+  </ion-navbar>
+</ion-header>
+<ion-content >
+  <ion-list>
+    <ion-item text-wrap no-lines class="inform abonne">
+       <p>
+        <span  *ngIf="!abonnement||abonnement.expired">
+          Votre abonnement est maintenant arrivé à expiration. Pour continuer à utiliser le service, 
+          vous devez souscrire à nouveau en choisissant parmi les options ci-dessous.
+        </span>
+        <span  *ngIf="abonnement&&!abonnement.expired">
+          Votre abonnement actuel ne vous permet pas de gérer un nombre d'utilisqteur supérieur à {{abonnement.nombreusers}}.
+          Vous pouvez toujours augmenter ce nombre en changeant de formule. Choisir parmi les options ci-dessous.
+        </span>
+      </p>
+     </ion-item>
+     </ion-list>
+     <ion-list>
+     <ion-item   text-wrap *ngFor="let price of prices; let i = index" [ngClass]="('item-'+i)" (click)="openPrice(price)" >
+      {{price.nom}}
+      <p>{{price.description}}</p>
+      <ion-note item-right>{{price.amount}}</ion-note>
+  </ion-item>
+   </ion-list>
+</ion-content>

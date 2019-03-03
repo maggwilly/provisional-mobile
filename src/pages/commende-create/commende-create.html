@@ -13,6 +13,8 @@
     </ion-navbar>
 </ion-header>
 <ion-content>
+        <ion-searchbar color="primary" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un nom">
+            </ion-searchbar>    
         <ion-list> 
              <ion-item>
                 <ion-label color="primary"><span>Date</span></ion-label>
@@ -29,7 +31,7 @@
         <ion-item  *ngFor="let produit of produits" (click)="addInCart(produit)" [hidden]="produit.hide">
             {{produit.nom}}
             <p>{{produit.description}}</p>
-            <ion-note item-right>{{produit.prix}}</ion-note>
+            <ion-note item-right>{{produit.cout}}</ion-note>
         </ion-item>
     </ion-list>
 </ion-content>

@@ -1,26 +1,30 @@
 import { Component } from '@angular/core';
-import { Events, NavController, ModalController, AlertController, LoadingController } from 'ionic-angular';
+import {IonicPage, Events, NavController, ModalController, AlertController, LoadingController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
-
+import {UserProvider } from '../../providers/user/user';
+@IonicPage()
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
   pointVentes: any = [];
-  visites: any = [];
+
   queryText = '';
   constructor(
     public navCtrl: NavController,
     public alertCtrl: AlertController,
     public modalCtrl: ModalController,
     public events: Events,
+
     public manager: ManagerProvider,
     public notify: AppNotify,
     public loadingCtrl: LoadingController,
-    public storage: Storage) { }
+    public storage: Storage) { 
+     
+    }
 
   ionViewDidLoad() {
     this.loadData();
@@ -30,25 +34,33 @@ export class HomePage {
   loadData(){
     this.storage.get('_pointVentes').then((data) => {
       this.pointVentes = data;
-      this.manager.getPointVentes( ).then(data=>{
+      this.manager.get('pointvente').then(data=>{
         this.pointVentes=data?data:[]
         this.storage.set('_pointVentes',this.pointVentes)    
       },error=>{
+        console.log(error)
         this.notify.onSuccess({message:"PROBLEME ! Verifiez votre connexion internet"})
       })
     });  
   }
 
+  add(){
+    this.navCtrl.push('PointVentePage')
+  }
+
+
+
   loadRemoteData(){
     let loader = this.loadingCtrl.create({
       content: "chargement...",
     });    
-    this.manager.getPointVentes( ).then(data=>{
+    this.manager.get('pointvente').then(data=>{
       this.pointVentes=data?data:[]
       this.storage.set('_pointVentes',this.pointVentes)
       loader.dismiss();      
     },error=>{
       loader.dismiss(); 
+      console.log(error)
       this.notify.onSuccess({message:"PROBLEME ! Verifiez votre connexion internet"})
     })
     loader.present();
@@ -56,13 +68,11 @@ export class HomePage {
 
 
   showCommende(pointVente:any){
-   this.navCtrl.push('CommendesPage',{pointVente:pointVente})
+   this.navCtrl.push('PointVenteDetailPage',{pointVente:pointVente})
 
   }
 
   
-
-
   search() {
     this.storage.get('_pointVentes').then((data) => {
       this.pointVentes = data;

@@ -1,0 +1,61 @@
+<!--
+  Generated template for the ProfilePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Information</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <form #form="ngForm" novalidate="novalidate">
+    <ion-list *ngIf="user">
+        <ion-item>
+            <ion-label color="primary" floating><span>Entreprise </span> </ion-label>
+            <ion-input [(ngModel)]="user.entreprise" name="entreprise" type="text" placeholder="" #entreprise="ngModel" [disabled]="!userService.amParent"></ion-input>
+        </ion-item>     
+        <ion-item>
+            <ion-label color="primary" floating><span>Votre nom </span> </ion-label>
+            <ion-input [(ngModel)]="user.nom" name="nom" type="text" placeholder="" #nom="ngModel"></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-label color="primary" floating>
+                <span>Télephone</span>
+            </ion-label>
+            <ion-input [(ngModel)]="user.phone" name="phone" type="tel" placeholder="" #tel="ngModel" disabled="true"></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-label color="primary" floating><span>Pays </span> </ion-label>
+            <ion-input [(ngModel)]="user.pays" name="pays" type="text" placeholder=""  #pays="ngModel" [disabled]="!userService.amParent"></ion-input>
+        </ion-item>
+        <ion-item >
+            <ion-label color="primary" floating> 
+                <span>Ville</span>
+            </ion-label>
+            <ion-select [(ngModel)]="user.ville" name="ville" #ville="ngModel" [disabled]="!userService.amParent">
+                    <ion-option value="Yaoundé">Yaoundé</ion-option>
+                    <ion-option value="Douala">Douala</ion-option>
+                    <ion-option value="Bafoussam">Bafoussam</ion-option>
+                    <ion-option value="Bertoua">Bertoua</ion-option>
+                    <ion-option value="Bamenda">Bamenda</ion-option>
+                    <ion-option value="Dschang">Dschang</ion-option>
+                    <ion-option value="Autre">Autre</ion-option>
+                </ion-select>
+        </ion-item>
+        <ion-item>
+            <ion-textarea rows="2" [(ngModel)]="user.adresse" placeholder="Adresse" name="adresse" #adresse="ngModel"></ion-textarea>
+        </ion-item>
+    </ion-list>
+    <div padding="padding">
+        <button ion-button block icon-right [disabled]="isInvalid()" (click)="onSubmit()">
+            <span>Enrégistrer les changements
+                <ion-icon name="md-done-all"></ion-icon>
+            </span>
+        </button>
+    </div>
+</form>
+</ion-content>

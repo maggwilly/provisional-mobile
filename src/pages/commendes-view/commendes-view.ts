@@ -25,7 +25,7 @@ export class CommendesViewPage {
 
 
   save(){
-   this.manager.postCommende(this.commende).then(()=>{
+   this.manager.post('commende',this.commende).then(()=>{
        this.notify .onSuccess({message:"enregistrement effectué"})
      },error=>{
       this.notify.onError({message:"PROBLEME ! Verifiez votre connexion internet"})

@@ -11,7 +11,6 @@ import { AppNotify } from '../../app/app-notify';
 })
 export class CommendesPage {
   commendes: any = []
-  pointVente: any;
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -20,7 +19,6 @@ export class CommendesPage {
     public notify: AppNotify,
     public storage: Storage
   ) {
-    this.pointVente = navParams.get('pointVente');
   }
 
   ionViewDidLoad() {
@@ -28,11 +26,11 @@ export class CommendesPage {
   }
 
   loadData() {
-    this.storage.get(this.pointVente.id + '_commendes').then((data) => {
+    this.storage.get('_commendes').then((data) => {
       this.commendes = data ? data : [];
-      this.manager.getCommendes(this.pointVente).then(data => {
+      this.manager.get('commende').then(data => {
         this.commendes = data ? data : []
-        this.storage.set(this.pointVente.id + '_commendes', this.commendes)
+        this.storage.set('_commendes', this.commendes)
       },error=>{
         this.notify.onSuccess({message:"PROBLEME ! Verifiez votre connexion internet"})
       })
@@ -42,9 +40,9 @@ export class CommendesPage {
 
   loadRemoteData() {
     let loader = this.loadingCtrl.create({});
-      this.manager.getCommendes(this.pointVente).then(data => {
+      this.manager.get('commende').then(data => {
         this.commendes = data ? data : []
-        this.storage.set(this.pointVente.id + '_commendes', this.commendes)
+        this.storage.set('_commendes', this.commendes)
         loader.dismiss();
       }, error => {
         this.notify.onSuccess({message:"PROBLEME ! Verifiez votre connexion internet"})
@@ -53,6 +51,7 @@ export class CommendesPage {
     loader.present();
   }
 
+  
   TotalQuantity(commende:any): number {
     let total = 0;
     commende.lignes.forEach(ligne => {
@@ -68,8 +67,6 @@ export class CommendesPage {
     getPointVente(commende: any){
       return commende.pointVenteItem?commende.pointVenteItem:commende.pointVente
     }
-  addCommende(){
-    this.navCtrl.push('CommendeCreatePage',{pointVente:this.pointVente})
-  }
+
  
 }
