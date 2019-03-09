@@ -1,0 +1,21 @@
+<ion-header>
+    <ion-navbar>
+      <ion-title>Rapports Mensuels</ion-title>
+      <ion-buttons end>
+      <button ion-button="ion-button" icon-only (click)="loadRemoteData()" >
+          <ion-icon name="refresh"></ion-icon>
+      </button>
+  </ion-buttons>   
+    </ion-navbar>
+  </ion-header>
+  <ion-content padding>
+      <ion-searchbar [hidden]="!rapports.length" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez">
+        </ion-searchbar>     
+      <ion-list>
+          <ion-item  *ngFor="let rapport of rapports" [hidden]="rapport.hide">
+              {{rapport.periode}}
+              <p>{{rapport.description}}</p>
+              <p>{{rapport.date| date:'DD/MM/YYYY'}}</p>
+          </ion-item>
+      </ion-list>
+  </ion-content>

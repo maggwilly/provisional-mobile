@@ -1,25 +1,27 @@
 
-<ion-header>
+<ion-header  no-border no-shadow>
   <ion-navbar>
     <ion-title>Les produits</ion-title>
     <ion-buttons end>
     <button ion-button="ion-button" icon-only (click)="loadRemoteData()" >
-        <ion-icon name="add"></ion-icon>
+        <ion-icon name="refresh"></ion-icon>
     </button>
-    <button ion-button icon-only (click)="add()">
-        <ion-icon name="add"></ion-icon>
+    <button ion-button small outline (click)="add()" icon-left>
+        <ion-icon name="add" ></ion-icon>
+        Creer
     </button>           
 </ion-buttons>    
   </ion-navbar>
 </ion-header>
 <ion-content padding>
-    <ion-searchbar color="primary" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un nom">
+    <ion-searchbar [hidden]="!produits.length" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un produit">
       </ion-searchbar>     
     <ion-list>
-        <ion-item  *ngFor="let produit of produits" (click)="addInCart(produit)" [hidden]="produit.hide">
+        <ion-item  *ngFor="let produit of produits" (click)="add(produit)" [hidden]="produit.hide">
             {{produit.nom}}
             <p>{{produit.description}}</p>
             <ion-note item-right>{{produit.cout}}</ion-note>
+            
         </ion-item>
     </ion-list>
 </ion-content>

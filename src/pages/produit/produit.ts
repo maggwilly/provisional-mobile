@@ -18,20 +18,22 @@ import { ManagerProvider} from '../../providers/manager/manager';
 export class ProduitPage {
 produit:any={}
   constructor(
-    public navCtrl: NavController,
-     public storage: Storage,
+       public navCtrl: NavController,
+       public storage: Storage,
        public navParams: NavParams, 
        public viewCtrl: ViewController,
        public notify: AppNotify,
-    public manager: ManagerProvider,) {
+       public manager: ManagerProvider,) {
+       this.produit=this.navParams.get('produit');
   }
   ionViewDidLoad() { 
+        console.log(  this.produit);
         
   }
 
 
 isInvalid():boolean {
-  return (!this.produit.nom||!this.produit.description||!this.produit.cout);
+  return (!this.produit.nom||!this.produit.cout);
 }
 
 dismiss(data?:any) {
@@ -40,11 +42,60 @@ dismiss(data?:any) {
 
 
 onSubmit(){
-  this.manager.post('produit',this.produit).then((data)=>{
-    this.dismiss(data);
-  },error=>{
-    this.notify.onSuccess({message:"PROBLEME ! Verifiez votre connexion internet"})
-  })
+     let self=this;
+      let loader= this.notify.loading({
+      content: "Enregistrement...",
+    }); 
+  this.manager.save('produit',this.produit).then((data)=>{
+     loader.dismiss().then(()=>{
+      self.dismiss(data);
+        this.notify.onSuccess({message:"Enregistremebt effectue"})
+     });    
   
+  },error=>{
+    loader.dismiss()
+    this.notify.onSuccess({message:"Verifiez votre connexion internet"})
+  })
+   loader.present(); 
 }
+deleteItem(){
+  let self=this;
+  this.notify.showAlert({
+    title:"Suppression",
+    message:"Voulez-vous supprimer cet element ?",
+    buttons: [
+      {
+        text: 'Annuler',
+        handler: () => {
+          console.log('Disagree clicked');
+        }
+      },
+      {
+        text: 'Supprimer',
+        handler: (data) => {
+                let loader= this.notify.loading({
+                 content: "Suppression...",
+                     }); 
+            this.manager.delete('produit',this.produit).then(data=>{
+            if(data.ok){
+              loader.dismiss().then(()=>{
+                self.dismiss(data);
+                 this.notify.onSuccess({message:"Element supprime"})
+               }); 
+            }else{
+              loader.dismiss()
+               this.notify.onError({message:"Cet element est lie a d'autres. Vous ne pouvez pas le supprimer"})
+            }
+          },error=>{
+            loader.dismiss()
+            this.notify.onError({message:"Un probleme est survenu"})
+          })
+            loader.present();
+        }
+      }
+    ]
+  })
+
+}
+
 }

@@ -4,5 +4,11 @@ page-price-detail {
   font-size: 1.3em;
   text-align: right;
   font-weight: bold;
+  color:  color($colors,primary);
+}
+.om-baner{
+  width: 100%;
+  height: 15%;
+  background-image: url("https://firebasestorage.googleapis.com/v0/b/trainings-fa73e.appspot.com/o/filemsgs%2FScreenshot-2018-4-29%20Vous%20n'%20%C3%AAtes%20pas%20le%20seul%20au%20concours.png?alt=media&amp;token=29d00ec6-d1e6-44b7-974f-2248c1c88363" );
 }
 }

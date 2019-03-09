@@ -1,0 +1,46 @@
+<ion-header no-border no-shadow>
+    <ion-navbar>
+      <ion-title>Les vendeurs</ion-title>
+      <ion-buttons end>
+      <button ion-button="ion-button" icon-only (click)="loadRemoteData()" >
+          <ion-icon name="refresh"></ion-icon>
+      </button>
+      <button ion-button small outline (click)="add()" icon-left>
+            <ion-icon name="add" ></ion-icon>
+            Creer
+        </button>           
+  </ion-buttons>    
+    </ion-navbar>
+  </ion-header>
+  <ion-content padding>
+    <!--  <ion-searchbar [hidden]="!vendeurs.length" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un nom">
+        </ion-searchbar>  -->   
+      <ion-list>
+          <div *ngIf="vendeurs.length">
+         <ion-item-divider  color="light">Mon equipe de vente ({{vendeurs.length}} membres)</ion-item-divider> 
+          <ion-item  *ngFor="let vendeur of vendeurs"  [hidden]="vendeur.hide">
+                <span *ngIf="!userService.amParent">{{vendeur.nom}}</span> 
+              <p *ngIf="!userService.amParent">{{vendeur.phone}}</p>
+                <span *ngIf="userService.amParent">Moi-meme</span> 
+              <p *ngIf="userService.amParent">Administrateur</p>              
+               <button *ngIf="!userService.amParent" ion-button outline color="danger" (click)="deleteUser(vendeur)" only-icon small item-right color="danger">
+                    <span>
+                        <ion-icon  name="close"></ion-icon>
+                    </span>
+               </button>  
+          </ion-item>
+          </div>
+          <div *ngIf="requesteds.length">
+          <ion-item-divider  color="light">Demandes envoyees ({{requesteds.length}})</ion-item-divider> 
+          <ion-item  *ngFor="let requested of requesteds"  [hidden]="requested.hide">
+                 {{requested.user.nom}}
+              <p>{{requested.user.phone}}</p>
+              <button  ion-button clear color="danger" small item-right (click)="deleteRequest(requested)" color="danger">
+                    <span>Annuler
+                        <ion-icon  name="close"></ion-icon>
+                    </span>
+               </button>              
+          </ion-item> 
+          </div>       
+      </ion-list>
+  </ion-content>

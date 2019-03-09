@@ -1,12 +1,17 @@
 
-<ion-header>
-
+<ion-header no-border no-shadow >
   <ion-navbar>
     <ion-title>Paiement</ion-title>
+         <ion-buttons showWhen="android,windows,core" end>
+          <button ion-button (click)="dismiss()" icon-left>
+            <ion-icon name="md-close" color="danger" showwhen="android,windows,core"></ion-icon> 
+            Fermer
+          </button>
+</ion-buttons>
   </ion-navbar>
-
 </ion-header>
-<ion-content padding>
+<ion-content >
+<div class="om-baner"></div>
   <div padding>
     <ion-segment [(ngModel)]="payement.duree" mode="ios" color="orange" (ionChange)="initPayement($event)" [disabled]="!payement.amount">
       <ion-segment-button value="1" >
@@ -31,7 +36,7 @@
         <ion-grid  style="height: 100%;justify-content: center;">
             <ion-row justify-content-center align-items-center>
                <ion-spinner [hidden]="payement.amount"  name="ios"></ion-spinner>
-               <ion-note class="amount" [hidden]="!payement.amount">{{payement.amount}}<sup>FCFA</sup></ion-note>
+               <ion-note class="amount" [hidden]="!payement.amount">{{payement.amount| number}} XAF</ion-note>
             </ion-row>
           </ion-grid>
    </ion-col>  
@@ -41,10 +46,13 @@
    <button ion-button block color="orange"  (click)="openUrl()" >Effectuer le paiement</button> 
   </div>
   </div>
-  <div ion-item text-wrap padding>
+
+</ion-content>
+<ion-footer no-border>
+  <div padding text-wrap >
     <p>
       Payez votre abonnement en toute simplicité par Orange Money.
-      <button ion-button clear small (click)="help()">Obtenir de l'aide.</button>
+      <button ion-button clear small (click)="help()" style="text-transform: none;">Obtenir de l'aide.</button>
     </p>
   </div>
-</ion-content>
+</ion-footer>

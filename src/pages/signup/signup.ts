@@ -114,12 +114,11 @@ onSubmit(){
          this.manager.post('user', this.newUser.value).then(data => {
           this.submitted = false;
           this.data = data;
-          console.log(data)
           if (data.value)
                this.stape = 'code';
         }, error => {
           this.submitted = false;
-          console.log(error)
+          this.appNotify.showAlert({message:'Le service peut-etre  indisponible. Verifiez votre connexion internet'})
         })
 }
 
@@ -140,7 +139,7 @@ onSubmit(){
 
         }, error => {
           this.submitted = false;
-          console.log(error)
+          this.appNotify.showAlert({message:'Le service peut-etre  indisponible. Verifiez votre connexion internet'})
         })
         break;
       case 'code':
@@ -153,12 +152,12 @@ onSubmit(){
             this.navCtrl.setRoot('TabsPage', {}, {animate: true, direction: 'forward'});
           }, error => {
             this.submitted = false;
-            console.log(error)
+            this.appNotify.showAlert({message:'Le service peut-etre  indisponible. Verifiez votre connexion internet'})
           })
          
         }, error => {
           this.submitted = false;
-          console.log(error)
+          this.appNotify.showAlert({message:'Le service peut-etre  indisponible. Verifiez votre connexion internet'})
         })
         break;
       default:

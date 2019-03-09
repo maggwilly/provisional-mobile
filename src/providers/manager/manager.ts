@@ -6,7 +6,7 @@ import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/map';
 import { Events } from 'ionic-angular';
 import { Config } from "../../app/config";
-
+import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 /*
   Generated class for the ManagerProvider provider.
   See https://angular.io/guide/dependency-injection for more info on providers
@@ -21,9 +21,6 @@ export class ManagerProvider {
     this.headers.set('X-User-Id',this.getUserId())
     
   }
-
-
-
 
   clearStorage() {
     //this.storage.clear();    
@@ -50,7 +47,11 @@ export class ManagerProvider {
     return token;
   }
 
-
+  find(entityName:any,keyname:string, keyvalue:string) {
+    return this.http.get(Config.server +'/'+entityName+ '/find/json?keyname='+keyname+'&keyvalue='+keyvalue, { headers: this.headers })
+      .toPromise()
+      .then(response => response.json());
+  }
 
   get(entityName:any) {
     return this.http.get(Config.server +'/'+entityName+ '/json', { headers: this.headers })
@@ -63,6 +64,8 @@ export class ManagerProvider {
       .toPromise()
       .then(response => response.text());
   }
+
+
   show(entityName:any,entityid) {
     return this.http.get(Config.server + '/'+entityName+'/'+entityid+'/show/json?id='+entityid, { headers: this.headers })
       .toPromise()
@@ -71,7 +74,6 @@ export class ManagerProvider {
 
   post(entityName:any,entity:any,action:string='new') {
     console.log(JSON.stringify(entity));
-    
     return this.http.post(Config.server + '/'+entityName+'/'+action+'/json',JSON.stringify(entity), { headers: this.headers })
       .toPromise()
       .then(response => response.json());
@@ -83,12 +85,25 @@ export class ManagerProvider {
       .then(response => response.json());
   }
 
-  delete(entityName:any,entity:any) {
-    return this.http.delete(Config.server + '/'+entityName+'/'+entity.id+'/delete/json?id='+entity.id ,{ headers: this.headers })
+
+ save(entityName:any,entity:any){
+ if(entity.id)
+   return this.put(entityName,entity);
+return this.post(entityName,entity);
+}
+
+
+
+  delete(entityName:any,entity:any, target:string='delete') {
+    return this.http.delete(Config.server + '/'+entityName+'/'+entity.id+'/'+target+'/json?id='+entity.id ,{ headers: this.headers })
       .toPromise()
       .then(response => response.json());
   }
 
-
+  getObservable(entityName:any,entityid) {
+    return IntervalObservable
+      .create(1000)
+      .flatMap((i) => this.http.get(Config.server + '/'+entityName+'/'+entityid+'/show/json?id='+entityid, { headers: this.headers }));
+}
 }
 

@@ -1,8 +1,12 @@
-<ion-header>
+<ion-header  no-border no-shadow>
   <ion-navbar>
     <ion-title>Limitations</ion-title>
-      <ion-buttons start>
-      </ion-buttons>
+     <ion-buttons showWhen="android,windows,core" end>
+        <button ion-button="ion-button" (click)="dismiss()" icon-left>
+            <ion-icon name="md-close" color="danger" showwhen="android,windows,core"></ion-icon> 
+            Fermer
+        </button>
+</ion-buttons>     
   </ion-navbar>
 </ion-header>
 <ion-content >
@@ -21,10 +25,10 @@
      </ion-item>
      </ion-list>
      <ion-list>
-     <ion-item   text-wrap *ngFor="let price of prices; let i = index" [ngClass]="('item-'+i)" (click)="openPrice(price)" >
+     <ion-item   text-wrap *ngFor="let price of prices; let i = index" [ngClass]="('item-'+i)" (click)="openPrice(price)" detail-push>
       {{price.nom}}
       <p>{{price.description}}</p>
-      <ion-note item-right>{{price.amount}}</ion-note>
+      <ion-note item-right>{{price.amount| number:'3.0-5'}} XAF</ion-note>
   </ion-item>
    </ion-list>
 </ion-content>

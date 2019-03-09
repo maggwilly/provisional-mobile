@@ -1,12 +1,13 @@
-<ion-header>
+<ion-header  no-border no-shadow>
 
     <ion-navbar>
-        <ion-title>Nouvelle structure</ion-title>
-        <ion-buttons start="start">
-            <button ion-button="ion-button" (click)="dismiss()">
-                <ion-icon name="md-close" showwhen="android,windows,core"></ion-icon>
-            </button>
-        </ion-buttons>
+        <ion-title><span *ngIf="!pointVente.nom">Nouveau point de vente</span><span *ngIf="pointVente.nom">{{pointVente.nom}}</span></ion-title>
+        <ion-buttons end>
+                <button ion-button  (click)="dismiss()" icon-left>
+                    <ion-icon name="md-close" color="danger" showwhen="android,windows,core"></ion-icon> 
+                    Fermer
+                </button>
+            </ion-buttons>
     </ion-navbar>
 </ion-header>
 <ion-content>
@@ -18,10 +19,10 @@
             </ion-item>
             <ion-item >
                 <ion-label color="primary" floating>
-                    <span>Type</span>
+                    <span>Categorie</span>
                 </ion-label>
-                <ion-select [(ngModel)]="pointVente.type" name="type" #type="ngModel" required="required">
-                        <ion-option value="Super-Marché">Super-Marché</ion-option>
+                <ion-select [(ngModel)]="pointVente.type" name="type" #type="ngModel">
+                        <ion-option value="Super-Marche">Super-Marché</ion-option>
                         <ion-option value="Boutique-de-Quartier">Boutique-de-Quartier</ion-option>
                         <ion-option value="Kiosque">Kiosque</ion-option>
                         <ion-option value="Boulangerie">Boulangerie</ion-option>
@@ -34,18 +35,13 @@
                 <ion-label color="primary" floating>
                     <span>Télephone</span>
                 </ion-label>
-                <ion-input [(ngModel)]="pointVente.tel" name="tel" type="tel" placeholder="" #tel="ngModel"></ion-input>
-            </ion-item>
-            <ion-item>
-                <ion-label color="primary" floating><span>Responsqble </span> </ion-label>
-                <ion-input [(ngModel)]="pointVente.responsable" name="responsable" type="text" placeholder=""
-                    #responsable="ngModel"></ion-input>
+                <ion-input [(ngModel)]="pointVente.telephone" name="telephone" type="tel" placeholder="" #telephone="ngModel"></ion-input>
             </ion-item>
             <ion-item >
-                <ion-label color="primary">
+                <ion-label color="primary" floating>
                     <span>Ville</span>
                 </ion-label>
-                <ion-select [(ngModel)]="pointVente.type" name="type" #type="ngModel" required="required">
+                <ion-select [(ngModel)]="pointVente.ville" name="ville" #ville="ngModel">
                         <ion-option value="Yaoundé">Yaoundé</ion-option>
                         <ion-option value="Douala">Douala</ion-option>
                         <ion-option value="Bafoussam">Bafoussam</ion-option>
@@ -55,23 +51,37 @@
                         <ion-option value="Autre">Autre</ion-option>
                     </ion-select>
             </ion-item>
-            <ion-item >
-                <ion-label color="primary">
-                    <span>Quartier</span>
+            <ion-item *ngIf="secteurs&&secteurs.length">
+                      <ion-label color="primary" floating>
+                    <span>Secteur de vente</span>
                 </ion-label>
-                <ion-input [(ngModel)]="pointVente.quartier" name="quartier" type="text" placeholder="" #ville="ngModel"></ion-input>
+                <ion-select [(ngModel)]="pointVente.secteur" name="secteur" #secteur="ngModel">
+                        <ion-option *ngFor="let secteur of secteurs" [value]="secteur.id">{{secteur.nom}}</ion-option>
+                    </ion-select>
+            </ion-item>            
+            <ion-item >
+                <ion-label color="primary" floating>
+                    <span>Nom du Quartier</span>
+                </ion-label>
+                <ion-input  [(ngModel)]="pointVente.quartier" name="quartier" type="text" placeholder="" #quartier="ngModel"></ion-input>
             </ion-item>
             <ion-item>
-                <ion-textarea rows="2" [(ngModel)]="pointVente.description" placeholder="Description du lieu par rapport à un endroit connu"
-                    name="description" #description="ngModel"></ion-textarea>
+                <ion-textarea rows="2" [(ngModel)]="pointVente.adresse" placeholder="Description du lieu par rapport à un endroit connu"
+                    name="adresse" #adresse="ngModel"></ion-textarea>
             </ion-item>
         </ion-list>
         <div padding="padding">
             <button ion-button block icon-right [disabled]="isInvalid()" (click)="onSubmit()">
-                <span>Enrégistrer
+                    <span *ngIf="!pointVente.id">Creer un point de vente</span>
+                    <span *ngIf="pointVente.id">Enregistrer les changements</span>                
                     <ion-icon name="md-done-all"></ion-icon>
-                </span>
             </button>
+            <br>
+            <button *ngIf="pointVente.id" ion-button outline block icon-right color="danger" (click)="deleteItem()">
+                    <span>Supprimer ce point de vente
+                        <ion-icon name="close"></ion-icon>
+                    </span>
+               </button>                
         </div>
     </form>
 </ion-content>

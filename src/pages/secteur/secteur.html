@@ -1,0 +1,53 @@
+
+<ion-header no-border no-shadow >
+    <ion-navbar>
+        <ion-title><span *ngIf="!secteur.nom">Nouveau Secteur</span><span *ngIf="secteur.nom">{{secteur.nom}}</span></ion-title>     
+        <ion-buttons end>
+                <button ion-button="ion-button" (click)="dismiss()" icon-left>
+                    <ion-icon name="md-close" color="danger" showwhen="android,windows,core"></ion-icon> 
+                    Fermer
+                </button>
+            </ion-buttons> 
+    </ion-navbar>
+</ion-header>
+<ion-content padding>
+    <form #form="ngForm" novalidate="novalidate">
+        <ion-list>
+            <ion-item>
+                <ion-label color="primary" floating><span>Nom du secteur</span> </ion-label>
+                <ion-input [(ngModel)]="secteur.nom" name="nom" type="text" placeholder="" #nom="ngModel"></ion-input>
+            </ion-item>
+            <ion-item >
+                <ion-label color="primary" floating>
+                    <span>Ville</span>
+                </ion-label>
+                <ion-select  [(ngModel)]="secteur.ville" name="ville" #ville="ngModel">
+                        <ion-option value="Yaoundé">Yaoundé</ion-option>
+                        <ion-option value="Douala">Douala</ion-option>
+                        <ion-option value="Bafoussam">Bafoussam</ion-option>
+                        <ion-option value="Bertoua">Bertoua</ion-option>
+                        <ion-option value="Bamenda">Bamenda</ion-option>
+                        <ion-option value="Dschang">Dschang</ion-option>
+                        <ion-option value="Autre">Autre</ion-option>
+                    </ion-select>
+            </ion-item>
+            <ion-item>
+                <ion-textarea rows="2" [(ngModel)]="secteur.description" placeholder="Description du secteur"
+                    name="description" #description="ngModel"></ion-textarea>
+            </ion-item>
+        </ion-list>
+        <div padding="padding">
+            <button ion-button block icon-right [disabled]="isInvalid()" (click)="onSubmit()">
+                <span *ngIf="!secteur.id">Creer un secteur</span>
+                <span *ngIf="secteur.id">Enregistrer les changements</span>
+                    <ion-icon name="md-done-all"></ion-icon>
+            </button>
+             <br>
+            <button *ngIf="secteur.id" ion-button outline block icon-right color="danger" (click)="deleteItem()">
+                    <span>Supprimer ce secteur
+                        <ion-icon name="close"></ion-icon>
+                    </span>
+               </button>             
+        </div>
+    </form>
+</ion-content>

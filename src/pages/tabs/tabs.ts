@@ -16,25 +16,28 @@ import {UserProvider } from '../../providers/user/user';
 export class TabsPage {
   tab2Root: any = 'HomePage';
   tab1Root: any = 'CommendesPage';
-  tab3Root: any = 'StatsPage';
+  tab3Root: any = 'DonneesPage';
   constructor(public navCtrl: NavController, 
     public userService:UserProvider,
     public navParams: NavParams) {
-      console.log('ionViewDidLoad TabsPage');
+       let skippecheck=this.navParams.get('skippecheck')
+        userService.resetObserver();
         userService.complete.then(user => {
-        console.log(user)
-        if (!user||!user.id||!user.parent) {
-            userService.go();   
-        }else if(user.receiveRequests&&user.receiveRequests.length)  
-               userService.request(user.receiveRequests);
-         else if(
-             (userService.amIMyParent()&&(!user.entreprise||!user.ville||!user.pays))
+               console.log(user);
+        if(user.error) 
+              return  userService.unavailable();
+        else if (!user.id||!user.parent) 
+              return userService.go();  
+        else if(user.receiveRequests&&user.receiveRequests.length&&!skippecheck)  
+              return  userService.request(user.receiveRequests);
+        else if(
+             (userService.amIMyParent()&&(!user.entreprise||!user.ville||!user.pays)&&!skippecheck)
              ||
-             (!userService.amIMyParent()&&(!user.nom))
+             (!userService.amIMyParent()&&(!user.nom)&&!skippecheck)
                )
-               userService.profile(user);
-          else if( (!user.parent.abonnement||user.parent.abonnement.expired))
-               userService.shoulpay(user.parent.abonnement);
+               return userService.profile(user);
+         else if( (!user.parent.abonnement||user.parent.abonnement.expired)&&!skippecheck)
+               return userService.shoulpay(user.parent.abonnement);
       }, (ERROR) => {			
           //loginService.go();
       })     

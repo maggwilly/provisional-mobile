@@ -23,25 +23,34 @@ export class UserProvider {
     private firebase: Firebase,
     public events: Events) {
   
+
+   this.resetObserver();
+  }
+
+  public resetObserver(){
+    this.user=null;
     this.storage.get('user').then((data)=>{
       if(!data)
          return this.go()
       this.user=data;    
-      this.manager.show('user',manager.getUserId()).then((data)=>{
-      this.user.parent=data;
+      this.manager.show('user',this.manager.getUserId()).then((user)=>{
+        if(!user)
+         return this.events.publish('auth', {});
+      this.user.parent=user.parent;
+       this.user.receiveRequests=user.receiveRequests;
       this.amParent=this.amIMyParent();
       this.storage.set('user',this.user)
       this.events.publish('user.login', {
         user: this.user
       });
     },error=>{
-      console.log(error)
+     // console.log(error)
       this.events.publish('auth', error)
     })
-  })
-  this.complete = this.makeComplete();
- 
+  })  
+    this.complete = this.makeComplete();
   }
+
 
   public go() {
 		//this.nav.setRoot(LoginPage, {}, {animate: false})
@@ -53,18 +62,24 @@ export class UserProvider {
   }
   
   public profile(user:any){
-    console.log(user)
-    this.app.getRootNav().setRoot('ProfilePage', {user : user}, {animate: false})
+    this.app.getRootNav().setRoot('ProfilePage')
   }
 
   public shoulpay(abonnement:any){
-      this.app.getRootNav().setRoot('ShoulPayPage', {abonnement : abonnement}, {animate: false})
+      this.app.getRootNav().setRoot('ShoulPayPage')
   }
+
+unavailable(){
+ this.app.getRootNav().setRoot('UnavailablePage') 
+}
 public amIMyParent(){
    if(!this.user||!this.user.parent)
      return
   return (this.user.id==this.user.parent.id);
 }
+
+
+
 	public makeComplete() {
 		let self = this;
 		return new Promise((resolve, reject) => {
@@ -78,7 +93,7 @@ public amIMyParent(){
 			});
 			 self.events.subscribe('auth', (pb) => {
         console.log(pb)
-				resolve();
+				resolve({error:true});
 			});
 		
 		})
@@ -103,7 +118,12 @@ public amIMyParent(){
   }
 
 
-
+logout(){
+  this.storage.set('user',undefined).then(()=>{
+    this.go();
+  }
+  )
+}
 
 
    onNotification() {

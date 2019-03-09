@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams,ViewController } from 'ionic-angular';
 import { ManagerProvider} from '../../providers/manager/manager';
 import { Storage } from '@ionic/storage';
 /**
@@ -20,15 +20,18 @@ export class HelpPage {
   constructor(public navCtrl: NavController,
     public manager: ManagerProvider,
     public storage: Storage,
+    public viewCtrl: ViewController, 
      public navParams: NavParams) {
     this.page=this.navParams.get('page');
   }
 
   ionViewDidLoad() {
-    this.manager.getText('help/',this.page+'.html').then(text=>{
+    this.manager.getText('help.',this.page+'.html').then(text=>{
       this.text=text;
     })
   
   }
-
+dismiss(){
+ this.viewCtrl.dismiss();
+}
 }

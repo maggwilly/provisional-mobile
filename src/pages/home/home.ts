@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import {IonicPage, Events, NavController, ModalController, AlertController, LoadingController } from 'ionic-angular';
+import {PopoverController,IonicPage, Events, NavController, ModalController, AlertController, LoadingController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
-import {UserProvider } from '../../providers/user/user';
+
 @IonicPage()
 @Component({
   selector: 'page-home',
@@ -11,15 +11,14 @@ import {UserProvider } from '../../providers/user/user';
 })
 export class HomePage {
   pointVentes: any = [];
-
   queryText = '';
   constructor(
     public navCtrl: NavController,
     public alertCtrl: AlertController,
     public modalCtrl: ModalController,
     public events: Events,
-
     public manager: ManagerProvider,
+    private popoverCtrl: PopoverController,
     public notify: AppNotify,
     public loadingCtrl: LoadingController,
     public storage: Storage) { 
@@ -33,13 +32,13 @@ export class HomePage {
 
   loadData(){
     this.storage.get('_pointVentes').then((data) => {
-      this.pointVentes = data;
+      this.pointVentes = data?data:[];
       this.manager.get('pointvente').then(data=>{
         this.pointVentes=data?data:[]
         this.storage.set('_pointVentes',this.pointVentes)    
       },error=>{
         console.log(error)
-        this.notify.onSuccess({message:"PROBLEME ! Verifiez votre connexion internet"})
+        this.notify.onSuccess({message:"Probleme de connexion"})
       })
     });  
   }
@@ -61,7 +60,7 @@ export class HomePage {
     },error=>{
       loader.dismiss(); 
       console.log(error)
-      this.notify.onSuccess({message:"PROBLEME ! Verifiez votre connexion internet"})
+      this.notify.onSuccess({message:"Probleme de connexion"})
     })
     loader.present();
   }
@@ -95,10 +94,16 @@ export class HomePage {
         }
       });
     } else {
-      // if there are no query words then this session passes the query test
       matchesQueryText = true;
     }
     item.hide = !(matchesQueryText);
   }
 
+    presentPopover(ev?:any) {
+
+    let popover = this.popoverCtrl.create('PopOverMenuPage');
+    popover.present({
+      ev: ev
+    });
+  }
 }

@@ -37,7 +37,7 @@ export class StatsPage {
   loadData() {
     this.storage.get( '_stats').then((data) => {
       this.stats = data ? data :[];
-      this.manager.get('stats').then(data => {
+      this.manager.get('stat').then(data => {
         this.stats = data ? data : []
         this.storage.set( '_stats', this.stats)
       },error=>{
@@ -58,6 +58,5 @@ export class StatsPage {
     loader.present();
   }
 
- 
- 
+
 }

@@ -8,6 +8,12 @@
 
   <ion-navbar>
     <ion-title>Information</ion-title>
+    <ion-buttons end>
+            <button ion-button="ion-button" (click)="dismiss()" icon-left>
+                <ion-icon name="md-close" color="danger" showwhen="android,windows,core"></ion-icon> 
+                Fermer
+            </button>
+        </ion-buttons>
   </ion-navbar>
 </ion-header>
 
@@ -45,8 +51,8 @@
                     <ion-option value="Dschang">Dschang</ion-option>
                     <ion-option value="Autre">Autre</ion-option>
                 </ion-select>
-        </ion-item>
-        <ion-item>
+                <ion-item>
+                    </ion-item>
             <ion-textarea rows="2" [(ngModel)]="user.adresse" placeholder="Adresse" name="adresse" #adresse="ngModel"></ion-textarea>
         </ion-item>
     </ion-list>
@@ -56,6 +62,7 @@
                 <ion-icon name="md-done-all"></ion-icon>
             </span>
         </button>
+      
     </div>
 </form>
 </ion-content>

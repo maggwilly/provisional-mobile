@@ -4,15 +4,27 @@
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-header>
-
+<ion-header no-border no-shadow>
   <ion-navbar>
-    <ion-title>requests</ion-title>
+    <ion-title>Invitations</ion-title>
+       <ion-buttons showWhen="android,windows,core" end>
+          <button ion-button="ion-button" (click)="dismiss()" icon-left>
+              <ion-icon name="md-close" color="danger" showwhen="android,windows,core"></ion-icon> 
+              Fermer
+          </button>
+</ion-buttons>  
   </ion-navbar>
 
 </ion-header>
-
-
 <ion-content padding>
-
+<ion-list *ngIf="requests">
+  <ion-card *ngFor="let request of requests">
+    <ion-card-header>{{request.user.nom}}</ion-card-header>
+    <ion-card-content>Acceptez de rejoindre l'equipe de vente {{request.user.entreprise}}.</ion-card-content>
+    <ion-row>
+      <ion-col><button button ion-button outline small color="danger" (click)="refuser(request)">Refuser</button></ion-col>
+      <ion-col><button button ion-button  small color="primary" (click)="accepter(request)">Accepter</button></ion-col>
+    </ion-row>
+  </ion-card>
+</ion-list>
 </ion-content>
