@@ -25,15 +25,15 @@
                         name="description" #description="ngModel"></ion-textarea>
               </ion-item>                      
         </ion-list>
-        <div padding="padding">
-            <button ion-button block icon-right [disabled]="isInvalid()" (click)="onSubmit()">
+        <div padding="padding" >
+            <button *ngIf="!inset" ion-button block icon-right [disabled]="isInvalid()" (click)="onSubmit()">
                     <span *ngIf="!produit.id">Creer un produit</span>
                     <span *ngIf="produit.id">Enregistrer les changements</span>
                     <ion-icon name="md-done-all"></ion-icon>
                
             </button>
              <br>
-            <button *ngIf="produit.id" ion-button outline block icon-right color="danger" (click)="deleteItem()">
+            <button  *ngIf="produit.id" ion-button outline block icon-right color="danger" (click)="deleteItem()">
                     <span>Supprimer ce produit
                         <ion-icon name="close"></ion-icon>
                     </span>
@@ -41,3 +41,7 @@
         </div>
     </form>
 </ion-content>
+<ion-footer *ngIf="inset">
+    <button ion-button full [disabled]="isInvalid()" (click)="onSubmit()">Creer un produit
+    </button>
+  </ion-footer>

@@ -2,7 +2,7 @@
   <ion-navbar>
     <ion-title>Les produits</ion-title>
     <ion-buttons end>
-    <button ion-button="ion-button" icon-only (click)="loadRemoteData()" >
+    <button ion-button="ion-button" icon-only >
         <ion-icon name="refresh"></ion-icon>
     </button>        
 </ion-buttons>    
@@ -10,7 +10,7 @@
 </ion-header>
 <ion-content padding>    
     <ion-list>
-        <ion-item  *ngFor="let price of prices" (click)="openPrice(price)" wrap-text>
+        <ion-item  *ngFor="let price of prices"  wrap-text>
             {{price.nom}}
             <p>{{price.description}}</p>
             <ion-note >{{price.amount}}</ion-note>

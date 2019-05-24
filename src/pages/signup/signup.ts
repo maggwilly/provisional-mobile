@@ -148,6 +148,8 @@ onSubmit(){
         code.user = this.data.user.id;
         this.manager.post('token', code, 'check').then(data => {
           this.submitted = false;
+          if(data.error_code)
+             return
           this.manager.storeUser(data).then(()=>{
             this.navCtrl.setRoot('TabsPage', {}, {animate: true, direction: 'forward'});
           }, error => {

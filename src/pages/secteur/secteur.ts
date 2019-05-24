@@ -17,12 +17,15 @@ import { AppNotify } from '../../app/app-notify';
 })
 export class SecteurPage {
   secteur:any={}
+  inset:boolean=true;
   constructor(public navCtrl: NavController, 
     public viewCtrl: ViewController,
     public notify: AppNotify,
     public manager: ManagerProvider,
     public navParams: NavParams) {
-    this.secteur=this.navParams.get('secteur')
+      if(!this.inset)
+       this.secteur=this.navParams.get('secteur')
+    this.inset=this.navParams.get('inset');
   }
 
   ionViewDidLoad() {
@@ -41,13 +44,17 @@ onSubmit(){
     });
   this.manager.save('secteur',this.secteur).then((data)=>{
     loader.dismiss().then(()=>{
-      self.dismiss(data);
-       this.notify.onSuccess({message:"Enregistremebt effectue"})
+      if(!data.error){
+        self.dismiss(data);
+        return  this.notify .onSuccess({message:"Enregistrement effectué"})
+      }
+      this.notify.onError({message:"Une erreur s'est produite et l'opération n'a pas put se terminer correctement"})
+
      }); 
     
   },error=>{
      loader.dismiss()
-    this.notify.onError({message:"Un probleme est survenu"})
+     this.notify.onError({message:" Verifiez votre connexion internet"})
   })
     loader.present();
 }

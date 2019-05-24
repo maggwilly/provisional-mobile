@@ -1,3 +1,21 @@
 page-commendes-view {
 
+    .line{
+       
+        font-style: normal;
+       min-height: 37px;
+       &.header{
+        border-bottom: solid 0.01em;
+        font-weight: bold;
+        height: 19px;
+    }
+    }
+    .label-md {
+        margin: 0px 2px 0px 0;
+    }
+    ion-item{
+        .item-md {
+            padding-left: 0px;}
+    }
+
 }

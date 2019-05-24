@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
 import { DatePipe} from "@angular/common";
+import { HomePage } from '../home/home';
 
 @IonicPage()
 @Component({
@@ -12,7 +13,7 @@ import { DatePipe} from "@angular/common";
 })
 export class CommendeCreatePage {
   produits: any[] = []
-  commende: any = { lignes: [] }
+  commende: any = { lignes: [], typeInsident:'Rien à signaler' }
   pointVente:any={};
   queryText = '';
   constructor(
@@ -47,11 +48,17 @@ export class CommendeCreatePage {
   }
 
   save(){
+    let loader = this.loadingCtrl.create({});
     this.manager.post('commende',this.commende).then(()=>{
         this.notify .onSuccess({message:"enregistrement effectué"})
+        this.navCtrl.setRoot(HomePage, {}, {animate: true, direction: 'forward'});
+        loader.dismiss();
       },error=>{
+        console.log(error);
+        loader.dismiss();
         this.notify.onError({message:"PROBLEME ! Verifiez votre connexion internet"})
    })
+   loader.present();
    }
 
   getPointVente(commende: any){
@@ -64,7 +71,7 @@ export class CommendeCreatePage {
 
   addInCart(produit: any) {
     let confirm = this.alertCtrl.create({
-      title: 'Ajouter à la facture',
+      title: 'AJOUTER UN PRODUIT',
       inputs: [
         {
           name: 'quantite',
@@ -86,8 +93,7 @@ export class CommendeCreatePage {
           text: 'Ajouter',
           handler: (data) => {
             if (data.quantite) {
-              if (this.isInCart(produit))
-                return
+              this.removeFromCart({produit:produit.id})
               this.commende.lignes.push({ produit: produit.id, quantite: data.quantite, produitItem: produit })
             }
           }
@@ -97,18 +103,18 @@ export class CommendeCreatePage {
     confirm.present();
   }
   TotalQuantity(commende:any): number {
-    let total = 0;
+    let total:number= 0;
     commende.lignes.forEach(ligne => {
-      total += ligne.quantite;
+      total += Number(ligne.quantite) ;
     });
     return total;
   }
 
 
-  isInCart(produit: any): boolean {
-    if (!this.commende.lignes.length)
-      return
-    return this.commende.lignes.find((item) => { return (item.produit == produit.id); })
+  removeFromCart(ligne: any) {
+    let index = this.commende.lignes.findIndex(item => { return (item.produit == ligne.produit) });
+    if (index > -1)
+      this.commende.lignes.splice(index,1);
   }
 
   search() {

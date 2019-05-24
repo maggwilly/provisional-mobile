@@ -32,12 +32,12 @@
                     </ion-select>
             </ion-item>
             <ion-item>
-                <ion-textarea rows="2" [(ngModel)]="secteur.description" placeholder="Description du secteur"
+                <ion-textarea rows="1" [(ngModel)]="secteur.description" placeholder="Description du secteur"
                     name="description" #description="ngModel"></ion-textarea>
             </ion-item>
         </ion-list>
         <div padding="padding">
-            <button ion-button block icon-right [disabled]="isInvalid()" (click)="onSubmit()">
+            <button *ngIf="!inset" ion-button block icon-right [disabled]="isInvalid()" (click)="onSubmit()">
                 <span *ngIf="!secteur.id">Creer un secteur</span>
                 <span *ngIf="secteur.id">Enregistrer les changements</span>
                     <ion-icon name="md-done-all"></ion-icon>
@@ -51,3 +51,7 @@
         </div>
     </form>
 </ion-content>
+<ion-footer *ngIf="inset">
+    <button ion-button full [disabled]="isInvalid()" (click)="onSubmit()">Creer un produit
+    </button>
+  </ion-footer>

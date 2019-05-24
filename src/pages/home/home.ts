@@ -3,6 +3,8 @@ import {PopoverController,IonicPage, Events, NavController, ModalController, Ale
 import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
+import { UserProvider } from '../../providers/user/user';
+import { timeout } from 'rxjs/operators';
 
 @IonicPage()
 @Component({
@@ -18,6 +20,7 @@ export class HomePage {
     public modalCtrl: ModalController,
     public events: Events,
     public manager: ManagerProvider,
+    public userService:UserProvider,
     private popoverCtrl: PopoverController,
     public notify: AppNotify,
     public loadingCtrl: LoadingController,
@@ -26,18 +29,20 @@ export class HomePage {
     }
 
   ionViewDidLoad() {
-    this.loadData();
+  this.userService.getAuthenticatedUser().subscribe(user=>{
+    if(user)
+      this.loadData();
+  })
 
   }
 
   loadData(){
-    this.storage.get('_pointVentes').then((data) => {
+    this.storage.get('_rendezvous').then((data) => {
       this.pointVentes = data?data:[];
-      this.manager.get('pointvente').then(data=>{
+      this.manager.get('rendezvous').then(data=>{
         this.pointVentes=data?data:[]
-        this.storage.set('_pointVentes',this.pointVentes)    
+        this.storage.set('_rendezvous',this.pointVentes)    
       },error=>{
-        console.log(error)
         this.notify.onSuccess({message:"Probleme de connexion"})
       })
     });  
@@ -53,9 +58,9 @@ export class HomePage {
     let loader = this.loadingCtrl.create({
       content: "chargement...",
     });    
-    this.manager.get('pointvente').then(data=>{
+    this.manager.get('rendezvous').then(data=>{
       this.pointVentes=data?data:[]
-      this.storage.set('_pointVentes',this.pointVentes)
+      this.storage.set('_rendezvous',this.pointVentes)
       loader.dismiss();      
     },error=>{
       loader.dismiss(); 
@@ -68,12 +73,11 @@ export class HomePage {
 
   showCommende(pointVente:any){
    this.navCtrl.push('PointVenteDetailPage',{pointVente:pointVente})
-
   }
 
   
   search() {
-    this.storage.get('_pointVentes').then((data) => {
+    this.storage.get('_rendezvous').then((data) => {
       this.pointVentes = data;
       let queryText = this.queryText.toLowerCase().replace(/,|\.|-/g, ' ');
       let queryWords = queryText.split(' ').filter(w => !!w.trim().length);

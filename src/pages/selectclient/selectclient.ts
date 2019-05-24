@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams,LoadingController,ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams,ModalController, ViewController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
@@ -21,7 +21,7 @@ export class SelectclientPage {
   constructor(
     public navCtrl: NavController,
     public manager: ManagerProvider,
-    public loadingCtrl: LoadingController,
+    public viewCtrl: ViewController,
      public modalCtrl: ModalController,
     public notify: AppNotify,
     public storage: Storage,    
@@ -32,6 +32,9 @@ export class SelectclientPage {
     this.loadData()
   }
 
+  dismiss(data?:any) {
+    this.viewCtrl.dismiss(data);
+}
   loadData(){    
     this.storage.get('_pointventes').then((data) => {
       this.pointventes = data?data:[];
@@ -44,22 +47,21 @@ export class SelectclientPage {
   });
   }
 
-
-
-
   add(pointVente={}){
-    let modal=  this.modalCtrl.create('PointVentePage',{pointVente:pointVente})
+    let self=this;
+    let modal=  this.modalCtrl.create('PointVentePage',{pointVente:pointVente,inset:true}, { cssClass: 'inset-modal' })
     modal.onDidDismiss(data=>{
       let index=-1;
-     if (data&&data.id) {
-        index= this.pointventes.findIndex(item=>item.id==data.id);
-        if(index>-1)
-           this.pointventes.splice(index,1);
-         this.pointventes.push(data);
-         this.storage.set('_pointventes',this.pointventes) 
-     }else if(data&&data.deletedId){
-       return this.findRemove(data);
-     }
+      if(!data)
+      return
+      if(data&&data.deletedId||data.id){
+        index= this.pointventes.findIndex(item=>item.id==data.deletedId||item.id==data.id);
+         if(index>-1)
+        this.pointventes.splice(index,1);
+        this.pointventes.splice(0,0,data); 
+        this.storage.set('_pointventes',this.pointventes) 
+        self.dismiss(data);
+      } 
     }) 
     modal.present()
   //  this.navCtrl.push('PointVentePage',{pointVente:pointVente})
@@ -72,9 +74,6 @@ export class SelectclientPage {
        this.storage.set('_pointventes',this.pointventes) 
   }
  
-
-   
-
   search() {
     let queryText = this.queryText.toLowerCase().replace(/,|\.|-/g, ' ');
     let queryWords = queryText.split(' ').filter(w => !!w.trim().length);

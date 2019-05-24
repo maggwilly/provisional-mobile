@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController,ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController,ModalController, ViewController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify'
@@ -24,6 +24,7 @@ export class SecteursPage {
      public manager: ManagerProvider,
      public modalCtrl: ModalController,
     public notify: AppNotify,
+    public viewCtrl: ViewController,
     public storage: Storage,
      public navParams: NavParams
      ) {
@@ -32,14 +33,17 @@ export class SecteursPage {
   ionViewDidLoad() {
     this.loadData()
   }
-
+  dismiss(data?:any) {
+    this.viewCtrl.dismiss(data);
+} 
   loadData(){    
     this.storage.get('_secteurs').then((data) => {
       this.secteurs = data?data:[];
     this.manager.get('secteur').then(data=>{
-      this.secteurs=data?data:[]
-      this.storage.set('_secteurs',this.secteurs)    
+      this.secteurs=data?data:[]  
     },error=>{
+      console.log(error);
+      
       this.notify.onError({message:" Verifiez votre connexion internet"})
     })
   });
@@ -51,7 +55,6 @@ export class SecteursPage {
     });    
     this.manager.get('secteur').then(data=>{
       this.secteurs=data?data:[]
-      this.storage.set('_secteurs',this.secteurs) 
       loader.dismiss();      
     },error=>{
       loader.dismiss();   
@@ -61,20 +64,16 @@ export class SecteursPage {
   }
  
   add(secteur={}){
-     let modal=  this.modalCtrl.create('SecteurPage',{secteur:secteur})
+     let modal=  this.modalCtrl.create('SecteurPage',{secteur:secteur,inset:true}, { cssClass: 'inset-modal' })
     modal.onDidDismiss(data=>{
        let index=-1;
      if (data&&data.id) {
          index= this.secteurs.findIndex(item=>item.id==data.id);
-         if(index>-1)
-         this.secteurs.splice(index,1);
-       this.secteurs.push(data);
-       this.storage.set('_secteurs',this.secteurs) 
+         this.secteurs.splice(0,0,data); 
      }else if(data&&data.deletedId){
        index= this.secteurs.findIndex(item=>item.id==data.deletedId);
        if(index>-1)
       this.secteurs.splice(index,1);
-       this.storage.set('_secteurs',this.secteurs)
      }
     }) 
     modal.present()

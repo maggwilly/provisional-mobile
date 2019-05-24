@@ -15,8 +15,6 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <ion-searchbar [hidden]="!pointVentes.length" color="primary" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un nom">
-  </ion-searchbar>
   <ion-list [hidden]="!pointVentes.length">
     <ion-item *ngFor="let pointVente of pointVentes" (click)="showCommende(pointVente)" [hidden]="pointVente.hide">
       <h2>{{pointVente.nom}}</h2>

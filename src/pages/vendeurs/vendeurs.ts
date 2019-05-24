@@ -42,8 +42,7 @@ export class VendeursPage {
       console.log(data);
       
       this.vendeurs=data?data.users:[];
-      this.requesteds=data?data.requests:[];
-      this.storage.set('_vendeurs',this.vendeurs)    
+      this.requesteds=data?data.requests:[];   
     },error=>{
       this.notify.onError({message:" Verifiez votre connexion internet"})
     })
@@ -58,7 +57,6 @@ export class VendeursPage {
       console.log(data);
       this.vendeurs=data?data.users:[]
       this.requesteds=data?data.requests:[];
-      this.storage.set('_vendeurs',this.vendeurs)
       loader.dismiss();       
     },error=>{
       loader.dismiss();   
@@ -108,10 +106,7 @@ export class VendeursPage {
               loader.dismiss().then(()=>{
                 if(!req.id)
                    return 
-               let  index= self.requesteds.findIndex(item=>item.id==req.id);
-               if(index>-1)
-                  self.requesteds.splice(index,1);
-                  self.requesteds.push(req);
+               this.requesteds.splice(0,0,req); 
                  this.notify.onSuccess({message:"Demande envoyee !"})
                });
             },error=>{
@@ -172,7 +167,6 @@ this.manager.delete('request',requested).then(data=>{
               loader.dismiss().then(()=>{
                 let  index= this.vendeurs.findIndex(item=>item.id==data.deletedId);
                 this.vendeurs.splice(index,1);
-                 this.storage.set('_vendeurs',this.vendeurs)
                 this.notify.onSuccess({message:"Element supprime"})
                }); 
             }else{

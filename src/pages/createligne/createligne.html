@@ -1,0 +1,34 @@
+
+<ion-header>
+  <ion-navbar>
+    <ion-title>{{ligne.nom}} </ion-title>
+    <ion-buttons end>
+    <button ion-button="ion-button" (click)="dismiss()" icon-left>
+      <ion-icon name="md-close" color="danger" showwhen="android,windows,core"></ion-icon> 
+      Fermer
+  </button>
+</ion-buttons>     
+  </ion-navbar>
+</ion-header>
+<ion-content padding>
+    <div text-center>Précisez la quantité commendée, le stock trouvé sur place et si il est de vous.</div>
+  <ion-item>
+    <ion-label color="primary"><span>Quantité </span> </ion-label>
+    <ion-input [(ngModel)]="ligne.quantite" name="quantite" type="number" placeholder="" #quantite="ngModel"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label color="primary"><span>Stock trouvé </span> </ion-label>
+    <ion-input [(ngModel)]="ligne.stock" name="stock" type="number" placeholder="" #stock="ngModel"></ion-input>
+  </ion-item> 
+  <ion-item>
+    <ion-label>Acheté chez nous</ion-label>
+    <ion-checkbox item-right [(ngModel)]="ligne.acn" name="acn" #acn="ngModel"></ion-checkbox>
+  </ion-item> 
+ <ion-item>
+     <ion-row><ion-col>Total:</ion-col><ion-col>{{total()}} FCFA</ion-col></ion-row>
+  </ion-item>
+ </ion-content>
+<ion-footer>
+  <button ion-button full [disabled]="isInvalid()" (click)="onSubmit()">Ajouter à la commende
+</button>
+</ion-footer>

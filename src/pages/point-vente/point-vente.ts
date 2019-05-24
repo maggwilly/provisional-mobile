@@ -2,8 +2,9 @@ import { Component } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
 import { ManagerProvider} from '../../providers/manager/manager';
-import { IonicPage, NavParams, NavController, ViewController  } from 'ionic-angular';
+import { IonicPage, NavParams, NavController, ViewController ,ModalController } from 'ionic-angular';
 import { AppNotify } from '../../app/app-notify';
+import { UserProvider } from '../../providers/user/user';
 @IonicPage()
 @Component({
   selector: 'page-point-vente',
@@ -11,15 +12,21 @@ import { AppNotify } from '../../app/app-notify';
 })
 export class PointVentePage {
   pointVente:any={};
-  secteurs:any[]=[]
+  secteurs:any[]=[];
+  inset:boolean;
   constructor(
     public navCtrl: NavController,
     public storage: Storage, 
     public navParams: NavParams,
     public viewCtrl: ViewController,
     public notify: AppNotify,
+    public modalCtrl:ModalController,
+    public userService:UserProvider,
     public manager: ManagerProvider,) {
       this.pointVente=this.navParams.get('pointVente')
+      this.inset=this.navParams.get('inset');
+      if(!this.pointVente.secteur)
+          this.pointVente.secteur=this.userService.user.secteur;
       if(this.pointVente.secteur)
         this.pointVente.secteur=this.pointVente.secteur.id;
     }
@@ -36,6 +43,13 @@ export class PointVentePage {
   });   
   }
 
+  select(){
+    let modal=this.modalCtrl.create('QuartiersPage',{ville:this.pointVente.ville});
+    modal.onDidDismiss(data => {
+          this.pointVente.quartier=data;
+     });
+     modal.present();
+  }
 
 isInvalid():boolean {
   return (!this.pointVente.nom||!this.pointVente.adresse||!this.pointVente.telephone);
@@ -53,8 +67,12 @@ onSubmit(){
     }); 
   this.manager.save('pointvente',this.pointVente).then((data)=>{
     loader.dismiss().then(()=>{
-      self.dismiss(data);
-       this.notify.onSuccess({message:"Enregistremebt effectue"})
+      if(!data.error){
+        self.dismiss(data);
+        return  this.notify .onSuccess({message:"Enregistrement effectué"})
+      }
+      this.notify.onError({message:"Une erreur s'est produite et l'opération n'a pas put se terminer correctement"})
+
      });  
     
   },error=>{

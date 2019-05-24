@@ -17,7 +17,9 @@ import { Firebase } from '@ionic-native/firebase/ngx';
   imports: [
     BrowserModule,
     IonicStorageModule.forRoot(),
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp,{
+      tabsHideOnSubPages:true
+    }),
      HttpModule
   ],
   bootstrap: [IonicApp],

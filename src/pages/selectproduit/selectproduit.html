@@ -1,0 +1,28 @@
+<ion-header  no-border no-shadow>
+    <ion-navbar>
+        <ion-buttons left>
+            <button ion-button   style="text-transform: none;" (click)="dismiss()" icon-left>
+                <ion-icon name="close" color="danger"></ion-icon>
+                Annuler
+            </button>           
+        </ion-buttons>        
+      <ion-title>Selectionnez un produit</ion-title>
+      <ion-buttons end>
+      <button ion-button small outline (click)="add()" icon-left>
+          <ion-icon name="add" ></ion-icon>
+          Creer
+      </button>           
+  </ion-buttons>    
+    </ion-navbar>
+  </ion-header>
+  <ion-content padding>
+      <ion-searchbar [hidden]="!produits.length" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un produit">
+        </ion-searchbar>     
+      <ion-list>
+          <ion-item  *ngFor="let produit of produits" (click)="select(produit)" [hidden]="produit.hide">
+              {{produit.nom}}
+              <p>{{produit.description}}</p>
+              <ion-note item-right>{{produit.cout}}</ion-note>
+          </ion-item>
+      </ion-list>
+  </ion-content>

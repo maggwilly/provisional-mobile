@@ -26,8 +26,6 @@ export class ProfilePage {
      public storage: Storage,
      public manager: ManagerProvider,) {
       this.user=this.navParams.get('user')
-      console.log(this.user);
-      
       if(!this.userService.amIMyParent())
       this.user.entreprise=this.user.parent.entreprise;
       this.user.pays=this.user.parent.pays;
@@ -60,7 +58,7 @@ dismiss(skippecheck=true){
    },error=>{
      console.log(error);
      
-    this.notify.onSuccess({message:"PROBLEME ! Verifiez votre connexion internet"})
+    this.notify.onSuccess({message:"Verifiez votre connexion internet"})
    })
   }
 }

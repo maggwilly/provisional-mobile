@@ -2,22 +2,20 @@
     <ion-navbar>
         <ion-title *ngIf="getPointVente(commende)">{{commende.date|date:'dd/MM/yyyy' }} - {{getPointVente(commende).nom}} </ion-title>
         <ion-buttons end="end">
-            <button ion-button="ion-button" outline="outline" color="white" (click)="openCart()" *ngIf="commende.lignes.length">
+            <button ion-button="ion-button" outline color="white" (click)="openCart()" >
                 <span>{{TotalQuantity(commende)}} 
                 </span>
             </button>
-            <button ion-button icon-only (click)="save()">
-                <ion-icon name="save"></ion-icon>
+            <button ion-button icon-only (click)="save()" *ngIf="commende.lignes.length">
+                <ion-icon name="done-all"></ion-icon>
             </button>           
         </ion-buttons>
     </ion-navbar>
 </ion-header>
-<ion-content>
-        <ion-searchbar color="primary" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un nom">
-            </ion-searchbar>    
+<ion-content  padding>
         <ion-list> 
              <ion-item>
-                <ion-label color="primary"><span>Date</span></ion-label>
+                <ion-label color="primary" flotting><span>Date du rapport</span></ion-label>
                 <ion-datetime 
                    displayFormat="DD/MM/YYYY"
                    pickerFormat="D MMM  YYYY" min="2019" max="2050"
@@ -27,11 +25,29 @@
                     #date="ngModel"></ion-datetime>
               </ion-item>
     </ion-list> 
+<ion-list-header>Selectionnez un produit</ion-list-header>
     <ion-list>
         <ion-item  *ngFor="let produit of produits" (click)="addInCart(produit)" [hidden]="produit.hide">
             {{produit.nom}}
             <p>{{produit.description}}</p>
-            <ion-note item-right>{{produit.cout}}</ion-note>
+            <ion-note item-right>{{produit.cout}} XAF</ion-note>
         </ion-item>
     </ion-list>
+    <ion-item>
+     <ion-label color="primary" floating>
+            <span>Insident à signaler</span>
+     </ion-label>
+     <ion-select [(ngModel)]="commende.typeInsident" name="typeInsident" #typeInsident="ngModel" required="required">
+                <ion-option value="Rien à signaler">Rien à signaler</ion-option>
+                <ion-option value="Insident portant sur le matériel">Insident portant sur le matériel</ion-option>
+                <ion-option value="Insident avec un souscripteur ou un prospect">Insident avec un souscripteur</ion-option>
+                <ion-option value="Insident de santé leger">Insident de santé leger</ion-option>
+                <ion-option value="Accident ayant occasionné des blessures ">Accident ayant occasionné des blessures</ion-option>
+                <ion-option value="Autre type d'insident">Autre type d'insident</ion-option>
+    </ion-select>
+    </ion-item>    
+    <ion-item *ngIf="commende.typeInsident!='Rien à signaler'">
+        <ion-textarea rows="3" [(ngModel)]="commende.description" placeholder="Compte rendu descriptif"
+            name="description" #description="ngModel"></ion-textarea>
+    </ion-item>    
 </ion-content>

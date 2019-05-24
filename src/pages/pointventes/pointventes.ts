@@ -22,7 +22,7 @@ export class PointventesPage {
     public navCtrl: NavController,
     public manager: ManagerProvider,
     public loadingCtrl: LoadingController,
-     public modalCtrl: ModalController,
+    public modalCtrl: ModalController,
     public notify: AppNotify,
     public storage: Storage,    
     public navParams: NavParams) {
@@ -51,7 +51,6 @@ export class PointventesPage {
     });    
     this.manager.get('pointvente').then(data=>{
       this.pointventes=data?data:[]
-      this.storage.set('_pointventes',this.pointventes)  
       loader.dismiss();     
     },error=>{
       loader.dismiss();   
@@ -59,8 +58,6 @@ export class PointventesPage {
     })
     loader.present();
   }
-
-
 
 
   show(pointVente,slidingItem: ItemSliding){
@@ -115,25 +112,22 @@ export class PointventesPage {
     let modal=  this.modalCtrl.create('PointVentePage',{pointVente:pointVente})
     modal.onDidDismiss(data=>{
       let index=-1;
-     if (data&&data.id) {
-        index= this.pointventes.findIndex(item=>item.id==data.id);
-        if(index>-1)
-           this.pointventes.splice(index,1);
-         this.pointventes.push(data);
-         this.storage.set('_pointventes',this.pointventes) 
-     }else if(data&&data.deletedId){
-       return this.findRemove(data);
-     }
+      if(!data)
+      return
+      if(data&&data.deletedId||data.id){
+        index= this.pointventes.findIndex(item=>item.id==data.deletedId||item.id==data.id);
+         if(index>-1)
+        this.pointventes.splice(index,1);
+        this.pointventes.splice(0,0,data); 
+      }     
     }) 
     modal.present()
-  //  this.navCtrl.push('PointVentePage',{pointVente:pointVente})
   }
 
   findRemove(data:any){
        let   index= this.pointventes.findIndex(item=>item.id==data.deletedId);
         if(index>-1)
        this.pointventes.splice(index,1);
-       this.storage.set('_pointventes',this.pointventes) 
   }
  
 

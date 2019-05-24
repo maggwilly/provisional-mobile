@@ -16,7 +16,8 @@ import { ManagerProvider} from '../../providers/manager/manager';
   templateUrl: 'produit.html',
 })
 export class ProduitPage {
-produit:any={}
+   produit:any={}
+  inset:boolean;
   constructor(
        public navCtrl: NavController,
        public storage: Storage,
@@ -25,6 +26,8 @@ produit:any={}
        public notify: AppNotify,
        public manager: ManagerProvider,) {
        this.produit=this.navParams.get('produit');
+       if(!this.inset)
+       this.inset=this.navParams.get('inset');
   }
   ionViewDidLoad() { 
         console.log(  this.produit);
@@ -48,8 +51,12 @@ onSubmit(){
     }); 
   this.manager.save('produit',this.produit).then((data)=>{
      loader.dismiss().then(()=>{
-      self.dismiss(data);
-        this.notify.onSuccess({message:"Enregistremebt effectue"})
+      if(!data.error){
+        self.dismiss(data);
+        return  this.notify .onSuccess({message:"Enregistrement effectué"})
+      }
+      this.notify.onError({message:"Une erreur s'est produite et l'opération n'a pas put se terminer correctement"})
+
      });    
   
   },error=>{
