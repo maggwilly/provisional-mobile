@@ -24,7 +24,7 @@ export class ManagerProvider {
   }
 
   storeUser(user: any) {
-    return this.storeEntity('user', user).then(()=>{
+    return this.storeEntityLocally('user', user).then(()=>{
       window.localStorage.setItem('_user_id_', user.id);
       window.localStorage.setItem('_user_token', user.apiKey);
       this.headers.set('X-Auth-Token', user.apiKey)
@@ -41,10 +41,10 @@ export class ManagerProvider {
     return this.http.get(`${Config.server}/${entityName}/json`, { headers: this.headers })
     .toPromise()
     .then(response =>{
-      return this.storeEntity(entityName,response.json()).then(()=>
-         this.getEntityLocal(entityName).then(entites=>resolve(entites)))
+      return this.storeEntityLocally(entityName,response.json()).then(()=>
+         this.getEntitieLocally(entityName).then(entites=>resolve(entites)))
     },error=>{
-        return  this.getEntityLocal(entityName).then(entites=>resolve(entites));
+        return  this.getEntitieLocally(entityName).then(entites=>resolve(entites));
     } );
     })
   }
@@ -63,7 +63,7 @@ export class ManagerProvider {
       return this.http.get(`${Config.server }/${entityName} /${entityid}/show/json?id=${entityid}`, { headers: this.headers })
       .toPromise()
       .then(response =>{
-       this.storeEntity(entityName,response.json()).then(()=> resolve(response.json()))  
+       this.storeEntityLocally(entityName,response.json()).then(()=> resolve(response.json()))  
       },error=>{
         return this.storage.get(`${entityName}_id_${entityid}`).then(data=>{
           resolve(data)
@@ -72,18 +72,24 @@ export class ManagerProvider {
     })
   }
   
-  storeEntity(entityName: any,data:any){
+  storeEntityLocally(entityName: any,data:any){
+    return new Promise<any>((resolve,reject)=>{
     if(!Array.isArray(data))
-     return  this.storage.set(`${entityName}_id_${data.id}`,data)
-     let promises:Promise<any>[]=[];
+     return  this.storage.set(`${entityName}_id_${data.id}`,data).then(()=>{
+          resolve(data)
+       })
+      let promises:Promise<any>[]=[];
      data.forEach(element => {
-      promises.push(this.storeEntity(entityName,element)) 
-     }
-   )
-     return  Promise.all(promises);
+        promises.push(this.storeEntityLocally(entityName,element)) 
+       }
+      )
+     return  Promise.all(promises).then(()=>{
+        resolve(data)
+     })
+    }) 
   }
 
-getEntityLocal(entityName: any){
+getEntitieLocally(entityName: any){
 return new Promise<any>((resolve,reject)=>{
   let entities:any[]=[];
   this.storage.forEach((value, key, index) => {
@@ -98,11 +104,11 @@ return new Promise<any>((resolve,reject)=>{
 
   post(entityName: any, entity: any, action: string = 'new') {
     return new Promise<any>((resolve,reject)=>{
-      this.storeEntity(entityName,entity).then(() => {
+      this.storeEntityLocally(entityName,entity).then(() => {
          this.http.post(Config.server + '/' + entityName + '/' + action + '/json', JSON.stringify(entity), { headers: this.headers })
         .toPromise()
         .then(response => {
-          return this.storeEntity(entityName,response.json()).then(()=> resolve(response.json()))
+          return this.storeEntityLocally(entityName,response.json()).then(()=> resolve(response.json()))
         },error=>{
           resolve (entity)
         })
@@ -113,7 +119,7 @@ return new Promise<any>((resolve,reject)=>{
 
   put(entityName: any, entity: any) {
     return new Promise<any>((resolve,reject)=>{
-      return this.storeEntity(entityName,entity).then(() => {
+      return this.storeEntityLocally(entityName,entity).then(() => {
          this.http.put(`${Config.server }/${entityName}/${entity.id}/edit/json`, JSON.stringify(entity), { headers: this.headers })
         .toPromise()
         .then(response => {
