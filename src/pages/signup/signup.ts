@@ -111,13 +111,14 @@ export class SignupPage {
 
 onSubmit(){
          this.submitted = true; 
-         this.manager.post('user', this.newUser.value).then(data => {
+         this.manager.post('register', this.newUser.value,'new',true).then(data => {
           this.submitted = false;
           this.data = data;
           if (data.value)
                this.stape = 'code';
         }, error => {
           this.submitted = false;
+          console.log(error);
           this.appNotify.showAlert({message:'Le service peut-etre  indisponible. Verifiez votre connexion internet'})
         })
 }
@@ -126,9 +127,9 @@ onSubmit(){
     switch (this.stape) {
       case 'phone':
         this.submitted = true;
-        this.manager.post('token', this.formPhone.value).then(data => {
+        this.manager.post('token', this.formPhone.value,'new',true).then(data => {
           this.submitted = false;
-          console.log(data)
+          console.log(data);
           this.data = data;
           if (data.value)
             this.stape = 'code';
@@ -138,6 +139,7 @@ onSubmit(){
           }
 
         }, error => {
+          console.log(error);
           this.submitted = false;
           this.appNotify.showAlert({message:'Le service peut-etre  indisponible. Verifiez votre connexion internet'})
         })
@@ -146,18 +148,20 @@ onSubmit(){
         this.submitted = true;
         let code: any = this.formCode.value
         code.user = this.data.user.id;
-        this.manager.post('token', code, 'check').then(data => {
+        this.manager.post('token', code, 'check',true).then(data => {
           this.submitted = false;
           if(data.error_code)
              return
           this.manager.storeUser(data).then(()=>{
             this.navCtrl.setRoot('TabsPage', {}, {animate: true, direction: 'forward'});
           }, error => {
+            console.log(error);
             this.submitted = false;
             this.appNotify.showAlert({message:'Le service peut-etre  indisponible. Verifiez votre connexion internet'})
           })
          
         }, error => {
+          console.log(error);
           this.submitted = false;
           this.appNotify.showAlert({message:'Le service peut-etre  indisponible. Verifiez votre connexion internet'})
         })

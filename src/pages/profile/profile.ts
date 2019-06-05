@@ -47,7 +47,7 @@ dismiss(skippecheck=true){
   this.navCtrl.setRoot('TabsPage', {skippecheck:skippecheck}, {animate: true, direction: 'forward'}); 
 }
   onSubmit(){
-   this.manager.put('user',this.user).then((data)=>{
+   this.manager.put('user',this.user,true).then((data)=>{
      if(data.id){
         this.storage.set('user',data).then(()=>{
           this.dismiss(false);

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, LoadingController, ViewController  ,ModalController} from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, LoadingController, ViewController  ,ModalController, Events} from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
@@ -19,26 +19,30 @@ export class SelectproduitPage {
     public navParams: NavParams,
     public modalCtrl: ModalController,
     public viewCtrl: ViewController,
+    public events:Events,
     public manager: ManagerProvider,
     public loadingCtrl: LoadingController,
     public notify: AppNotify,
     public storage: Storage) {
+      this.events.subscribe('loaded:produit:new',()=>{
+        this.loadData();
+       })
   }
 
   ionViewDidLoad() {
-      this.loadData()
+      this.loadData(true)
   }
 
-  loadData(){    
-    this.storage.get('_produits').then((data) => {
-      this.produits = data?data:[];
+  loadData(onlineIfEmpty?:boolean){    
+
     this.manager.get('produit').then(data=>{
       this.produits=data?data:[]
-      this.storage.set('_produits',this.produits) ;   
+      if(onlineIfEmpty&&(!data||data.length))
+      return this.loadRemoteData();
     },error=>{
       this.notify.onError({message:" Verifiez votre connexion internet"})
     })
-  });
+
   }
 
   dismiss(data?:any) {
@@ -49,9 +53,8 @@ export class SelectproduitPage {
     let loader= this.notify.loading({
       content: "chargement...",
     });    
-    this.manager.get('produit').then(data=>{
+    this.manager.get('produit',true).then(data=>{
       this.produits=data?data:[]
-      this.storage.set('_produits',this.produits)  
       loader.dismiss();     
     },error=>{
       loader.dismiss();   
@@ -75,7 +78,6 @@ export class SelectproduitPage {
         if(index>-1)
        this.produits.splice(index,1);
        this.produits.splice(0,0,data); 
-       this.storage.set('_produits',this.produits)
        this.select(data) 
      }
    }) 

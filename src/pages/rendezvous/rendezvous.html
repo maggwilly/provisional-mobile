@@ -1,0 +1,44 @@
+<ion-header no-border no-shadow >
+    <ion-navbar>
+          <ion-title><span>Rendez-vous</span></ion-title>
+          <ion-buttons end>
+                  <button ion-button="ion-button" (click)="dismiss()" icon-left>
+                      <ion-icon name="md-close" color="danger" showwhen="android,windows,core"></ion-icon> 
+                      Fermer
+                  </button>
+              </ion-buttons>        
+    </ion-navbar>
+  </ion-header>
+  <ion-content padding>
+      <form #form="ngForm" novalidate="novalidate">
+          <ion-list>
+              <ion-item>
+                  <ion-label color="primary" floating>Saisir la date</ion-label>
+                  <ion-datetime 
+                     displayFormat="DD/MM/YYYY"
+                     pickerFormat="D MMM  YYYY" min="2019" max="2019"
+                     doneText="Terminé" cancelText="Annuler"
+                     name="dateat"
+                     [(ngModel)]="rendezvous.dateat"
+                      #date="ngModel"></ion-datetime>
+                </ion-item>
+                <ion-item *ngIf="users&&users.length">
+                    <ion-label color="primary" floating>
+                  <span>A honorer par</span>
+              </ion-label>
+                <ion-select [(ngModel)]="rendezvous.user" name="user" #user="ngModel">
+                      <ion-option *ngFor="let user of users" [value]="user.id">{{user.nom}}</ion-option>
+                  </ion-select>
+          </ion-item>            
+           <ion-item>
+                    <ion-textarea rows="2" [(ngModel)]="rendezvous.commentaire" placeholder="Commentaire"
+                          name="commentaire" #commentaire="ngModel"></ion-textarea>
+              </ion-item>                      
+          </ion-list>
+      </form>
+  </ion-content>
+  <ion-footer >
+      <button ion-button full [disabled]="isInvalid()" (click)="onSubmit()">
+        Creer un rendezvous
+      </button>
+  </ion-footer>

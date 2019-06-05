@@ -89,7 +89,7 @@ export class PriceDetailPage {
        Number(this.payement.duree)==12&&this.twelveMonth
       ) 
           return this.amount();
-    this.manager.post('payement',this.payement).then(data=>{     
+    this.manager.post('payement',this.payement,'new',true).then(data=>{     
       if(!data.payment_url)
         return  this.notify.onError({message:"Le paiement est momentanement indisponible. Reessayez plus tard"})
         switch (data.duree) {

@@ -4,7 +4,6 @@ import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
 import { UserProvider } from '../../providers/user/user';
-import { timeout } from 'rxjs/operators';
 
 @IonicPage()
 @Component({
@@ -12,7 +11,7 @@ import { timeout } from 'rxjs/operators';
   templateUrl: 'home.html'
 })
 export class HomePage {
-  pointVentes: any = [];
+  rendezvous: any = [];
   queryText = '';
   constructor(
     public navCtrl: NavController,
@@ -25,31 +24,30 @@ export class HomePage {
     public notify: AppNotify,
     public loadingCtrl: LoadingController,
     public storage: Storage) { 
-     
+      this.events.subscribe('loaded:rendezvous:new',()=>{
+        this.loadData();
+       })
     }
 
   ionViewDidLoad() {
   this.userService.getAuthenticatedUser().subscribe(user=>{
     if(user)
-      this.loadData();
+      this.loadData(true);
   })
 
   }
 
-  loadData(){
-    this.storage.get('_rendezvous').then((data) => {
-      this.pointVentes = data?data:[];
+  loadData(onlineIfEmpty?:boolean){
       this.manager.get('rendezvous').then(data=>{
-        this.pointVentes=data?data:[]
-        this.storage.set('_rendezvous',this.pointVentes)    
+        this.rendezvous=data?data:[]
+        if(onlineIfEmpty&&(!data||data.length))
+        return this.loadRemoteData();
       },error=>{
+        console.log(error);
+        
         this.notify.onSuccess({message:"Probleme de connexion"})
       })
-    });  
-  }
-
-  add(){
-    this.navCtrl.push('PointVentePage')
+   
   }
 
 
@@ -58,34 +56,31 @@ export class HomePage {
     let loader = this.loadingCtrl.create({
       content: "chargement...",
     });    
-    this.manager.get('rendezvous').then(data=>{
-      this.pointVentes=data?data:[]
-      this.storage.set('_rendezvous',this.pointVentes)
+    this.manager.get('rendezvous',true).then(data=>{
+      this.rendezvous=data?data:[]
       loader.dismiss();      
     },error=>{
+      console.log(error);
       loader.dismiss(); 
-      console.log(error)
       this.notify.onSuccess({message:"Probleme de connexion"})
     })
     loader.present();
   }
 
 
-  showCommende(pointVente:any){
-   this.navCtrl.push('PointVenteDetailPage',{pointVente:pointVente})
+  show(rendezvous:any){
+   this.navCtrl.push('PointVenteDetailPage',{rendezvous:rendezvous})
   }
 
   
   search() {
-    this.storage.get('_rendezvous').then((data) => {
-      this.pointVentes = data;
       let queryText = this.queryText.toLowerCase().replace(/,|\.|-/g, ' ');
       let queryWords = queryText.split(' ').filter(w => !!w.trim().length);
-      this.pointVentes.forEach(item => {
+      this.rendezvous.forEach(item => {
         item.hide = true;
         this.filter(item, queryWords);
       });
-    });
+    
   }
 
   filter(item, queryWords) {

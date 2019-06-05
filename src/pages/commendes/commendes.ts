@@ -28,7 +28,6 @@ export class CommendesPage {
     this.today = moment().format("YYYY-MM-DD");
     this.events.subscribe('commende.added', (data) => {
     this.commendes.push(data);
-    this.storage.set('_commendes', this.commendes)
     })
     this.events.subscribe('commende.updated', (data) => {
       let index = this.commendes.findIndex(item => item.id == data.id);
@@ -36,31 +35,31 @@ export class CommendesPage {
         this.commendes.splice(index, 1);
         this.commendes.push(data);
       }
-      this.storage.set('_commendes', this.commendes)
     })
-
+    this.events.subscribe('loaded:commande:new',()=>{
+      this.loadData();
+     })
   }
 
   ionViewDidLoad() {
-    this.loadData();
+    this.loadData(true);
   }
 
-  loadData() {
-    this.storage.get('_commendes').then((data) => {
-      this.commendes = data ? data : [];
+  loadData(onlineIfEmpty?:boolean) {
       this.manager.get('commende').then(data => {
         this.commendes = data ? data : []
+        if(onlineIfEmpty&&(!data||data.length))
+            return this.loadRemoteData();
         this.search()
       }, error => {
         this.notify.onSuccess({ message: "Verifiez votre connexion internet" })
       })
-    });
   }
 
 
   loadRemoteData() {
     let loader = this.loadingCtrl.create({});
-    this.manager.get('commende').then(data => {
+    this.manager.get('commende',true).then(data => {
       this.commendes = data ? data : []
       this.search()
       loader.dismiss();

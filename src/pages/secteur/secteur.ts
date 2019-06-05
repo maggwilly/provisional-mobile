@@ -38,6 +38,7 @@ isInvalid():boolean {
   return (!this.secteur.nom||!this.secteur.ville);
 }
 onSubmit(){
+  this.secteur.change=true;
    let self=this;
    let loader= this.notify.loading({
       content: "Enregistrement...",

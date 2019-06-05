@@ -139,6 +139,7 @@ canEdit():boolean{
   }
 
   save() {
+    this.commende.change=true;
     this.commende.pointVente = this.pointVente.id;
     let loader = this.notify.loading({ content: 'Enregistrement ...' });
     this.manager.save('commende', this.commende).then((data) => {

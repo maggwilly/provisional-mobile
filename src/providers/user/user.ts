@@ -4,7 +4,7 @@ import { ManagerProvider } from '../manager/manager';
 import { Storage } from '@ionic/storage';
 import { Events, App } from 'ionic-angular';
 import { Firebase } from '@ionic-native/firebase/ngx';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 
 
@@ -27,34 +27,36 @@ export class UserProvider {
     public app: App,
     private firebase: Firebase,
     public events: Events) {
+    
     this.resetObserver();
   }
 
   public resetObserver() {
+    this.complete = this.makeComplete(); 
     this.user = null;
-    this.storage.get(`user_id_${this.manager.getUserId()}`).then((data) => {
+    if(!this.manager.getUserId())
+      return this.events.publish('auth', null);
+    this.manager.getEntitieLocally('user',this.manager.getUserId()).then((data) => {
+      console.log('data',data);
       if (!data)
-        return this.go()
+      return this.events.publish('auth', null)
       this.user = data;
       this.authenticatedUser.next(this.user)
-      this.manager.show('user', this.manager.getUserId()).then((user) => {
-        //console.log(user);
-        if (!user)
-          return this.events.publish('auth', user);
+      this.manager.show('user', this.manager.getUserId(),true).then((user) => {      
+        if (!this.user)
+          return  this.go();
         this.user.parent = user.parent;
         this.user.receiveRequests = user.receiveRequests;
-        this.storage.set(`user_id_${this.manager.getUserId()}`,this.user)
+        this.manager.storeEntityLocally(`user`,this.user)
         this.amParent = this.amIMyParent();
-        this.storage.set('user', this.user)
         this.events.publish('user.login', {
           user: this.user
         });
       }, error => {
-        console.log(error);
-        this.events.publish('auth', { error: true })
+        this.events.publish('error', error)
       })
     })
-    this.complete = this.makeComplete();
+   
   }
 
 
@@ -64,7 +66,6 @@ export class UserProvider {
   }
 
   public go() {
-    //this.nav.setRoot(LoginPage, {}, {animate: false})
     this.app.getRootNav().setRoot('SignupPage', {}, { animate: false })
   }
 
@@ -92,6 +93,7 @@ export class UserProvider {
 
 
   public makeComplete() {
+    
     let self = this;
     return new Promise((resolve, reject) => {
       if (self.user) {
@@ -102,10 +104,11 @@ export class UserProvider {
         resolve(data.user);
       });
       self.events.subscribe('auth', (pb) => {
-      //  console.log(pb)
-        resolve(pb);
+       resolve(pb);
       });
-
+      self.events.subscribe('error', (error) => {
+        resolve(error);
+       });
     })
   };
 
@@ -129,7 +132,8 @@ export class UserProvider {
 
 
   logout() {
-    this.storage.set('user', undefined).then(() => {
+    this.manager.removeUser().then(() => {
+      this.storage.clear();
       this.authenticatedUser.next(null)
       this.go();
     }

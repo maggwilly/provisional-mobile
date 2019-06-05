@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, LoadingController ,ModalController} from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, LoadingController ,ModalController, Events} from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
@@ -19,32 +19,35 @@ export class ProduitsPage {
     public navParams: NavParams,
       public modalCtrl: ModalController,
     public manager: ManagerProvider,
+    public events: Events,
     public loadingCtrl: LoadingController,
     public notify: AppNotify,
     public storage: Storage) {
-  
+      this.events.subscribe('loaded:produit:new',()=>{
+        this.loadData();
+       })
   }
 
   ionViewDidLoad() {
-    this.loadData()
+    this.loadData(true)
   }
 
-  loadData(){    
-    this.storage.get('_produits').then((data) => {
-      this.produits = data?data:[];
+  loadData(onlineIfEmpty?:boolean){    
     this.manager.get('produit').then(data=>{
-      this.produits=data?data:[]   
+      this.produits=data?data:[]  
+      if(onlineIfEmpty&&(!data||data.length))
+      return this.loadRemoteData(); 
     },error=>{
       this.notify.onError({message:" Verifiez votre connexion internet"})
     })
-  });
+
   }
 
   loadRemoteData(){
     let loader= this.notify.loading({
       content: "chargement...",
     });    
-    this.manager.get('produit').then(data=>{
+    this.manager.get('produit',true).then(data=>{
       this.produits=data?data:[]
       loader.dismiss();     
     },error=>{

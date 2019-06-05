@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams,LoadingController,ModalController,ItemSliding } from 'ionic-angular';
+import { IonicPage, NavController, NavParams,LoadingController,ModalController,ItemSliding, Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
@@ -23,25 +23,28 @@ export class PointventesPage {
     public manager: ManagerProvider,
     public loadingCtrl: LoadingController,
     public modalCtrl: ModalController,
+    public events:Events,
     public notify: AppNotify,
     public storage: Storage,    
     public navParams: NavParams) {
+      this.events.subscribe('loaded:pointvente:new',()=>{
+        this.loadData();
+       })
   }
 
   ionViewDidLoad() {
-    this.loadData()
+    this.loadData(true)
   }
 
-  loadData(){    
-    this.storage.get('_pointventes').then((data) => {
-      this.pointventes = data?data:[];
+  loadData(onlineIfEmpty?:boolean){    
     this.manager.get('pointvente').then(data=>{
-      this.pointventes=data?data:[]
-      this.storage.set('_pointventes',this.pointventes)    
+      this.pointventes=data?data:[] 
+      if(onlineIfEmpty&&(!data||data.length))
+      return this.loadRemoteData();
     },error=>{
       this.notify.onError({message:"Verifiez votre connexion internet"})
     })
-  });
+
   }
 
 
@@ -49,10 +52,12 @@ export class PointventesPage {
     let loader= this.notify.loading({
       content: "chargement...",
     });    
-    this.manager.get('pointvente').then(data=>{
+    this.manager.get('pointvente',true).then(data=>{
       this.pointventes=data?data:[]
       loader.dismiss();     
     },error=>{
+      console.log(error);
+      
       loader.dismiss();   
       this.notify.onError({message:"Verifiez votre connexion internet"})
     })
@@ -85,7 +90,7 @@ export class PointventesPage {
                     let loader= this.notify.loading({
                    content: "Suppression...",
                        }); 
-            this.manager.delete('pointvente',pointVente).then(data=>{
+             this.manager.delete('pointvente',pointVente).then(data=>{
               if(data.ok){
                 loader.dismiss().then(()=>{
                     this.findRemove(data);

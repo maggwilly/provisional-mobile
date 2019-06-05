@@ -23,9 +23,8 @@ export class TabsPage {
        let skippecheck=this.navParams.get('skippecheck')
         userService.resetObserver();
         userService.complete.then(user => {
-        if(user&&user.error) 
-              return  userService.unavailable();
-        else if (!user||!user.id||!user.parent) 
+              console.log(user);    
+      if (!user||!user.id||!user.parent) 
               return userService.go();  
         else if(user.receiveRequests&&user.receiveRequests.length&&!skippecheck)  
               return  userService.request(user.receiveRequests);
@@ -37,7 +36,9 @@ export class TabsPage {
                return userService.profile(user);
          else if( (!user.parent.abonnement||user.parent.abonnement.expired)&&!skippecheck)
                return userService.shoulpay(user.parent.abonnement);
-      }, (ERROR) => {			
+      }, (ERROR) => {
+            console.log(ERROR);
+            return  userService.unavailable();   			
       })     
   }
 

@@ -45,6 +45,7 @@ dismiss(data?:any) {
 
 
 onSubmit(){
+  this.produit.change=true;
      let self=this;
       let loader= this.notify.loading({
       content: "Enregistrement...",

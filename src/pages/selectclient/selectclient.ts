@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams,ModalController, ViewController } from 'ionic-angular';
+import {Events, IonicPage, NavController, NavParams,ModalController, ViewController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
@@ -22,10 +22,14 @@ export class SelectclientPage {
     public navCtrl: NavController,
     public manager: ManagerProvider,
     public viewCtrl: ViewController,
+    public events:Events,
      public modalCtrl: ModalController,
     public notify: AppNotify,
     public storage: Storage,    
     public navParams: NavParams) {
+      this.events.subscribe('loaded:pointvente:new',()=>{
+        this.loadData();
+       })
   }
 
   ionViewDidLoad() {
@@ -35,15 +39,12 @@ export class SelectclientPage {
   dismiss(data?:any) {
     this.viewCtrl.dismiss(data);
 }
-  loadData(){    
-    this.storage.get('_pointventes').then((data) => {
-      this.pointventes = data?data:[];
+  loadData(onlineIfEmpty?:boolean){    
+
     this.manager.get('pointvente').then(data=>{
-      this.pointventes=data?data:[]
-      this.storage.set('_pointventes',this.pointventes)    
+      this.pointventes=data?data:[]   
     },error=>{
       this.notify.onError({message:"Verifiez votre connexion internet"})
-    })
   });
   }
 
@@ -59,7 +60,6 @@ export class SelectclientPage {
          if(index>-1)
         this.pointventes.splice(index,1);
         this.pointventes.splice(0,0,data); 
-        this.storage.set('_pointventes',this.pointventes) 
         self.dismiss(data);
       } 
     }) 
@@ -71,7 +71,6 @@ export class SelectclientPage {
        let   index= this.pointventes.findIndex(item=>item.id==data.deletedId);
         if(index>-1)
        this.pointventes.splice(index,1);
-       this.storage.set('_pointventes',this.pointventes) 
   }
  
   search() {

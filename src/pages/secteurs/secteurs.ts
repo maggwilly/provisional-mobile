@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController,ModalController, ViewController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController,ModalController, ViewController, Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify'
@@ -19,41 +19,46 @@ export class SecteursPage {
   secteurs:any[]=[]
  queryText = '';
   constructor(
-     public navCtrl: NavController,
+    public navCtrl: NavController,
     public loadingCtrl: LoadingController,
-     public manager: ManagerProvider,
-     public modalCtrl: ModalController,
+    public manager: ManagerProvider,
+    public modalCtrl: ModalController,
     public notify: AppNotify,
+    public events:Events,
     public viewCtrl: ViewController,
     public storage: Storage,
-     public navParams: NavParams
+    public navParams: NavParams
      ) {
+       this.events.subscribe('loaded:secteur:new',()=>{
+        this.loadData();
+       })
   }
 
   ionViewDidLoad() {
-    this.loadData()
+    this.loadData(true)
   }
+
   dismiss(data?:any) {
     this.viewCtrl.dismiss(data);
 } 
-  loadData(){    
-    this.storage.get('_secteurs').then((data) => {
-      this.secteurs = data?data:[];
+
+  loadData(onlineIfEmpty?:boolean){    
     this.manager.get('secteur').then(data=>{
-      this.secteurs=data?data:[]  
+      this.secteurs=data?data:[] 
+      if(onlineIfEmpty&&(!data||data.length))
+      return this.loadRemoteData(); 
     },error=>{
       console.log(error);
-      
       this.notify.onError({message:" Verifiez votre connexion internet"})
     })
-  });
+
   }
 
   loadRemoteData(){
     let loader= this.notify.loading({
       content: "chargement...",
     });    
-    this.manager.get('secteur').then(data=>{
+    this.manager.get('secteur',true).then(data=>{
       this.secteurs=data?data:[]
       loader.dismiss();      
     },error=>{
@@ -63,6 +68,7 @@ export class SecteursPage {
     loader.present();
   }
  
+
   add(secteur={}){
      let modal=  this.modalCtrl.create('SecteurPage',{secteur:secteur,inset:true}, { cssClass: 'inset-modal' })
     modal.onDidDismiss(data=>{
@@ -78,6 +84,8 @@ export class SecteursPage {
     }) 
     modal.present()
   }
+
+
   search() {
     let queryText = this.queryText.toLowerCase().replace(/,|\.|-/g, ' ');
     let queryWords = queryText.split(' ').filter(w => !!w.trim().length);

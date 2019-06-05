@@ -30,15 +30,14 @@ export class ShoulPayPage {
   }
 
   loadData(){    
-    this.storage.get('_prices').then((data) => {
-      this.prices = data;
-    this.manager.get('price').then(data=>{
+
+    this.manager.get('price',true).then(data=>{
       this.prices=data?data:[]
       this.storage.set('_prices',this.prices)    
     },error=>{
       this.notify.onError({message:"PROBLEME ! Verifiez votre connexion internet"})
     })
-  });
+
   }
 
 dismiss(skippecheck=true){

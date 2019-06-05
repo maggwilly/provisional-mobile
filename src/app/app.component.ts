@@ -1,9 +1,10 @@
 import { Component ,ViewChild} from '@angular/core';
-import { Platform,Nav, } from 'ionic-angular';
+import { Platform,Nav, Events, } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import {UserProvider } from '../providers/user/user';
 import * as moment from 'moment';
+import { ManagerProvider } from '../providers/manager/manager';
 @Component({
   templateUrl: 'app.html'
 })
@@ -11,29 +12,36 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
   rootPage:any = 'TabsPage';
-  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public userService:UserProvider) {
-    moment.locale('fr'/*, {
-			relativeTime: {
-				future: 'now',
-				past: '%s',
-				s: 'now',
-				m: '1 m',
-				mm: '%d m',
-				h: '1 h',
-				hh: '%d h',
-				d: '1 d',
-				dd: '%d d',
-				M: '1 m',
-				MM: '%d m',
-				y: '1 y',
-				yy: '%d y'
+  constructor(platform: Platform, 
+    statusBar: StatusBar,
+     splashScreen: SplashScreen,
+      public events: Events,
+     public manager: ManagerProvider,
+      public userService:UserProvider
+      ) {
+    moment.locale('fr')
+    this.events.subscribe('app:connection:change',(status)=>{
+      if(status=='connected'){
+        this.manager.connected=true
+        this.manager.isAscing=true;
+        this.manager.ascync().then(()=>{
+          this.manager.isAscing=false;
+        });
       }
-		}*/)
+        
+    })
     platform.ready().then(() => {
       if(platform.is('cordova')){
         this.userService.getToken();
         this.userService.onNotification();
-      }    
+
+      }  
+      this.userService.getAuthenticatedUser().subscribe(user=>{
+        if(user)
+        this.events.publish('app:connection:change','connected');
+      })
+    
+       
       statusBar.styleDefault();
       splashScreen.hide();
     });

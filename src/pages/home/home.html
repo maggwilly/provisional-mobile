@@ -15,10 +15,10 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <ion-list [hidden]="!pointVentes.length">
-    <ion-item *ngFor="let pointVente of pointVentes" (click)="showCommende(pointVente)" [hidden]="pointVente.hide">
-      <h2>{{pointVente.nom}}</h2>
-      <h3>{{pointVente.telephone}}</h3>
+  <ion-list *ngIf="rendezvous.length">
+    <ion-item *ngFor="let rdv of rendezvous" (click)="show(rdv)" [hidden]="rdv.hide">
+      <h2 *ngIf="rdv.pointVente">{{rdv.pointVente.nom}}</h2>
+      <h3 *ngIf="rdv.pointVente">{{rdv.pointVente.telephone}}</h3>
     </ion-item>
   </ion-list>
 </ion-content>

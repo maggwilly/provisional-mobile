@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Storage } from '@ionic/storage';
-
 import { ManagerProvider} from '../../providers/manager/manager';
 import { IonicPage, NavParams, NavController, ViewController ,ModalController } from 'ionic-angular';
 import { AppNotify } from '../../app/app-notify';
@@ -32,15 +31,12 @@ export class PointVentePage {
     }
 
   ionViewDidLoad() { 
-    this.storage.get('_secteurs').then((data) => {
-      this.secteurs = data?data:[];
     this.manager.get('secteur').then(data=>{
       this.secteurs=data?data:[]
-      this.storage.set('_secteurs',this.secteurs)    
+  
     },error=>{
       this.notify.onError({message:" Verifiez votre connexion internet"})
-    })
-  });   
+    })  
   }
 
   select(){
@@ -61,6 +57,7 @@ dismiss(data?:any) {
 
 
 onSubmit(){
+      this.pointVente.change=true;
        let self=this;
       let loader= this.notify.loading({
       content: "Enregistrement...",
@@ -71,7 +68,7 @@ onSubmit(){
         self.dismiss(data);
         return  this.notify .onSuccess({message:"Enregistrement effectué"})
       }
-      this.notify.onError({message:"Une erreur s'est produite et l'opération n'a pas put se terminer correctement"})
+      this.notify.onError({message:"Une erreur s'est produite"})
 
      });  
     
