@@ -38,8 +38,8 @@ export class VendeursPage {
   loadData(){    
     this.manager.get('user',true).then(data=>{
       console.log(data);
-      this.vendeurs=data?data.users:[];
-      this.requesteds=data?data.requests:[];   
+      this.vendeurs=data?data:[];
+     // this.requesteds=data&&data.requests?data.requests:[];   
     },error=>{
       this.notify.onError({message:" Verifiez votre connexion internet"})
     })
@@ -52,8 +52,8 @@ export class VendeursPage {
     });    
     this.manager.get('user',true).then(data=>{
       console.log(data);
-      this.vendeurs=data?data.users:[]
-      this.requesteds=data?data.requests:[];
+      this.vendeurs=data?data:[];
+     // this.requesteds=data&&data.requests?data.requests:[]; 
       loader.dismiss();       
     },error=>{
       loader.dismiss();   

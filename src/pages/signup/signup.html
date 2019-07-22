@@ -2,9 +2,9 @@
     <ion-header>
         <ion-navbar></ion-navbar>
     </ion-header>
-    <div class="logo" padding>
-        <img class="logo" src="assets/img/logo/logo-instagram.png"/>
-    </div>
+    <ion-grid>
+        <ion-row justify-content-center>
+       <ion-col col-sm-12  col-md-6 col-lg-4 col-xl-3>  
     <section *ngIf="stape=='phone'">
         <form [formGroup]="formPhone">
             <div padding text-center>
@@ -16,7 +16,7 @@
                     <ion-input formControlName="login" placeholder="Numéro de télephone" type="tel"></ion-input>
                 </ion-item>
                 <div *ngIf="!phone.valid&&phone.touched">
-                    <small *ngIf="phone.errors.pattern&&phone.dirty" color="danger">Saisir un numéro de telephone valide de 09 chiffres.</small>
+                    <small *ngIf="phone.errors&&phone.dirty" color="danger">Saisir un numéro de telephone valide de 09 chiffres.</small>
                 </div>
                 <button (click)="nextStape()"   [disabled]="submitted||isInvalid()" block class="login-button" color="secondary" ion-button outline>
                     <span>
@@ -59,13 +59,13 @@
                     <ion-input formControlName="username" placeholder="Numéro de télephone" type="tel" disabled="true"></ion-input>
                 </ion-item>
                 <div *ngIf="!phone2.valid&&phone2.touched">
-                    <small *ngIf="phone2.errors.pattern&&phone2.dirty" color="danger">Saisir un numéro de telephone valide de 09 chiffres.</small>
+                    <small *ngIf="phone2.errors&&phone2.dirty" color="danger">Saisir un numéro de telephone valide de 09 chiffres.</small>
                 </div>                              
                 <ion-item>
                     <ion-input formControlName="email" placeholder="Adresse mail" type="text"></ion-input>
                 </ion-item>
                 <div *ngIf="!email.valid && email.touched">
-                    <div><small *ngIf="email.errors.pattern && email.dirty">Saisir une adresse mail valide.</small></div>
+                    <div><small *ngIf="email.errors&& email.dirty">Saisir une adresse mail valide.</small></div>
                 </div>                                
                 <button (click)="onSubmit()"   [disabled]="submitted||isInvalid()" block color="secondary" icon-left ion-button>
                     <span >
@@ -83,6 +83,9 @@
       </ion-row>    
    </ion-grid> 
     </div>
+</ion-col>
+</ion-row>
+</ion-grid>   
 </ion-content>
 <ion-footer no-border no-shadow>
 <button ion-item (click)="previewStape()" *ngIf="stape!='phone'" text-wrap class="goback">

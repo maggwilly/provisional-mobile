@@ -14,16 +14,18 @@ import {UserProvider } from '../../providers/user/user';
   templateUrl: 'pop-over-menu.html',
 })
 export class PopOverMenuPage {
+   navCtrl: NavController;
    user:any;
   pages:any[]=[
     {name:'A propos', component:'AboutPage'},
     {name:'Mon profil', component:'ProfilePage'}
   ]
   constructor(
-    public navCtrl: NavController,
+   
     public viewCtrl: ViewController, 
     public navParams: NavParams ,
     public userService:UserProvider) {
+     this. navCtrl=this.navParams.get('navCtrl')
   }
 
   ionViewDidLoad() {

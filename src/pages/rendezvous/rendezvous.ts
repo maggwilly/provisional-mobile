@@ -18,6 +18,7 @@ import { DatePipe } from "@angular/common";
 export class RendezvousPage {
    rendezvous:any={}
    users:any[]=[]
+   pointVente: any = {};
   constructor(
     public navCtrl: NavController,
     public manager: ManagerProvider,
@@ -25,6 +26,7 @@ export class RendezvousPage {
     public notify: AppNotify,
     public navParams: NavParams) {
     this.rendezvous=this.navParams.get('rendezvous');
+    this.pointVente = navParams.get('pointVente');
     
   }
 
@@ -33,8 +35,11 @@ export class RendezvousPage {
     this.rendezvous.date = datePipe.transform(new Date(), 'yyyy-MM-dd');
     if(!this.rendezvous.dateat)
     this.rendezvous.dateat = datePipe.transform(new Date(), 'yyyy-MM-dd');
+   
+    if(this.rendezvous.user&&this.rendezvous.user.id)
+        this.rendezvous.user=this.rendezvous.user.id;    
     this.manager.get('user').then(data=>{
-      this.users=data?data:[] ; 
+    this.users=data?data:[] ;
     },error=>{
     })
 
@@ -49,20 +54,16 @@ export class RendezvousPage {
     let loader= this.notify.loading({
      content: "Enregistrement...",
   }); 
- if(!this.rendezvous.pointVente.id)
- return self.dismiss();
-  this.rendezvous.id = this.rendezvous.pointVente.id;
-  console.log(this.rendezvous.id);
-  
-  this.rendezvous.pointVente = this.rendezvous.pointVente.id;
+  this.rendezvous.id = this.pointVente.id;
   this.manager.save('rendezvous',this.rendezvous).then((data)=>{
-  loader.dismiss().then(()=>{
-    if(!data.error){
-      self.dismiss(data);
-      return  this.notify .onSuccess({message:"Enregistrement effectué"})
-    }
-    this.notify.onError({message:"Une erreur s'est produite"})
-   });  
+      loader.dismiss().then(()=>{
+        if(!data.error){
+          self.dismiss(data);
+          return  this.notify.onSuccess({message:"Enregistrement effectué"})
+        }
+        this.notify.onError({message:"Une erreur s'est produite"})
+       });  
+   
 },error=>{
   loader.dismiss()
   this.notify.onError({message:"Un probleme est survenu"})

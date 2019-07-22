@@ -114,6 +114,7 @@ onSubmit(){
          this.manager.post('register', this.newUser.value,'new',true).then(data => {
           this.submitted = false;
           this.data = data;
+          console.log(data);
           if (data.value)
                this.stape = 'code';
         }, error => {
@@ -153,7 +154,7 @@ onSubmit(){
           if(data.error_code)
              return
           this.manager.storeUser(data).then(()=>{
-            this.navCtrl.setRoot('TabsPage', {}, {animate: true, direction: 'forward'});
+            this.navCtrl.setRoot('MenuPage', {}, {animate: true, direction: 'forward'});
           }, error => {
             console.log(error);
             this.submitted = false;

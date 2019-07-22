@@ -1,6 +1,6 @@
 <ion-header no-border no-shadow >
   <ion-navbar>
-        <ion-title><span *ngIf="!produit.nom">Nouveau Produit</span><span *ngIf="produit.nom">{{produit.nom}}</span></ion-title>
+        <ion-title><span *ngIf="!produit.nom">Créer un produit</span><span *ngIf="produit.nom">{{produit.nom}}</span></ion-title>
         <ion-buttons end>
                 <button ion-button="ion-button" (click)="dismiss()" icon-left>
                     <ion-icon name="md-close" color="danger" showwhen="android,windows,core"></ion-icon> 
@@ -9,7 +9,10 @@
             </ion-buttons>        
   </ion-navbar>
 </ion-header>
-<ion-content padding>
+<ion-content >
+        <ion-card>
+                <ion-card-header text-wrap>Créer ou modifier un article</ion-card-header>
+        </ion-card>     
     <form #form="ngForm" novalidate="novalidate">
         <ion-list>
             <ion-item>

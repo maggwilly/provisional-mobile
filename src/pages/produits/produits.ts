@@ -13,22 +13,26 @@ import { AppNotify } from '../../app/app-notify';
 export class ProduitsPage {
   produits: any[] = []
   queryText = '';
+  openAddPage:boolean
   constructor(
     public navCtrl: NavController,
     public alertCtrl: AlertController,
     public navParams: NavParams,
-      public modalCtrl: ModalController,
+    public modalCtrl: ModalController,
     public manager: ManagerProvider,
     public events: Events,
     public loadingCtrl: LoadingController,
     public notify: AppNotify,
     public storage: Storage) {
+      this.openAddPage=this.navParams.get('openAddPage')
       this.events.subscribe('loaded:produit:new',()=>{
         this.loadData();
        })
   }
 
   ionViewDidLoad() {
+    if(this.openAddPage)
+       this.add()
     this.loadData(true)
   }
 
@@ -97,4 +101,8 @@ export class ProduitsPage {
     }
     item.hide = !(matchesQueryText);
   }
+
+  doScroll(env){
+
+  }     
 }

@@ -18,6 +18,8 @@ import { ManagerProvider} from '../../providers/manager/manager';
 export class ProduitPage {
    produit:any={}
   inset:boolean;
+  test_1:boolean;
+  openAddPage:boolean
   constructor(
        public navCtrl: NavController,
        public storage: Storage,
@@ -25,7 +27,7 @@ export class ProduitPage {
        public viewCtrl: ViewController,
        public notify: AppNotify,
        public manager: ManagerProvider,) {
-       this.produit=this.navParams.get('produit');
+       this.produit=this.navParams.get('produit')?this.navParams.get('produit'):{}
        if(!this.inset)
        this.inset=this.navParams.get('inset');
   }

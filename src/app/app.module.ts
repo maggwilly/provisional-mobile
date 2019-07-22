@@ -10,9 +10,19 @@ import { HttpModule }    from '@angular/http';
 import { IonicStorageModule } from '@ionic/storage';
 import { UserProvider } from '../providers/user/user';
 import { Firebase } from '@ionic-native/firebase/ngx';
+import { Geofence } from '@ionic-native/geofence';
+import { Geolocation } from '@ionic-native/geolocation';
+import { Diagnostic } from '@ionic-native/diagnostic';
+import { LocationAccuracy } from '@ionic-native/location-accuracy';
+import { LocalisationProvider } from '../providers/localisation/localisation';
+import { Network } from '@ionic-native/network';
+import {
+  GoogleMaps
+} from '@ionic-native/google-maps';
+
 @NgModule({
   declarations: [
-    MyApp
+    MyApp,
   ],
   imports: [
     BrowserModule,
@@ -20,7 +30,8 @@ import { Firebase } from '@ionic-native/firebase/ngx';
     IonicModule.forRoot(MyApp,{
       tabsHideOnSubPages:true
     }),
-     HttpModule
+     HttpModule,
+   
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -29,11 +40,17 @@ import { Firebase } from '@ionic-native/firebase/ngx';
   providers: [
     StatusBar,
     SplashScreen,
-
+    Diagnostic,
+    Geofence,
+    Geolocation,
+    LocationAccuracy,
+    GoogleMaps,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    ManagerProvider
-    , AppNotify,
+    ManagerProvider,
+     AppNotify,
+    LocalisationProvider,
     UserProvider,
+    Network,
     Firebase
   ]
 })

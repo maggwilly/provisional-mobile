@@ -41,7 +41,7 @@ export class DonneesPage {
   }
   presentPopover(ev?:any) {
 
-    let popover = this.popoverCtrl.create('PopOverMenuPage');
+    let popover = this.popoverCtrl.create('PopOverMenuPage',{navCtrl:this.navCtrl});
     popover.present({
       ev: ev
     });

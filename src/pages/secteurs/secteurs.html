@@ -1,20 +1,24 @@
 <ion-header  no-border no-shadow>
     <ion-navbar>
-      <ion-title>Les secteurs</ion-title>
+      <ion-row no-padding>
+          <ion-col>  <ion-title>Liste des zones</ion-title></ion-col>
+          <ion-col>
+            <ion-searchbar [hidden]="!secteurs.length"  [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un produit">
+            </ion-searchbar>         
+          </ion-col>
+        </ion-row>       
       <ion-buttons end>
       <button ion-button="ion-button" icon-only (click)="loadRemoteData()" >
           <ion-icon name="refresh"></ion-icon>
       </button>
       <button ion-button small outline (click)="add()" icon-left>
           <ion-icon name="add" ></ion-icon>
-          Creer
+          Nouveau
       </button>          
   </ion-buttons>    
     </ion-navbar>
   </ion-header>
-  <ion-content padding>
-      <ion-searchbar [hidden]="!secteurs.length" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un nom">
-        </ion-searchbar>     
+  <ion-content >     
       <ion-list>
           <ion-item  *ngFor="let secteur of secteurs" (click)="add(secteur)" [hidden]="secteur.hide" text-wrap>
                 <span *ngIf="secteur.ville">{{secteur.ville}} - </span> <strong>{{secteur.nom}}</strong>

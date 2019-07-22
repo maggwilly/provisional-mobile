@@ -41,7 +41,7 @@ export class ShoulPayPage {
   }
 
 dismiss(skippecheck=true){
-   this.navCtrl.setRoot('TabsPage', {skippecheck:skippecheck}, {animate: true, direction: 'forward'}); 
+   this.navCtrl.setRoot('MenuPage', {skippecheck:skippecheck}, {animate: true, direction: 'forward'}); 
 }
 
   loadRemoteData(){

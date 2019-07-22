@@ -1,11 +1,17 @@
-<ion-header  no-border no-shadow>
+<ion-header >
   <ion-navbar>
-    <button menuToggle ion-button icon-only>
+    <button menuToggle  ion-button icon-only>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Accueil</ion-title>
+    <ion-row no-padding>
+        <ion-col ><ion-title>Accueil</ion-title></ion-col>
+        <ion-col>
+          <ion-searchbar *ngIf="rendezvous" [hidden]="!rendezvous.length" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un nom">
+          </ion-searchbar>         
+        </ion-col>
+      </ion-row>    
     <ion-buttons end>
-      <button ion-button icon-only (click)="loadRemoteData()">
+      <button ion-button icon-only (click)="refresh()">
         <ion-icon name="refresh"></ion-icon>
       </button>
       <button ion-button icon-only (click)="presentPopover($event)">
@@ -15,10 +21,33 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <ion-list *ngIf="rendezvous.length">
-    <ion-item *ngFor="let rdv of rendezvous" (click)="show(rdv)" [hidden]="rdv.hide">
-      <h2 *ngIf="rdv.pointVente">{{rdv.pointVente.nom}}</h2>
-      <h3 *ngIf="rdv.pointVente">{{rdv.pointVente.telephone}}</h3>
+    <ion-row justify-content-around>
+        <ion-col col-6 >
+         <button ion-button icon-left outline small (click)="openFilter()"><ion-icon name="funnel"></ion-icon> 
+          Critères  
+          <span *ngIf="nbrecriteres"> - ({{nbrecriteres}})</span></button>
+        </ion-col>
+        <ion-col col-6 class="item-right">
+         <button float-right ion-button icon-left outline small (click)="openMap()" [disabled]="!rendezvous.length"> <ion-icon name="map"></ion-icon>Carte</button>
+       </ion-col>   
+      </ion-row>
+   <ion-list *ngIf="rendezvous.length">
+    <ion-item *ngFor="let pointVente of rendezvous" (click)="show(pointVente)" [hidden]="pointVente.hide">
+      <h2 >{{pointVente.nom}}</h2>
+      <p>{{pointVente.telephone}}</p>
     </ion-item>
+    <div padding>
+      <button ion-button block small clear (click)="refresh()" style="text-transform: none;">Afficher plus</button>   
+     </div>  
   </ion-list>
+  <ion-grid style="height: 80%;justify-content: center;position:absolute;top:20%" *ngIf="!rendezvous.length">
+    <ion-row style="height: 100%;justify-content: center;" justify-content-center align-items-center>
+        <div text-center text-wrap  class="empty" padding>
+          Aucun element correspondant aux critères.
+        </div>
+    </ion-row>
+  </ion-grid>
 </ion-content>
+<ion-footer >
+  <ion-row><ion-col>{{rendezvous.length}} lignes</ion-col><ion-col></ion-col><ion-col></ion-col></ion-row>
+</ion-footer>

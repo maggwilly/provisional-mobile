@@ -20,7 +20,7 @@ export class CreatelignePage {
       public viewCtrl: ViewController,
       public navParams: NavParams) {
        this.produit=this.navParams.get('produit');
-      this.ligne.produit=this.produit.id;
+      this.ligne.produit=this.produit;
       this.ligne.nom=this.produit.nom;
   }
 

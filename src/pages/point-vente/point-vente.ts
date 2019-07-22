@@ -4,6 +4,9 @@ import { ManagerProvider} from '../../providers/manager/manager';
 import { IonicPage, NavParams, NavController, ViewController ,ModalController } from 'ionic-angular';
 import { AppNotify } from '../../app/app-notify';
 import { UserProvider } from '../../providers/user/user';
+import { LocalisationProvider } from '../../providers/localisation/localisation';
+import * as moment from 'moment';
+
 @IonicPage()
 @Component({
   selector: 'page-point-vente',
@@ -13,6 +16,8 @@ export class PointVentePage {
   pointVente:any={};
   secteurs:any[]=[];
   inset:boolean;
+  openAddPage:boolean
+  fetching:boolean;
   constructor(
     public navCtrl: NavController,
     public storage: Storage, 
@@ -21,19 +26,40 @@ export class PointVentePage {
     public notify: AppNotify,
     public modalCtrl:ModalController,
     public userService:UserProvider,
-    public manager: ManagerProvider,) {
-      this.pointVente=this.navParams.get('pointVente')
+    public manager: ManagerProvider,
+    public location:LocalisationProvider
+ 
+    ) {
+      this.pointVente=this.navParams.get('pointVente')?this.navParams.get('pointVente'):{}
       this.inset=this.navParams.get('inset');
       if(!this.pointVente.secteur)
           this.pointVente.secteur=this.userService.user.secteur;
       if(this.pointVente.secteur)
         this.pointVente.secteur=this.pointVente.secteur.id;
+        if(!this.pointVente.date)
+          this.pointVente.date= moment().format("YYYY-MM-DD");
+       //
     }
+
+  getCurrentPosition($ev){
+    if(!this.pointVente.atnow)
+       return;
+    this.fetching=true;
+    this.location.getCurrentPosition().then((resp) => {
+      this.pointVente.lat = resp.coords.latitude;
+      this.pointVente.long = resp.coords.longitude;
+      this.fetching=false;
+    }).catch((error) => {
+      this.fetching=false;
+      console.log(error);
+    });
+  }
 
   ionViewDidLoad() { 
     this.manager.get('secteur').then(data=>{
       this.secteurs=data?data:[]
-  
+      if(this.pointVente.secteur&&this.pointVente.secteur.id)
+      this.pointVente.secteur=this.pointVente.secteur.id;        
     },error=>{
       this.notify.onError({message:" Verifiez votre connexion internet"})
     })  
@@ -48,7 +74,7 @@ export class PointVentePage {
   }
 
 isInvalid():boolean {
-  return (!this.pointVente.nom||!this.pointVente.adresse||!this.pointVente.telephone);
+  return (!this.pointVente.nom||!this.pointVente.adresse||!this.pointVente.telephone||(this.pointVente.atnow&&(!this.pointVente.lat||!this.pointVente.long)));
 }
 
 dismiss(data?:any) {
@@ -117,6 +143,7 @@ deleteItem(){
       }
     ]
   })
-
 }
+
+
 }

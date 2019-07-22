@@ -4,7 +4,7 @@ import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
 import { UserProvider } from '../../providers/user/user';
-
+import * as moment from 'moment';
 @IonicPage()
 @Component({
   selector: 'page-home',
@@ -13,6 +13,8 @@ import { UserProvider } from '../../providers/user/user';
 export class HomePage {
   rendezvous: any = [];
   queryText = '';
+  filtre:any={type:'',user:'',secteur:'',ville:'',beforedate:moment().format("YYYY-MM-DD"),beforelastvisitedate:moment().format("YYYY-MM-DD")}
+  nbrecriteres:number;
   constructor(
     public navCtrl: NavController,
     public alertCtrl: AlertController,
@@ -24,7 +26,8 @@ export class HomePage {
     public notify: AppNotify,
     public loadingCtrl: LoadingController,
     public storage: Storage) { 
-      this.events.subscribe('loaded:rendezvous:new',()=>{
+      this.events.subscribe('loaded:pointvente:new',()=>{
+        if(!this.nbrecriteres)
         this.loadData();
        })
     }
@@ -34,29 +37,52 @@ export class HomePage {
     if(user)
       this.loadData(true);
   })
-
   }
 
   loadData(onlineIfEmpty?:boolean){
-      this.manager.get('rendezvous').then(data=>{
+      this.manager.get('pointvente').then(data=>{
         this.rendezvous=data?data:[]
         if(onlineIfEmpty&&(!data||data.length))
         return this.loadRemoteData();
       },error=>{
-        console.log(error);
-        
         this.notify.onSuccess({message:"Probleme de connexion"})
       })
    
   }
 
+  refresh(){
+    this.filtre={type:'',user:'',secteur:'',ville:'',beforedate:moment().format("YYYY-MM-DD"),beforelastvisitedate:moment().format("YYYY-MM-DD")};
+    this.nbrecriteres=0;
+    this.queryText='';
+    return this.loadRemoteData();
+  }
 
+  openFilter() {
+    let modal = this.modalCtrl.create('FiltrePointventePage', { filtre: this.filtre })
+    modal.onDidDismiss(data => {
+    console.log(data);
+    if(!data)
+      return;
+      let nbrecriteres=0;
+    Object.keys(data).forEach(key => {
+      if(data[key])
+        nbrecriteres++;
+    });
+    this.nbrecriteres=nbrecriteres;
+    return this.loadRemoteData();
+    });
+    modal.present()
+  }
+
+  doScroll(env){
+
+  }
 
   loadRemoteData(){
     let loader = this.loadingCtrl.create({
       content: "chargement...",
     });    
-    this.manager.get('rendezvous',true).then(data=>{
+    this.manager.get('pointvente',true,null,null,this.filtre,this.nbrecriteres).then(data=>{
       this.rendezvous=data?data:[]
       loader.dismiss();      
     },error=>{
@@ -68,8 +94,8 @@ export class HomePage {
   }
 
 
-  show(rendezvous:any){
-   this.navCtrl.push('PointVenteDetailPage',{rendezvous:rendezvous})
+  show(pointVente:any){
+   this.navCtrl.push('PointVenteDetailPage',{pointVente: pointVente})
   }
 
   
@@ -100,9 +126,25 @@ export class HomePage {
 
     presentPopover(ev?:any) {
 
-    let popover = this.popoverCtrl.create('PopOverMenuPage');
+    let popover = this.popoverCtrl.create('PopOverMenuPage',{navCtrl:this.navCtrl});
     popover.present({
       ev: ev
     });
+  }
+
+  openMap(){
+    let points:any[]=[];
+    this.rendezvous.forEach(point => {
+      if (point.lat&&point.long) {
+        points.push({pos:{lat:point.lat,long:point.long},
+                      title:point.nom,
+                      address:point.adresse,
+                      type:point.type,
+                      quartier:point.quartier,
+                      visited:point.lastCommende,
+                     })
+      }
+    });
+    this.navCtrl.push('MapPage',{points: points,title:`Aperçu des réalités`});
   }
 }

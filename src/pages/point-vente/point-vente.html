@@ -1,93 +1,115 @@
-<ion-header  no-border no-shadow>
+<ion-header no-border no-shadow>
 
     <ion-navbar>
-        <ion-title><span *ngIf="!pointVente.nom">Nouveau point de vente</span><span *ngIf="pointVente.nom">{{pointVente.nom}}</span></ion-title>
+        <ion-title><span *ngIf="!pointVente.nom">Créer un point de vente</span><span
+                *ngIf="pointVente.nom">{{pointVente.nom}}</span></ion-title>
         <ion-buttons end>
-                <button ion-button  (click)="dismiss()" icon-left>
-                    <ion-icon name="md-close" color="danger" showwhen="android,windows,core"></ion-icon> 
-                    Fermer
-                </button>
-            </ion-buttons>
+            <button ion-button (click)="dismiss()" icon-left>
+                <ion-icon name="md-close" color="danger" showwhen="android,windows,core"></ion-icon>
+                Fermer
+            </button>
+        </ion-buttons>
     </ion-navbar>
 </ion-header>
 <ion-content>
+        <ion-card>
+                <ion-card-header text-wrap>Créer ou modifier un point de vente</ion-card-header>
+        </ion-card> 
     <form #form="ngForm" novalidate="novalidate">
         <ion-list>
+
+            <ion-item>
+                <ion-label>J'y suis maintenant</ion-label>
+                <ion-toggle item-right (ionChange)="getCurrentPosition()" [(ngModel)]="pointVente.atnow" name="atnow" #atnow="ngModel" color="primary">
+                </ion-toggle>
+            </ion-item>
             <ion-item>
                 <ion-label color="primary" floating><span>Nom du point de vente </span> </ion-label>
-                <ion-input [(ngModel)]="pointVente.nom" name="nom" type="text" placeholder="" #nom="ngModel"></ion-input>
+                <ion-input [(ngModel)]="pointVente.nom" name="nom" type="text" placeholder="" #nom="ngModel">
+                </ion-input>
             </ion-item>
-            <ion-item >
+            <ion-item>
                 <ion-label color="primary" floating>
                     <span>Categorie</span>
                 </ion-label>
                 <ion-select [(ngModel)]="pointVente.type" name="type" #type="ngModel">
-                        <ion-option value="Super-Marche">Super-Marché</ion-option>
-                        <ion-option value="Boutique-de-Quartier">Boutique-de-Quartier</ion-option>
-                        <ion-option value="Kiosque">Kiosque</ion-option>
-                        <ion-option value="Boulangerie">Boulangerie</ion-option>
-                        <ion-option value="Debit-de-boisson">Debit-de-boisson</ion-option>
-                        <ion-option value="Station-service">Station-service</ion-option>
-                        <ion-option value="Etalage-de-marché">Etalage-de-marché</ion-option>
-                    </ion-select>
+                    <ion-option value="Super-Marche">Super-Marché</ion-option>
+                    <ion-option value="Boutique-de-Quartier">Boutique-de-Quartier</ion-option>
+                    <ion-option value="Kiosque">Kiosque</ion-option>
+                    <ion-option value="Boulangerie">Boulangerie</ion-option>
+                    <ion-option value="Debit-de-boisson">Debit-de-boisson</ion-option>
+                    <ion-option value="Station-service">Station-service</ion-option>
+                    <ion-option value="Etalage-de-marché">Etalage-de-marché</ion-option>
+                </ion-select>
             </ion-item>
             <ion-item>
                 <ion-label color="primary" floating>
-                    <span>Numero detélephone</span>
+                    <span>Numero de télephone</span>
                 </ion-label>
-                <ion-input [(ngModel)]="pointVente.telephone" name="telephone" type="tel" placeholder="" #telephone="ngModel"></ion-input>
+                <ion-input [(ngModel)]="pointVente.telephone" name="telephone" type="tel" placeholder=""
+                    #telephone="ngModel"></ion-input>
             </ion-item>
-            <ion-item  *ngIf="!inset">
+            <ion-item *ngIf="!inset">
                 <ion-label color="primary" floating>
                     <span>Ville</span>
                 </ion-label>
                 <ion-select [(ngModel)]="pointVente.ville" name="ville" #ville="ngModel">
-                        <ion-option value="Yaoundé">Yaoundé</ion-option>
-                        <ion-option value="Douala">Douala</ion-option>
-                        <ion-option value="Bafoussam">Bafoussam</ion-option>
-                        <ion-option value="Bertoua">Bertoua</ion-option>
-                        <ion-option value="Bamenda">Bamenda</ion-option>
-                        <ion-option value="Dschang">Dschang</ion-option>
-                        <ion-option value="Autre">Autre</ion-option>
-                    </ion-select>
+                    <ion-option value="Yaoundé">Yaoundé</ion-option>
+                    <ion-option value="Douala">Douala</ion-option>
+                    <ion-option value="Bafoussam">Bafoussam</ion-option>
+                    <ion-option value="Bertoua">Bertoua</ion-option>
+                    <ion-option value="Bamenda">Bamenda</ion-option>
+                    <ion-option value="Dschang">Dschang</ion-option>
+                    <ion-option value="Autre">Autre</ion-option>
+                </ion-select>
+            </ion-item>
+            <ion-item *ngIf="secteurs&&secteurs.length&&!inset">
+                <ion-label color="primary" floating>
+                    <span>Zone</span>
+                </ion-label>
+                <ion-select [(ngModel)]="pointVente.secteur" name="secteur" #secteur="ngModel">
+                    <ion-option *ngFor="let secteur of secteurs" [value]="secteur.id">{{secteur.nom}}</ion-option>
+                </ion-select>
             </ion-item>
             <ion-item *ngIf="!inset" [hidden]="!pointVente.ville" (click)="select()">
                 <ion-label color="primary" floating>
                     <span>Nom du quartier</span>
                 </ion-label>
-                <ion-input  [(ngModel)]="pointVente.quartier" name="quartier" type="text" placeholder="" #quartier="ngModel"></ion-input>
-            </ion-item> 
-
-            <ion-item *ngIf="secteurs&&secteurs.length&&!inset">
-                      <ion-label color="primary" floating>
-                    <span>Secteur de vente</span>
-                </ion-label>
-                <ion-select [(ngModel)]="pointVente.secteur" name="secteur" #secteur="ngModel">
-                        <ion-option *ngFor="let secteur of secteurs" [value]="secteur.id">{{secteur.nom}}</ion-option>
-                    </ion-select>
-            </ion-item>            
-
+                <ion-input [(ngModel)]="pointVente.quartier" name="quartier" type="text" placeholder=""
+                    #quartier="ngModel"></ion-input>
+            </ion-item>
+            <button ion-item (click)="getCurrentPosition()" [hidden]="!pointVente.atnow">
+                <ion-icon name="marker"></ion-icon>
+                <h2>Position géographique</h2>
+                <p  *ngIf="!fetching&&pointVente.long&&pointVente.lat">l
+                    atitude: {{pointVente.lat}}, longitude: {{pointVente.long}}</p>
+                <p  *ngIf="fetching">Localisation ...</p>
+                <p  *ngIf="!fetching&&(!pointVente.long||!pointVente.lat)" style="color: red; font-weight: bold;">
+                  Connectez-vous et cliquez  pour determiner la position.
+                </p>
+                </button>
             <ion-item>
-                <ion-textarea rows="2" [(ngModel)]="pointVente.adresse" placeholder="Description du lieu par rapport à un endroit connu"
-                    name="adresse" #adresse="ngModel"></ion-textarea>
+                <ion-textarea rows="2" [(ngModel)]="pointVente.adresse"
+                    placeholder="Description du lieu par rapport à un endroit connu" name="adresse" #adresse="ngModel">
+                </ion-textarea>
             </ion-item>
         </ion-list>
         <div padding="padding" *ngIf="!inset">
             <button ion-button block icon-right [disabled]="isInvalid()" (click)="onSubmit()">
-                    <span *ngIf="!pointVente.id">Creer un point de vente</span>
-                    <span *ngIf="pointVente.id">Enregistrer les changements</span>                
-                    <ion-icon name="md-done-all"></ion-icon>
+                <span *ngIf="!pointVente.id">Creer un point de vente</span>
+                <span *ngIf="pointVente.id">Enregistrer les changements</span>
+                <ion-icon name="md-done-all"></ion-icon>
             </button>
             <br>
             <button *ngIf="pointVente.id" ion-button outline block icon-right color="danger" (click)="deleteItem()">
-                    <span>Supprimer ce point de vente
-                        <ion-icon name="close"></ion-icon>
-                    </span>
-               </button>                
+                <span>Supprimer ce point de vente
+                    <ion-icon name="close"></ion-icon>
+                </span>
+            </button>
         </div>
     </form>
 </ion-content>
 <ion-footer *ngIf="inset">
     <button ion-button full [disabled]="isInvalid()" (click)="onSubmit()">Creer un point de vente
     </button>
-  </ion-footer>
+</ion-footer>

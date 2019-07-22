@@ -23,11 +23,19 @@
         <ion-card-content>
           <ion-grid>
           <ion-row><ion-col><strong>Ref-#{{commende.numFacture}}</strong></ion-col>
-            <ion-col *ngIf="commende.date" text-right>{{commende.date|date:'dd/MM/yyyy' }}</ion-col></ion-row>
+            <ion-col *ngIf="commende.date" text-right>{{commende.date|date:'dd/MM/yyyy HH:mm' }}</ion-col></ion-row>
           <ion-row *ngIf="commende.user"><ion-col>{{commende.user.nom}}</ion-col></ion-row>
          </ion-grid>
         </ion-card-content>
       </ion-card>
+
+      <div class="spiner" horizontal layout center center-center padding [hidden]="!submitted||commende.lignes">
+        <ion-grid padding>
+         <ion-row justify-content-center align-items-center>    
+       <ion-spinner color="royal" name="ios"></ion-spinner>
+      </ion-row>    
+      </ion-grid> 
+      </div> 
       <ion-card *ngIf="commende.lignes">
           <ion-row><ion-col>{{commende.lignes.length}} articles</ion-col><ion-col text-right>Total: {{commende.total}} FCFA</ion-col></ion-row>
         </ion-card> 
@@ -38,11 +46,11 @@
             </button>
         </ion-list-header>               
       <ion-card *ngIf="commende.lignes">
-          <ion-row class="line header" no-padding><ion-col>Designation</ion-col><ion-col col-2>Qte</ion-col><ion-col col-4 text-right>Total</ion-col></ion-row>
+          <ion-row class="line header" no-padding><ion-col col-4>Designation</ion-col><ion-col col-2>Qte</ion-col><ion-col col-2>P.U</ion-col><ion-col col-2 text-right>Total</ion-col></ion-row>
           <ion-item-sliding #slidingItem *ngFor="let ligne of commende.lignes; let i = index; ">
               <ion-item #item>                
                   <ion-icon [hidden]="!editing" item-start color="danger" name="remove-circle" (click)="openOption(slidingItem, item, $event)"></ion-icon>
-                  <ion-row class="line" no-padding><ion-col col-6>{{ligne.nom}}</ion-col><ion-col col-2>{{ligne.quantite}}</ion-col><ion-col col-4 text-right>{{ligne.total}}</ion-col></ion-row>                                  
+                  <ion-row class="line" no-padding><ion-col col-4>{{ligne.produit.nom}}</ion-col><ion-col col-2>{{ligne.quantite}}</ion-col><ion-col col-2>{{ligne.produit.cout}}</ion-col><ion-col col-2 text-right>{{(ligne.produit.cout * ligne.quantite)}}</ion-col></ion-row>                                  
            </ion-item>
            <ion-item-options icon-start (ionSwipe)="deleteItem(commende.lignes, i)" [hidden]="!canEdit()">
               <button color="danger" (click)="deleteItem(commende.lignes, i)" ion-button icon-left expandable>

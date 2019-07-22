@@ -42,11 +42,22 @@
     margin: 5px 8px 5px 0;
 }
 ion-modal.inset-modal {
-  // transparent black background overlay
+	border-radius: 12px;
+	box-shadow: 0 2px 6px 0 hsla(205,9%,48%,.14);
   background-color: rgba(0, 0, 0, .5) !important;
   transition: opacity .25s ease-in-out;
   padding: 20vh 10vw;
 }
+
+
+.top-radius {
+  border-radius: 10% 10% 0 0;
+}
+
+.bottom-radius {
+  border-radius: 0 0 10% 10%;
+}
+
 
 ion-footer button {
   margin: 0 !important;
@@ -58,5 +69,5 @@ ion-footer button {
   padding-left: 10%;
   padding-right: 10%; 
    font-size: 1.2em;
-  color:map-get($colors, light);  
+  //color:map-get($colors, light);  
 }  

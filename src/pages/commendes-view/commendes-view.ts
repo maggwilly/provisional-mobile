@@ -3,6 +3,7 @@ import {Events, IonicPage, NavController, NavParams, App, Item, ItemSliding, Mod
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
 import { UserProvider } from '../../providers/user/user';
+import * as moment from 'moment';
 @IonicPage()
 @Component({
   selector: 'page-commendes-view',
@@ -14,7 +15,7 @@ export class CommendesViewPage {
   editing: boolean = false;
   edited:boolean = false;
   pointVente: any = {}
-
+  submitted=true;
   constructor(
     public navCtrl: NavController,
     public manager: ManagerProvider,
@@ -26,6 +27,8 @@ export class CommendesViewPage {
     public navParams: NavParams
   ) {
       this.commende = this.navParams.get('commende');
+      if(!this.commende.date)
+      this.commende.date= moment().format("YYYY-MM-DD HH:mm");
       this.pointVente = this.commende.pointVente;
   }
 
@@ -34,10 +37,12 @@ export class CommendesViewPage {
         this.edited=true;
         return
     }
+    
     this.manager.show('commende', this.commende.id).then((data) => {
       this.commende = data;
       this.edited=false;
-      this.makeUp();
+      this.submitted=false;
+      //this.makeUp();
     }, error => {
       this.notify.onError({ message: "Verifiez votre connexion internet" })
     })
@@ -117,13 +122,14 @@ canEdit():boolean{
 
   terminate(){
     this.commende.terminated=true;
-    this.commende.pointVente = this.pointVente.id;
+    this.commende.change=true;
+    //this.commende.pointVente = this.pointVente.id;
     let loader = this.notify.loading({ content: 'Enregistrement ...' });
     this.manager.save('commende', this.commende).then((data) => {
       loader.dismiss().then(() => {
         if (!data.error){
           this.edited=false;
-          this.commende.terminated=true;
+          this.commende=data;
           this.events.publish('commende.update',data);
           return this.notify.onSuccess({ message: "Enregistrement effectué" })
         }
@@ -140,7 +146,7 @@ canEdit():boolean{
 
   save() {
     this.commende.change=true;
-    this.commende.pointVente = this.pointVente.id;
+    //this.commende.pointVente = this.pointVente.id;
     let loader = this.notify.loading({ content: 'Enregistrement ...' });
     this.manager.save('commende', this.commende).then((data) => {
       loader.dismiss().then(() => {
@@ -148,7 +154,7 @@ canEdit():boolean{
         if (!data.error){
           this.edited=false;
           if(!this.commende.id){
-            this.commende.id=data.id;
+            this.commende=data;
             this.events.publish('commende.added',data);
           }
           return this.notify.onSuccess({ message: "Enregistrement effectué" })
@@ -175,8 +181,8 @@ canEdit():boolean{
        let index= this.commende.lignes.findIndex(item=> item.produit==data.produit)
        if(index>0)
           this.commende.lignes.splice(index,1);
-        this.commende.lignes.push(data);
-        return this.makeUp(data);
+           this.commende.lignes.push(data);
+           this.commende.total += Number(data.total)
       })
       modal.present();
     })

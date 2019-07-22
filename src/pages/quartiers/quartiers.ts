@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, ViewController, AlertController, NavParams } from 'ionic-angular';
 import { ManagerProvider } from '../../providers/manager/manager';
+import {Config} from '../../app/config'
 /*
   Generated class for the Select page.
 
@@ -16,6 +17,7 @@ export class QuartiersPage {
   queryText: string;
   newQuartiers: any[] = [];
   ville: string = ''
+  apikey=Config.googleApiKey;
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -33,7 +35,9 @@ export class QuartiersPage {
     });
 
   }
+  detail($event){
 
+  }
 
   search() {
     let queryText = this.queryText.toLowerCase().replace(/,|\.|-/g, ' ');

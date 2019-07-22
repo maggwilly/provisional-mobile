@@ -1,26 +1,36 @@
 
 <ion-header  no-border no-shadow>
   <ion-navbar>
-    <ion-title>Les produits</ion-title>
+      <ion-row no-padding>
+          <ion-col> <ion-title >Les produits</ion-title></ion-col>
+          <ion-col>
+            <ion-searchbar [hidden]="!produits.length"  [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un produit">
+            </ion-searchbar>         
+          </ion-col>
+        </ion-row>     
     <ion-buttons end>
     <button ion-button="ion-button" icon-only (click)="loadRemoteData()" >
         <ion-icon name="refresh"></ion-icon>
     </button>
     <button ion-button small outline (click)="add()" icon-left>
         <ion-icon name="add" ></ion-icon>
-        Creer
+        Créer
     </button>           
 </ion-buttons>    
   </ion-navbar>
 </ion-header>
-<ion-content padding>
-    <ion-searchbar [hidden]="!produits.length" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un produit">
-      </ion-searchbar>     
+<ion-content >     
     <ion-list>
         <ion-item  *ngFor="let produit of produits" (click)="add(produit)" [hidden]="produit.hide">
             {{produit.nom}}
             <p>{{produit.description}}</p>
             <ion-note item-right>{{produit.cout}}</ion-note>
         </ion-item>
+        <div padding>
+          <button ion-button block small clear (click)="doScroll()" style="text-transform: none;">Afficher plus</button>   
+         </div>    
     </ion-list>
 </ion-content>
+<ion-footer >
+    <ion-row><ion-col>{{produits.length}} lignes</ion-col><ion-col></ion-col><ion-col></ion-col></ion-row>
+  </ion-footer>

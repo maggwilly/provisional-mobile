@@ -12,18 +12,16 @@
   </ion-buttons>    
     </ion-navbar>
   </ion-header>
-  <ion-content padding>
+  <ion-content>
     <!--  <ion-searchbar [hidden]="!vendeurs.length" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un nom">
         </ion-searchbar>  -->   
       <ion-list>
           <div *ngIf="vendeurs.length">
          <ion-item-divider  color="light">Mon equipe de vente ({{vendeurs.length}} membres)</ion-item-divider> 
-          <ion-item  *ngFor="let vendeur of vendeurs"  [hidden]="vendeur.hide">
-                <span *ngIf="!userService.amParent">{{vendeur.nom}}</span> 
-              <p *ngIf="!userService.amParent">{{vendeur.phone}}</p>
-                <span *ngIf="userService.amParent">Moi-meme</span> 
-              <p *ngIf="userService.amParent">Administrateur</p>              
-               <button *ngIf="!userService.amParent" ion-button outline color="danger" (click)="deleteUser(vendeur)" only-icon small item-right color="danger">
+          <ion-item  *ngFor="let vendeur of vendeurs"  [hidden]="vendeur.hide||vendeur.id==userService.user">
+                <span *ngIf="vendeur.id!=userService.user">{{vendeur.nom}}</span> 
+              <p *ngIf="vendeur.id!=userService.user">{{vendeur.phone}}</p>          
+               <button  ion-button outline color="danger" (click)="deleteUser(vendeur)" only-icon small item-right color="danger">
                     <span>
                         <ion-icon  name="close"></ion-icon>
                     </span>

@@ -1,0 +1,108 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>Critères de recherche</ion-title>
+        <ion-buttons end>
+            <button ion-button (click)="dismiss()" icon-left>
+                <ion-icon name="md-close" color="danger" showwhen="android,windows,core"></ion-icon>
+                Fermer
+            </button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-header>
+<ion-content padding>
+    <ion-item>
+        <ion-label color="primary">
+            <span>Categorie</span>
+        </ion-label>
+        <ion-select [(ngModel)]="filtre.type" name="type" #type="ngModel">
+            <ion-option value="">Toutes catégories</ion-option>
+            <ion-option value="Boutique-de-Quartier">Boutique-de-Quartier</ion-option>
+            <ion-option value="Kiosque">Kiosque</ion-option>
+            <ion-option value="Super-Marche">Super-Marché</ion-option>
+            <ion-option value="Boulangerie">Boulangerie</ion-option>
+            <ion-option value="Debit-de-boisson">Debit-de-boisson</ion-option>
+            <ion-option value="Station-service">Station-service</ion-option>
+            <ion-option value="Etalage-de-marché">Etalage-de-marché</ion-option>
+        </ion-select>
+    </ion-item>
+    <ion-item>
+        <ion-label color="primary">
+            <span>Dans la ville de </span>
+        </ion-label>
+        <ion-select [(ngModel)]="filtre.ville" name="ville" #ville="ngModel">
+            <ion-option value="">Toutes les villes</ion-option>
+            <ion-option value="Yaoundé">Yaoundé</ion-option>
+            <ion-option value="Douala">Douala</ion-option>
+            <ion-option value="Bafoussam">Bafoussam</ion-option>
+            <ion-option value="Bertoua">Bertoua</ion-option>
+            <ion-option value="Bamenda">Bamenda</ion-option>
+            <ion-option value="Dschang">Dschang</ion-option>
+        </ion-select>
+    </ion-item>
+    <ion-item *ngIf="secteurs&&secteurs.length">
+        <ion-label color="primary">
+            <span>Situés dans la zone de </span>
+        </ion-label>
+        <ion-select [(ngModel)]="filtre.secteur" name="secteur" #secteur="ngModel">
+            <ion-option value="">Toutes les zones</ion-option>
+            <ion-option *ngFor="let secteur of secteurs" [value]="secteur.id">{{secteur.nom}}</ion-option>
+        </ion-select>
+    </ion-item>
+    <ion-item [hidden]="!filtre.ville" (click)="select()">
+        <ion-label color="primary">
+            <span>Quartier</span>
+        </ion-label>
+        <ion-input [(ngModel)]="filtre.quartier" name="quartier" type="text" placeholder="" #quartier="ngModel">
+        </ion-input>
+    </ion-item>
+    <ion-item-divider> Date de création</ion-item-divider>
+    <ion-row>
+        <ion-col>
+            <ion-item>
+                <ion-label color="primary" floating><span>Créés le, ou après le </span></ion-label>
+                <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="D MMM  YYYY" min="2019" doneText="Terminé"
+                    cancelText="Annuler" name="afterdate" [(ngModel)]="filtre.afterdate" #date="ngModel"></ion-datetime>
+            </ion-item>
+        </ion-col>
+        <ion-col>
+            <ion-item>
+                <ion-label color="primary" floating><span>Créés le, ou avant le </span></ion-label>
+                <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="D MMM  YYYY" min="2019" doneText="Terminé"
+                    cancelText="Annuler" name="beforedate" [(ngModel)]="filtre.beforedate" #date="ngModel">
+                </ion-datetime>
+            </ion-item>
+        </ion-col>
+    </ion-row>
+    <ion-item-divider> Dernière visite</ion-item-divider>
+    <ion-row>
+        <ion-col>
+            <ion-item>
+                <ion-label color="primary" floating><span>Visités le,  ou depuis le </span></ion-label>
+                <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="D MMM  YYYY" min="2019" doneText="Terminé"
+                    cancelText="Annuler" name="afterlastvisitedate" [(ngModel)]="filtre.afterlastvisitedate"
+                    #date="ngModel"></ion-datetime>
+            </ion-item>
+        </ion-col>
+        <ion-col>
+            <ion-item>
+                <ion-label color="primary" floating><span>Visités le,  ou avant le </span></ion-label>
+                <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="D MMM  YYYY" min="2019" doneText="Terminé"
+                    cancelText="Annuler" name="beforelastvisitedate" [(ngModel)]="filtre.beforelastvisitedate"
+                    #date="ngModel"></ion-datetime>
+            </ion-item>
+        </ion-col>
+    </ion-row>
+    <ion-item *ngIf="users&&users.length">
+        <ion-label color="primary">
+            <span>Créé par</span>
+        </ion-label>
+        <ion-select [(ngModel)]="filtre.user" name="user" #user="ngModel">
+            <ion-option value="">Tout le monde</ion-option>
+            <ion-option *ngFor="let user of users" [value]="user.id">{{user.nom}}</ion-option>
+        </ion-select>
+    </ion-item>
+</ion-content>
+<ion-footer>
+    <button ion-button full (click)="onSubmit()">Appliquer les critères
+    </button>
+</ion-footer>

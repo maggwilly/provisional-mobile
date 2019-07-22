@@ -39,6 +39,7 @@ export class SelectclientPage {
   dismiss(data?:any) {
     this.viewCtrl.dismiss(data);
 }
+
   loadData(onlineIfEmpty?:boolean){    
 
     this.manager.get('pointvente').then(data=>{
@@ -97,4 +98,9 @@ export class SelectclientPage {
     }
     item.hide = !(matchesQueryText);
   }
+
+  doScroll(env){
+
+  }
+
 }

@@ -1,7 +1,7 @@
 
 <ion-header no-border no-shadow >
     <ion-navbar>
-        <ion-title><span *ngIf="!secteur.nom">Nouveau Secteur</span><span *ngIf="secteur.nom">{{secteur.nom}}</span></ion-title>     
+        <ion-title><span *ngIf="!secteur.nom">Créer une zone</span><span *ngIf="secteur.nom">{{secteur.nom}}</span></ion-title>     
         <ion-buttons end>
                 <button ion-button="ion-button" (click)="dismiss()" icon-left>
                     <ion-icon name="md-close" color="danger" showwhen="android,windows,core"></ion-icon> 
@@ -10,11 +10,14 @@
             </ion-buttons> 
     </ion-navbar>
 </ion-header>
-<ion-content padding>
+<ion-content >
+        <ion-card>
+                <ion-card-header text-wrap>Créer ou modifier une zone</ion-card-header>
+        </ion-card>    
     <form #form="ngForm" novalidate="novalidate">
         <ion-list>
             <ion-item>
-                <ion-label color="primary" floating><span>Nom du secteur</span> </ion-label>
+                <ion-label color="primary" floating><span>Nom de la zone</span> </ion-label>
                 <ion-input [(ngModel)]="secteur.nom" name="nom" type="text" placeholder="" #nom="ngModel"></ion-input>
             </ion-item>
             <ion-item >
@@ -38,7 +41,7 @@
         </ion-list>
         <div padding="padding">
             <button *ngIf="!inset" ion-button block icon-right [disabled]="isInvalid()" (click)="onSubmit()">
-                <span *ngIf="!secteur.id">Creer un secteur</span>
+                <span *ngIf="!secteur.id">Créer un secteur</span>
                 <span *ngIf="secteur.id">Enregistrer les changements</span>
                     <ion-icon name="md-done-all"></ion-icon>
             </button>
@@ -52,6 +55,8 @@
     </form>
 </ion-content>
 <ion-footer *ngIf="inset">
-    <button ion-button full [disabled]="isInvalid()" (click)="onSubmit()">Creer un produit
+    <button ion-button full [disabled]="isInvalid()" (click)="onSubmit()">
+        <span *ngIf="!secteur.id">Créer une zone</span>
+        <span *ngIf="secteur.id">Enregistrer les changements</span>
     </button>
   </ion-footer>

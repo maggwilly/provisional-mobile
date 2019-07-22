@@ -16,8 +16,10 @@
         </ion-buttons>
   </ion-navbar>
 </ion-header>
-
-<ion-content padding>
+<ion-content >
+        <ion-card>
+                <ion-card-header text-wrap>Modifiez ou completez vos informations </ion-card-header>
+        </ion-card>     
   <form #form="ngForm" novalidate="novalidate">
     <ion-list *ngIf="user">
         <ion-item>

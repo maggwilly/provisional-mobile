@@ -33,11 +33,10 @@ export class UserProvider {
 
   public resetObserver() {
     this.complete = this.makeComplete(); 
-    this.user = null;
+    //this.user = null;
     if(!this.manager.getUserId())
       return this.events.publish('auth', null);
     this.manager.getEntitieLocally('user',this.manager.getUserId()).then((data) => {
-      console.log('data',data);
       if (!data)
       return this.events.publish('auth', null)
       this.user = data;
@@ -96,7 +95,7 @@ export class UserProvider {
     
     let self = this;
     return new Promise((resolve, reject) => {
-      if (self.user) {
+      if (self.user&&self.user.parent) {
         resolve(self.user);
         return;
       }
@@ -125,9 +124,10 @@ export class UserProvider {
       this.registrationid = token;
       window.localStorage.setItem('token_registration', token)
     });
-    this.complete.then(user => {
+    this.getAuthenticatedUser().subscribe(user=>{
+      if(user)
       this.register(user);
-    })
+    })    
   }
 
 
@@ -161,6 +161,7 @@ export class UserProvider {
 
 
   register(user: any) {
+
     if (!user || !user.id || !user.parent || !this.registrationid)
       return
     user.registration = this.registrationid;

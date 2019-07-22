@@ -1,75 +1,94 @@
 <ion-header>
   <ion-navbar>
-    <ion-title *ngIf="rendezvous.pointVente">{{rendezvous.pointVente.nom}}</ion-title>
+    <ion-title *ngIf="pointVente">{{pointVente.nom}}</ion-title>
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <ion-card *ngIf="rendezvous.pointVente">
-    <ion-card-header><strong> {{rendezvous.pointVente.nom}}</strong> - {{rendezvous.pointVente.type}}</ion-card-header>
-    <div padding>
-      <ion-row>
-        <ion-col>
-            Créé le {{rendezvous.pointVente.date}}
-        </ion-col>
-        <ion-col *ngIf="rendezvous.pointVente.createdBy">
-           Par {{rendezvous.pointVente.createdBy.nom}}
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col>
-          Numero de télephone
-        </ion-col>
-        <ion-col>
-          {{rendezvous.pointVente.telephone}}
-        </ion-col>
-      </ion-row>
-      <p>{{rendezvous.pointVente.ville}} - {{rendezvous.pointVente.quartier}},</p>
-      <p>{{rendezvous.pointVente.relativeTo}} - {{rendezvous.pointVente.adresse}}</p>
-    </div>
+    <ion-row no-padding>
+        <ion-col col-4>
+  <ion-card *ngIf="pointVente">
+    <ion-card-header text-wrap><strong> {{pointVente.nom}}</strong> - {{pointVente.type}}</ion-card-header>
+      <ion-item>
+          Créé le {{pointVente.date}}
+      </ion-item>
+      <ion-item *ngIf="pointVente.createdBy">
+          Créé par {{pointVente.createdBy.nom}}
+      </ion-item>
+      <ion-item *ngIf="pointVente.createdBy">
+         Télephone  {{pointVente.telephone}}
+      </ion-item>
+      <ion-item >
+          {{pointVente.ville}} - {{pointVente.quartier}}
+          <p>{{pointVente.relativeTo}} - {{pointVente.adresse}}</p>
+       </ion-item>   
+       <ion-item>
+          <button  clear item-left small ion-button color="danger" >Desactiver</button>
+  
+          <button    small item-right ion-button outline color="primary" (click)="edit()">Modifier</button>
+        </ion-item>     
   </ion-card>
-<ion-card >
-  <ion-card-header>
-    <span *ngIf="!rendezvous.id">Détails de la prochaine visite</span>
-    <span *ngIf="rendezvous.id">Détails du prochain rendez-vous</span>
-  </ion-card-header>
-  <div *ngIf="rendezvous&&rendezvous.dateat" padding>
-  <h2>Le  {{rendezvous.dateat}}</h2>
-  <ion-row>
-    <ion-col *ngIf="!rendezvous.passdays">
-        <span  >{{rendezvous.realdateat}}</span> 
-    </ion-col>
-    <ion-col *ngIf="rendezvous.user">
-       par {{rendezvous.user.nom}}
-    </ion-col>
-  </ion-row>
-<ion-list inset *ngIf="rendezvous.previsions&&rendezvous.previsions.length">
-  <ion-item *ngFor="let prevision of rendezvous.previsions">
-   {{prevision.produit}}
-   <p>{{prevision.last_cmd_quantity}} depuis le {{prevision.last_cmd_date}}</p>
-   <p>Prévoir {{prevision.next_cmd_quantity}}</p>
-  </ion-item>
- </ion-list>
- <p *ngIf="rendezvous.commentaire">{{rendezvous.commentaire}}</p>
- <ion-row>
-   <ion-col *ngIf="rendezvous.id">
-    <button block clear  small ion-button color="danger" (click)="cancelRdv()">Annuler</button>
- </ion-col>
- <ion-col >
-    <button block   small ion-button color="primary" (click)="editRdv()">Conclure</button>
- </ion-col>
-</ion-row>
-</div>
-<div *ngIf="!rendezvous||!rendezvous.dateat" padding>
-  <p text-center>Aucun rendez-vous programmé ou estimé</p>
-   <br>
-   <button block  outline ion-button (click)="createRdv()"> Créer un rendez-vous</button>
-</div>
+  <ion-card >
+      <ion-card-header text-wrap>
+        <span *ngIf="pointVente.rendezvous&&!pointVente.rendezvous.id">Détails de la prochaine visite</span>
+        <span *ngIf="pointVente.rendezvous&&pointVente.rendezvous.id">Détails du prochain rendez-vous</span>
+      </ion-card-header>
+      <div *ngIf="pointVente.rendezvous&&pointVente.rendezvous.dateat" padding>
+      <h2>Le  {{pointVente.rendezvous.dateat}}</h2>
+      <ion-row>
+        <ion-col *ngIf="pointVente.rendezvous&&!pointVente.rendezvous.passdays">
+            <span  >{{pointVente.rendezvous.realdateat}}</span> 
+        </ion-col>
+        <ion-col *ngIf="pointVente.rendezvous&&pointVente.rendezvous.user">
+           Créé par {{pointVente.rendezvous.user.nom}}
+        </ion-col>
+      </ion-row>
+     <p *ngIf="pointVente.rendezvous&&pointVente.rendezvous.commentaire">{{pointVente.rendezvous.commentaire}}</p>
+    </div>
+    <div *ngIf="!pointVente.rendezvous||!pointVente.rendezvous.dateat" padding>
+      <p text-center>Aucun rendez-vous programmé ou estimé</p>
+       <br>
+       <button block  outline ion-button (click)="createRdv()"> Créer un rendez-vous</button>
+    </div>
+    <ion-item *ngIf="pointVente.rendezvous&&pointVente.rendezvous.dateat">
+        <button  clear item-left small ion-button color="danger" (click)="cancelRdv()">Annuler</button>
+
+        <button    small item-right ion-button outline color="primary" (click)="editRdv()">Modifier</button>
+      </ion-item>  
+    </ion-card>  
+<ion-card>
+    <ion-card-header text-wrap>Articles pouvant être en rupture</ion-card-header>
+    <ion-list inset *ngIf="pointVente.rendezvous&&pointVente.rendezvous.previsions&&pointVente.rendezvous.previsions.length">
+        <ion-item *ngFor="let prevision of pointVente.rendezvous.previsions">
+         {{prevision.produit}}
+         <p>{{prevision.last_cmd_quantity}} depuis le {{prevision.last_cmd_date}}</p>
+         <p>Prévoir {{prevision.next_cmd_quantity}}</p>
+        </ion-item>
+       </ion-list>
 </ion-card>
-<ion-list *ngIf="rendezvous.lastLines&&rendezvous.lastLines.length">
-  <ion-list-header>Dernieres commendes</ion-list-header>
-  <ion-item *ngFor="let line of rendezvous.lastLines">
-      {{line.produit.nom}}
-      <p>{{line.quantite}} depuis le {{line.commende.date}}</p>
-    </ion-item>
-</ion-list>
+</ion-col>
+<ion-col col-8>
+  <ion-card *ngIf="pointVente">
+      <div #map id="map" [hidden]="!map"></div>
+    </ion-card>
+</ion-col>
+</ion-row> 
+<ion-row>
+  <ion-col>
+      <ion-card  [pointvente]="pointVente" lastcommende>
+        <ion-card-header text-wrap>Dernier passage <span *ngIf="pointVente.lastCommende">{{pointVente.lastCommende.date|date:'dd/MM/yyyy HH:mm'}}</span></ion-card-header>
+    </ion-card>
+    <ion-list *ngIf="pointVente.lastCommende&&pointVente.lastCommende.lignes">
+        <ion-item *ngFor="let line of pointVente.lastCommende.lignes">
+              {{line.produit.nom}} <ion-note item-right>{{line.quantite}}</ion-note>>
+              <p>{{line.stock}} trouvés </p>
+          </ion-item>
+      </ion-list>    
+  </ion-col>
+  <ion-col>
+    <ion-card>
+          <ion-card-header text-wrap>Moyenne de vente</ion-card-header>
+    </ion-card>   
+  </ion-col>  
+</ion-row>
+
 </ion-content>

@@ -1,27 +1,35 @@
-<!--
-  Generated template for the PointventesPage page.
 
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header  no-border no-shadow>
   <ion-navbar>
-    <ion-title>Les Points de Vente</ion-title>
+    <ion-row no-padding>
+      <ion-col><ion-title>Liste des points de vente</ion-title></ion-col>
+      <ion-col>
+        <ion-searchbar *ngIf="pointventes" [hidden]="!pointventes.length" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un nom">
+        </ion-searchbar>         
+      </ion-col>
+    </ion-row>
     <ion-buttons end>
-        <button ion-button="ion-button" icon-only (click)="loadRemoteData()" >
+        <button ion-button="ion-button" icon-only (click)="refresh()" >
             <ion-icon name="refresh"></ion-icon>
         </button>
         <button ion-button small outline (click)="add()" icon-left>
             <ion-icon name="add" ></ion-icon>
-            Creer
+            Créer
         </button>           
-    </ion-buttons>    
+    </ion-buttons>       
   </ion-navbar>
 </ion-header>
 <ion-content>
-    <ion-searchbar *ngIf="pointventes" [hidden]="!pointventes.length" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un nom">
-      </ion-searchbar>     
-    <ion-list>
+      <ion-row justify-content-around>
+        <ion-col col-6 >
+         <button ion-button icon-left outline small (click)="openFilter()"><ion-icon name="funnel"  ></ion-icon> Critères  
+          <span *ngIf="nbrecriteres">  -  ({{nbrecriteres}})</span></button>
+        </ion-col>
+        <ion-col col-6 class="item-right">
+         <button float-right ion-button icon-left outline small (click)="openMap()" [disabled]="!pointventes.length"> <ion-icon name="map"></ion-icon>Carte</button>
+       </ion-col>   
+      </ion-row>
+    <ion-list *ngIf="pointventes.length">
         <ion-item-sliding *ngFor="let pointvente of pointventes"  [hidden]="pointvente.hide" #slidingItem>
         <ion-item #item (click)="show(pointvente,slidingItem)" >
             {{pointvente.nom}}
@@ -39,6 +47,19 @@
               <ion-icon name="create"></ion-icon> Modifier
             </button>            
       </ion-item-options>        
-     </ion-item-sliding>        
+     </ion-item-sliding> 
+     <div padding>
+       <button ion-button block small clear (click)="refresh()" style="text-transform: none;">Afficher plus</button>   
+      </div>    
     </ion-list>
+    <ion-grid style="height: 80%;justify-content: center;position:absolute;top:20%" *ngIf="!pointventes.length">
+        <ion-row style="height: 100%;justify-content: center;" justify-content-center align-items-center>
+            <div text-center text-wrap  class="empty" padding>
+              Aucun element correspondant aux critères.
+            </div>
+        </ion-row>
+      </ion-grid>    
 </ion-content>
+<ion-footer >
+    <ion-row><ion-col>{{pointventes.length}} lignes</ion-col><ion-col></ion-col><ion-col></ion-col></ion-row>
+  </ion-footer>

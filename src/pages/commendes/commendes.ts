@@ -12,8 +12,10 @@ import * as moment from 'moment';
 export class CommendesPage {
   commendes: any = []
   today: string;
-  target: string = 'today'
   queryText = '';
+  openAddPage:boolean
+  filtre:any={type:'',user:'',secteur:'',ville:'',beforedate:moment().format("YYYY-MM-DD")}
+  nbrecriteres:number;
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -26,6 +28,7 @@ export class CommendesPage {
     public storage: Storage
   ) {
     this.today = moment().format("YYYY-MM-DD");
+    this.openAddPage=this.navParams.get('openAddPage')
     this.events.subscribe('commende.added', (data) => {
     this.commendes.push(data);
     })
@@ -37,16 +40,21 @@ export class CommendesPage {
       }
     })
     this.events.subscribe('loaded:commande:new',()=>{
-      this.loadData();
+      if(!this.nbrecriteres)
+         this.loadData();
      })
   }
 
   ionViewDidLoad() {
+    if (this.openAddPage)
+    this.add()
     this.loadData(true);
   }
 
   loadData(onlineIfEmpty?:boolean) {
       this.manager.get('commende').then(data => {
+        console.log(data);
+        
         this.commendes = data ? data : []
         if(onlineIfEmpty&&(!data||data.length))
             return this.loadRemoteData();
@@ -56,11 +64,21 @@ export class CommendesPage {
       })
   }
 
+  refresh(){
+    this.filtre={type:'',user:'',secteur:'',ville:'',beforedate:moment().format("YYYY-MM-DD")};
+    this.nbrecriteres=0;
+    this.queryText='';
+    return this.loadRemoteData();
+  }
 
   loadRemoteData() {
-    let loader = this.loadingCtrl.create({});
-    this.manager.get('commende',true).then(data => {
+    let loader = this.loadingCtrl.create({
+      content: "chargement...",
+    });
+    this.manager.get('commende',true,null,null,this.filtre,this.nbrecriteres).then(data => {
       this.commendes = data ? data : []
+      console.log(data);
+      
       this.search()
       loader.dismiss();
     }, error => {
@@ -112,8 +130,26 @@ export class CommendesPage {
 
 
 
+  openFilter() {
+    let modal = this.modalCtrl.create('FiltreVentePage', { filtre: this.filtre })
+    modal.onDidDismiss(data => {
+      let nbrecriteres=0;
+      if(!data)
+      return;
+    Object.keys(data).forEach(key => {
+      if(data[key])
+        nbrecriteres++;
+    });
+    this.nbrecriteres=nbrecriteres;
+
+    return this.loadRemoteData();
+    });
+    modal.present()
+  }
+
+
   openCart(commende) {
-    this.app.getActiveNav().push('CommendesViewPage', { commende: commende })
+    this.navCtrl.push('CommendesViewPage', { commende: commende })
   }
 
   getPointVente(commende: any) {
@@ -127,10 +163,9 @@ export class CommendesPage {
       if (!data)
         return // this.app.getRootNav().pop();
       commende.pointVente = data;
-      this.app.getRootNav().push('CommendesViewPage', { commende: commende })
+      this.navCtrl.push('CommendesViewPage', { commende: commende })
     })
     modal.present();
-
   }
 
   search() {
@@ -155,16 +190,24 @@ export class CommendesPage {
     } else {
       matchesQueryText = true;
     }
-    let matchesSegment = false;
-    if (this.target === 'today') {
-      if (item.date == this.today)
-        matchesSegment = true;
-    } else if (this.target === 'notended') {
-      if (!item.terminated)
-        matchesSegment = true;
-    } else matchesSegment = true;
 
-    item.hide = !(matchesQueryText && matchesSegment);
+    item.hide = !(matchesQueryText);
   }
 
+
+openMap(){
+  let points:any[]=[];
+  this.commendes.forEach(commende => {
+    if (commende.pointVente.lat&&commende.pointVente.long) {
+      points.push({pos:{lat:commende.pointVente.lat,long:commende.pointVente.long},
+                    title:commende.pointVente.nom,
+                    address:commende.pointVente.adresse,
+                    type:commende.pointVente.type,
+                    quartier:commende.pointVente.quartier,
+                    visited:commende.pointVente.lastCommende,
+                   })
+             }
+       });
+  this.navCtrl.push('MapPage',{points: points,title:`Interactions`});
+}
 }

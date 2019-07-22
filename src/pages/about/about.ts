@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams ,ViewController} from 'ionic-angular';
 import { ManagerProvider} from '../../providers/manager/manager';
 /**
  * Generated class for the AboutPage page.
@@ -17,11 +17,13 @@ export class AboutPage {
   text:string
   constructor(public navCtrl: NavController,
      public manager: ManagerProvider,
+     public viewCtrl: ViewController,
      public navParams: NavParams) {
   }
 
 dismiss(){
-  this.navCtrl.setRoot('TabsPage', {skippecheck:true}, {animate: true, direction: 'forward'}); 
+  this.viewCtrl.dismiss()
+  //this.navCtrl.setRoot('TabsPage', {skippecheck:true}, {animate: true, direction: 'forward'}); 
 }
   ionViewDidLoad() {
     this.manager.getText('help.','abaout.html').then(text=>{

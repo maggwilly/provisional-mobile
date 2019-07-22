@@ -1,23 +1,29 @@
 <ion-header  no-border no-shadow>
     <ion-navbar>
-        <ion-buttons left>
-            <button ion-button   style="text-transform: none;" (click)="dismiss()" icon-left>
-                <ion-icon name="close" color="danger"></ion-icon>
-                Annuler
+        <ion-buttons start>
+            <button ion-button  icon-only  (click)="dismiss()" icon-left>
+                <ion-icon name="ios-close" color="danger"></ion-icon>
             </button>           
-        </ion-buttons>        
-      <ion-title>Selectionnez un produit</ion-title>
+        </ion-buttons> 
+        <ion-row no-padding>
+                <ion-col> <ion-title >Les produits</ion-title></ion-col>
+                <ion-col>
+                        <ion-searchbar [hidden]="!produits.length" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un produit">
+                            </ion-searchbar>           
+                </ion-col>
+              </ion-row>               
       <ion-buttons end>
       <button ion-button small outline (click)="add()" icon-left>
           <ion-icon name="add" ></ion-icon>
-          Creer
+          Créer
       </button>           
   </ion-buttons>    
     </ion-navbar>
   </ion-header>
-  <ion-content padding>
-      <ion-searchbar [hidden]="!produits.length" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un produit">
-        </ion-searchbar>     
+  <ion-content>
+        <ion-card>
+                <ion-card-header text-wrap>Selectionnez un produit pour l'ajouter à la vente</ion-card-header>
+        </ion-card>    
       <ion-list>
           <ion-item  *ngFor="let produit of produits" (click)="select(produit)" [hidden]="produit.hide">
               {{produit.nom}}
@@ -26,3 +32,6 @@
           </ion-item>
       </ion-list>
   </ion-content>
+  <ion-footer >
+        <ion-row><ion-col>{{produits.length}} lignes</ion-col><ion-col></ion-col><ion-col></ion-col></ion-row>
+      </ion-footer>
