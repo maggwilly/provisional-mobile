@@ -33,7 +33,7 @@
               </p>
           </ion-item>
       </ion-card>  
-    <ion-list *ngIf="previsions.length">
+    <ion-list *ngIf="previsions.length&&!loading">
         <ion-item  *ngFor="let produit of previsions"  [hidden]="produit.hide" (click)="openDetail(produit)" text-wrap> 
             {{produit.nom}}<ion-badge  color="light"> {{produit.next_cmd_quantity}} {{produit.unite}}(s)</ion-badge>
             <p>{{produit.description}}</p>

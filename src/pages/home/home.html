@@ -38,7 +38,7 @@
       </button>
     </ion-col>
   </ion-row>
-  <ion-list *ngIf="groups.length">
+  <ion-list *ngIf="groups.length&&!loading">
     <ion-item-group *ngFor="let group of groups" [hidden]="!group.poinventes">
       <ion-item-divider color="light">{{group.secteur}} ({{group.poinventes.length}})</ion-item-divider>
       <ion-item #item *ngFor="let pointvente of group.poinventes" (click)="show(pointvente)"
@@ -75,6 +75,11 @@
       <button ion-button block small clear (click)="refresh()" style="text-transform: none;">Afficher plus</button>
     </div>
   </ion-list>
+  <ion-grid padding style="height: 100%;justify-content: center" [hidden]="loading">
+    <ion-row style="justify-content: center;" justify-content-center align-items-center>    
+  <ion-spinner color="royal" name="ios"></ion-spinner>
+ </ion-row>    
+ </ion-grid>   
   <ion-grid style="height: 80%;justify-content: center;position:absolute;top:20%" *ngIf="!groups.length&&!loading">
     <ion-row style="height: 100%;justify-content: center;" justify-content-center align-items-center>
       <div text-center text-wrap class="empty" padding>
