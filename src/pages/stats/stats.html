@@ -1,10 +1,100 @@
-
 <ion-header no-border no-shadow>
   <ion-navbar>
-    <ion-title>Statistiques</ion-title>
-    
+      <button menuToggle  ion-button icon-only showWhen="mobile">
+          <ion-icon name="menu"></ion-icon>
+        </button>  
+    <ion-title><strong *ngIf="filtre">
+      <span *ngIf="filtre.afterdate">Tableau de bord </span>
+      <span *ngIf="filtre.beforedate"> <span *ngIf="filtre.afterdate">et</span><span *ngIf="!filtre.afterdate">, Avant</span> le {{filtre.beforedate|date:'dd/MM/yyyy'}}</span></strong></ion-title>
+    <ion-buttons end>
+      <button ion-button icon-left (click)="refresh()"> 
+        <ion-icon name="refresh"></ion-icon> <span showWhen="core">Actualiser</span> 
+      </button> 
+      <button ion-button icon-only (click)="openFilter()" [disabled]="!isOnline">
+          <ion-icon name="funnel"></ion-icon><span showWhen="core">Seletionnez</span> 
+        </button>      
+    </ion-buttons>   
   </ion-navbar>
-</ion-header>
-<ion-content padding>
+</ion-header> 
+<ion-content>
+  <div *ngIf="stats">
+<ion-grid>
+  <ion-row>
+<ion-card>
+    <ion-item text-wrap>
+         <strong *ngIf="filtre"><span *ngIf="filtre.afterdate">Entre le {{filtre.afterdate|date:'dd/MM/yyyy'}}</span>
+          <span *ngIf="filtre.beforedate"> <span *ngIf="filtre.afterdate">et</span><span *ngIf="!filtre.afterdate">, Avant</span> le {{filtre.beforedate|date:'dd/MM/yyyy'}}</span></strong>
+        <p *ngIf="filtre">
+            <span *ngIf="filtre.type">, {{filtre.type}}</span><span *ngIf="!filtre.type">Toutes catégories</span>
+            <span *ngIf="filtre.ville">{{filtre.ville}}</span><span *ngIf="!filtre.ville">, toutes les villes</span>
+           <span *ngIf="filtre.quartier">, {{filtre.quartier}}</span><span *ngIf="!filtre.quartier">, tous les quartiers</span>
+        </p>   
+    </ion-item>
+</ion-card>  
+</ion-row>
+  <ion-row>
+      <ion-col>
+          <ion-card class="kpi"> 
+              <ion-card-content>
+                <ion-row class="box-info">
+                  <ion-col><span class="circle-text primary"><ion-icon name="md-people"></ion-icon> </span></ion-col>
+                  <ion-col text-center> <span class="label">{{stats.total_count}}</span></ion-col>
+                </ion-row>
+                <p><ion-icon name="ios-information-circle-outline"></ion-icon> Nombre total des clients</p>
+              </ion-card-content>
+            </ion-card>
+      </ion-col>
+      <ion-col>
+          <ion-card class="kpi">
+              <ion-card-content>
+                  <ion-row class="box-info">
+                      <ion-col><span class="circle-text orange"><ion-icon name="md-person-add"></ion-icon></span></ion-col>
+                      <ion-col text-center> <span class="label">{{stats.created_count}}</span></ion-col>
+                    </ion-row>                  
+                <p><ion-icon name="ios-information-circle-outline"></ion-icon>Nombre de Clients prospectés</p>
+              </ion-card-content>
+            </ion-card>
+      </ion-col>
+      <ion-col>
+          <ion-card class="kpi">
+              <ion-card-content>
+                <ion-row class="box-info">
+                    <ion-col><span class="circle-text danger"><ion-icon name="md-checkbox-outline"></ion-icon></span></ion-col>
+                    <ion-col text-center> <span class="label">{{stats.engaged_count}}</span></ion-col>
+                  </ion-row>                
+                <p><ion-icon name="ios-information-circle-outline"></ion-icon>Nombre de Clients engagés </p>
+              </ion-card-content>
+            </ion-card>
+      </ion-col>
+      <ion-col>
+          <ion-card class="kpi">
+            <ion-card-content>
+              <ion-row class="box-info">
+                  <ion-col><span class="circle-text secondary"><ion-icon name="md-clipboard"></ion-icon></span></ion-col>
+                  <ion-col text-center>  <span class="label">{{stats.target_vs_visited}}%</span></ion-col>
+                </ion-row>              
+              <p><ion-icon name="ios-information-circle-outline"></ion-icon> Objectif des livraisons</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+    </ion-row>
 
+  <ion-row>
+  <ion-card id="chart-sale">
+    <ion-card-header>
+        Evolutions hebdomadaires des indicateurs
+    </ion-card-header>
+           <google-chart style = "width: 550px; height: 400px; margin: 0 auto" [data]="pieChartData"></google-chart>
+  </ion-card>
+  </ion-row>
+</ion-grid>
+   </div>
+    <ion-grid style="height: 80%;justify-content: center;position:absolute;top:15vh" *ngIf="!pieChartData">
+      <ion-row style="height: 100%;justify-content: center;" justify-content-center align-items-center>
+          <ion-spinner name="ios"></ion-spinner>
+      </ion-row>
+    </ion-grid> 
+    <ion-fab right bottom>
+        <button ion-fab  color="danger" (click)="openFilter()"><ion-icon name="funnel" ></ion-icon></button>
+      </ion-fab>
 </ion-content>

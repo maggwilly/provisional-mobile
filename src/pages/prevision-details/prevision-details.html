@@ -1,0 +1,36 @@
+
+<ion-header #head>
+  <ion-navbar>
+    <ion-title>Prévision - {{produit.nom}}</ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content padding-top hide-header [header]="head">
+<ion-card>
+    <ion-item  text-wrap> 
+        {{produit.nom}}<ion-badge  color="light"> {{produit.next_cmd_quantity}} {{produit.unite}}(s)</ion-badge>
+        <p>{{produit.description}}</p>
+        <p *ngIf="produit.next_cmd_date">{{produit.next_cmd_quantity}} à partir de 
+          <ion-badge color="orange"> {{produit.next_cmd_date|moment}} </ion-badge>
+          </p>      
+    </ion-item>  
+</ion-card>
+<ion-list *ngIf="produit.next_cmd_clients&&produit.next_cmd_clients.length">
+<ion-item *ngFor="let detail of produit.next_cmd_clients"  text-wrap>
+    {{detail.pointVente.nom}} 
+    <ion-badge *ngIf="detail.quantity" color="light" >
+        <span> {{detail.quantity}} {{produit.unite}}(s)</span>
+      </ion-badge> 
+    <ion-badge *ngIf="detail.dateat"  >
+    <span> {{detail.dateat |moment}}</span>
+  </ion-badge>    
+
+    <p><strong *ngIf="detail.pointVente.quartier">- {{detail.pointVente.quartier}}</strong>
+      <a href="tel: {{detail.pointVente.telephone}}">{{detail.pointVente.telephone}}</a>
+      <span *ngIf="detail.pointVente.ville">, {{detail.pointVente.ville}}</span>
+      <span *ngIf="detail.pointVente.type">{{detail.pointVente.type}}</span>
+      <span *ngIf="detail.pointVente.adresse">, {{detail.pointVente.adresse}}</span>
+    </p>
+    <p></p>   
+</ion-item>
+</ion-list>  
+</ion-content>

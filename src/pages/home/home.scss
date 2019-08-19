@@ -1,3 +1,22 @@
 page-home {
-/**/
+
+    span.passed{
+        color:map-get($colors, danger);
+    }
+    span.today{
+        color:map-get($colors, secondary);
+    }
+    span.future{
+        color:map-get($colors, primary);
+    }
+
+    ion-badge.passed{
+        background-color:map-get($colors, danger);
+    }
+    ion-badge.today{
+        background-color:map-get($colors, secondary);
+    }
+    ion-badge.future{
+        background-color:map-get($colors, primary);
+    }
 }

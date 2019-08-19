@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, LoadingController, ModalController
 import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify'
+import { LocalisationProvider } from '../../providers/localisation/localisation';
 /**
  * Generated class for the SecteursPage page.
  *
@@ -19,11 +20,13 @@ export class SecteursPage {
   secteurs: any[] = []
   queryText = '';
   openAddPage: any;
+  loading
   constructor(
     public navCtrl: NavController,
     public loadingCtrl: LoadingController,
     public manager: ManagerProvider,
     public modalCtrl: ModalController,
+    public localisation:LocalisationProvider,
     public notify: AppNotify,
     public events: Events,
     public viewCtrl: ViewController,
@@ -32,27 +35,30 @@ export class SecteursPage {
   ) {
     this.openAddPage = this.navParams.get('openAddPage')
     this.events.subscribe('loaded:secteur:new', () => {
-      this.loadData();
+     // this.loadData();
     })
   }
 
   ionViewDidLoad() {
     if (this.openAddPage)
       this.add()
-    this.loadData(true)
+    this.loadData()
   }
 
   dismiss(data?: any) {
     this.viewCtrl.dismiss(data);
   }
 
-  loadData(onlineIfEmpty?: boolean) {
-    this.manager.get('secteur').then(data => {
+  loadData() {
+    this.loading=true ;
+    this.manager.get('secteur',this.localisation.isOnline()).then(data => {
       this.secteurs = data ? data : []
-      if (onlineIfEmpty && (!data || data.length))
-        return this.loadRemoteData();
-    }, error => {
+      this.loading=false ;
+      this.localisation.onConnect(this.localisation.isOnline());
+    },error=>{
+      this.localisation.onConnect(false);
       console.log(error);
+      this.loading=false ;
       this.notify.onError({ message: " Verifiez votre connexion internet" })
     })
 
@@ -62,10 +68,14 @@ export class SecteursPage {
     let loader = this.notify.loading({
       content: "chargement...",
     });
+    this.loading=true ;
     this.manager.get('secteur', true).then(data => {
       this.secteurs = data ? data : []
+      this.loading=false ;
       loader.dismiss();
-    }, error => {
+      this.localisation.onConnect(this.localisation.isOnline());
+    },error=>{
+      this.localisation.onConnect(false);
       loader.dismiss();
       this.notify.onError({ message: "Verifiez votre connexion internet" })
     })

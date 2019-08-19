@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import {PopoverController,Nav, IonicPage, NavController, NavParams, ModalController ,MenuController } from 'ionic-angular';
 import {UserProvider } from '../../providers/user/user';
-
+import { Config } from "../../app/config";
 @IonicPage()
 @Component({
   selector: 'page-menu',
@@ -9,10 +9,10 @@ import {UserProvider } from '../../providers/user/user';
 })
 export class MenuPage {
   @ViewChild(Nav) nav: Nav;
-  rootPage:any='HomePage';
+  rootPage:any= Config.HomePage;
  
   pages:any[]=[
-    {name:'Accueil', component:'HomePage', icon:'home'},
+    {name:'Accueil', component: Config.HomePage, icon:'home'},
     {name:'Mes Clients', component:'PointventesPage',addPage:'PointVentePage', icon:'contacts'},
     {name:'Mes Produits', component:'ProduitsPage',addPage:'ProduitPage', icon:'md-bookmarks'},
     {name:'Zones de vente', component:'SecteursPage', addPage:'SecteurPage',icon:'md-map'},
@@ -20,9 +20,10 @@ export class MenuPage {
   ]
 
    suppages:any[]=[
-    {name:'Mon equipe de vente', component:'VendeursPage', icon:'ios-people'},
-    {name:'Statistiques du mois', component:'StatsPage', icon:'md-analytics'},
-    {name:'Rapports memsuels', component:'RapportsPage', icon:'ios-paper'},    
+    {name:'Mon equipe', component:'VendeursPage', icon:'ios-people'},
+    {name:'Tableau de bord', component:'StatsPage', icon:'md-analytics'},
+    {name:'Cartographie', component:'CartographPage', icon:'ios-map-outline'},
+    {name:'Prévisions', component:'PrevisionsPage', icon:'md-pulse'}
   ] 
 
 
@@ -37,7 +38,7 @@ export class MenuPage {
       userService.resetObserver();
       userService.complete.then(user => {
     if (!user||!user.id||!user.parent) 
-            return userService.go();  
+            return userService.go(user);  
       else if(user.receiveRequests&&user.receiveRequests.length&&!skippecheck)  
             return  userService.request(user.receiveRequests);
       else if(
@@ -46,8 +47,8 @@ export class MenuPage {
            (!userService.amIMyParent()&&(!user.nom)&&!skippecheck)
              )
              return this.nav.setRoot('ProfilePage',{user:user});//userService.profile(user);
-       else if( (!user.parent.abonnement||user.parent.abonnement.expired)&&!skippecheck)
-             return userService.shoulpay(user.parent.abonnement);
+      /* else if( (!user.parent.abonnement||user.parent.abonnement.expired)&&!skippecheck)
+             return userService.shoulpay(user.parent.abonnement);*/
     }, (ERROR) => {
           console.log(ERROR);
           return  userService.unavailable();   			
@@ -57,7 +58,7 @@ export class MenuPage {
 
 
   presentPopover(ev?:any) {
-    let popover = this.popoverCtrl.create('PopOverMenuPage',{navCtrl:this.nav});
+    let popover = this.popoverCtrl.create('PopOverMenuPage',{navCtrl:this.nav,menu:this.menu});
     popover.present({
       ev: ev
     });
@@ -65,6 +66,6 @@ export class MenuPage {
   
   openPage(p:any,openAddPage?:boolean){
     this.menu.close()
-    this.nav.setRoot(p.component,{openAddPage:openAddPage})
+    this.nav.push(p.component,{openAddPage:openAddPage})
   } 
 }

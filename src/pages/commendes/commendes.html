@@ -1,7 +1,10 @@
-<ion-header no-border >
+<ion-header no-border #head>
   <ion-navbar>
+      <button menuToggle  ion-button icon-only showWhen="mobile">
+          <ion-icon name="menu"></ion-icon>
+        </button>    
       <ion-row no-padding>
-          <ion-col> <ion-title >Interactions avec les points de vente</ion-title></ion-col>
+          <ion-col> <ion-title >Historique des visites et livraisons</ion-title></ion-col>
           <ion-col>
             <ion-searchbar [hidden]="!commendes.length"  [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un nom">
             </ion-searchbar>         
@@ -13,16 +16,16 @@
       </button>
       <button ion-button icon-left outline (click)="add()">
         <ion-icon name="add"></ion-icon>
-        Nouveau
+        Créer
       </button>
     </ion-buttons>    
   </ion-navbar>
 </ion-header>
-<ion-content >
+<ion-content padding-top hide-header [header]="head">
  <ion-row justify-content-around>
    <ion-col col-6 >
-    <button ion-button icon-left outline small (click)="openFilter()"><ion-icon name="funnel"></ion-icon> 
-      Critères <span *ngIf="nbrecriteres">  -  ({{nbrecriteres}})</span>
+    <button ion-button icon-left outline small (click)="openFilter()" [disabled]="!isOnline"><ion-icon name="funnel"></ion-icon> 
+      Critères <span *ngIf="nbrecriteres&&isOnline">  -  ({{nbrecriteres}})</span>
     </button>
    </ion-col>
    <ion-col col-6 class="item-right">
@@ -32,11 +35,10 @@
 <ion-list *ngIf="commendes.length">
   <ion-item-sliding  *ngFor="let commende of commendes"  #slidingItem [hidden]="commende.deleted||commende.hide">
   <ion-item (click)="openCart(commende)" text-wrap>
-    <span>{{commende.id}},  {{commende.date|date:'dd/MM/yyyy' }}</span>
     <div *ngIf="commende.pointVente&&commende.id">
     <strong>{{commende.pointVente.nom |uppercase}}</strong> -  {{commende.date|date:'dd/MM/yyyy' }}
-    <p> {{commende.pointVente.telephone}}<span *ngIf="commende.pointVente.quartier">,{{commende.pointVente.quartier}}</span></p>
-    <p> {{commende.pointVente.adresse}} </p>
+    <p><span>{{commende.pointVente.type}}</span><span *ngIf="commende.pointVente.ville">,{{commende.pointVente.ville}}</span><span *ngIf="commende.pointVente.quartier">,{{commende.pointVente.quartier}}</span><span>{{commende.pointVente.adresse}}</span></p>
+    <p>Effectué  {{commende.date|moment:'fromnow'}} <span *ngIf="commende.user&&commende.user.nom"> par {{commende.user.nom}}</span></p>
   </div>
   </ion-item>
   <ion-item-options side="right" [hidden]="commende.terminated">    
@@ -49,7 +51,7 @@
   <button ion-button block small clear (click)="refresh()" style="text-transform: none;">Afficher plus</button>   
  </div>  
 </ion-list> 
-<ion-grid style="height: 80%;justify-content: center;position:absolute;top:20%" *ngIf="!commendes.length">
+<ion-grid style="height: 80%;justify-content: center;position:absolute;top:20%" *ngIf="!commendes.length&&!loading">
     <ion-row style="height: 100%;justify-content: center;" justify-content-center align-items-center>
         <div text-center text-wrap  class="empty" padding>
           Aucun element correspondant aux critères.
@@ -60,6 +62,6 @@
   <button ion-fab color="primary" (click)="add()"><ion-icon name="add" ></ion-icon></button>
 </ion-fab>
 </ion-content>
-<ion-footer >
+<!--<ion-footer >
     <ion-row><ion-col>{{commendes.length}} lignes</ion-col><ion-col></ion-col><ion-col></ion-col></ion-row>
-  </ion-footer>
+  </ion-footer>-->

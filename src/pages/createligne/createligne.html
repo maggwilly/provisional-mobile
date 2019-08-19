@@ -17,6 +17,10 @@
     <ion-input [(ngModel)]="ligne.quantite" name="quantite" type="number" placeholder="" #quantite="ngModel"></ion-input>
   </ion-item>
   <ion-item>
+      <ion-label color="primary"><span>Prix Unitaire </span> </ion-label>
+      <ion-input [(ngModel)]="ligne.pu" name="pu" type="number" placeholder="" #pu="ngModel"></ion-input>
+    </ion-item>  
+  <ion-item>
     <ion-label color="primary"><span>Stock trouvé </span> </ion-label>
     <ion-input [(ngModel)]="ligne.stock" name="stock" type="number" placeholder="" #stock="ngModel"></ion-input>
   </ion-item> 

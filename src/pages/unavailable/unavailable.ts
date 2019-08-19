@@ -22,6 +22,6 @@ export class UnavailablePage {
     console.log('ionViewDidLoad UnavailablePage');
   }
   retry(){
-  this.navCtrl.setRoot('TabsPage', {skippecheck:false}, {animate: true, direction: 'forward'}); 
+  this.navCtrl.setRoot('MenuPage', {skippecheck:false}, {animate: true, direction: 'forward'}); 
 }
 }

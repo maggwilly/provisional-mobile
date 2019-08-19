@@ -3,6 +3,7 @@ import { Events, IonicPage, NavController, NavParams, LoadingController, ItemSli
 import { ManagerProvider } from '../../providers/manager/manager';
 import { Storage } from '@ionic/storage';
 import { AppNotify } from '../../app/app-notify';
+import { LocalisationProvider } from '../../providers/localisation/localisation';
 import * as moment from 'moment';
 @IonicPage()
 @Component({
@@ -14,22 +15,27 @@ export class CommendesPage {
   today: string;
   queryText = '';
   openAddPage:boolean
-  filtre:any={type:'',user:'',secteur:'',ville:'',beforedate:moment().format("YYYY-MM-DD")}
+  filtre:any
   nbrecriteres:number;
+  loading:boolean;
+  isOnline:boolean;
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
     public manager: ManagerProvider,
     public app: App,
     public events: Events,
+    public localisation:LocalisationProvider,
     public modalCtrl: ModalController,
     public loadingCtrl: LoadingController,
     public notify: AppNotify,
     public storage: Storage
   ) {
+    this.isOnline=this.localisation.isOnline();
     this.today = moment().format("YYYY-MM-DD");
     this.openAddPage=this.navParams.get('openAddPage')
     this.events.subscribe('commende.added', (data) => {
+      if(data)
     this.commendes.push(data);
     })
     this.events.subscribe('commende.updated', (data) => {
@@ -46,42 +52,55 @@ export class CommendesPage {
   }
 
   ionViewDidLoad() {
-    if (this.openAddPage)
-    this.add()
-    this.loadData(true);
+    this.refresh()
+
   }
 
-  loadData(onlineIfEmpty?:boolean) {
-      this.manager.get('commende').then(data => {
-        console.log(data);
-        
+  loadData() {
+    this.loading=true;
+      this.manager.get('commende',this.localisation.isOnline()).then(data => {
+        this.loading=false;
         this.commendes = data ? data : []
-        if(onlineIfEmpty&&(!data||data.length))
-            return this.loadRemoteData();
         this.search()
-      }, error => {
+        this.localisation.onConnect(this.localisation.isOnline());
+      },error=>{
+        this.localisation.onConnect(false);
         this.notify.onSuccess({ message: "Verifiez votre connexion internet" })
       })
   }
 
   refresh(){
-    this.filtre={type:'',user:'',secteur:'',ville:'',beforedate:moment().format("YYYY-MM-DD")};
+    this.filtre={type:'',
+    user:'',secteur:''
+    ,ville:'',
+    afterdate:moment().startOf('month').format("YYYY-MM-DD"),
+    beforedate:moment().endOf('week').format("YYYY-MM-DD")
+  };
     this.nbrecriteres=0;
     this.queryText='';
-    return this.loadRemoteData();
+    if (this.openAddPage){
+      this.add()
+       return this.loadData()
+    }
+    if(this.localisation.isOnline())
+       return this.loadRemoteData();
+    return this.loadData()
   }
 
   loadRemoteData() {
+    this.countCricteres(this.filtre);
     let loader = this.loadingCtrl.create({
       content: "chargement...",
     });
+    this.loading=true;
     this.manager.get('commende',true,null,null,this.filtre,this.nbrecriteres).then(data => {
       this.commendes = data ? data : []
-      console.log(data);
-      
+      this.loading=false;
       this.search()
       loader.dismiss();
-    }, error => {
+      this.localisation.onConnect(this.localisation.isOnline());
+    },error=>{
+      this.localisation.onConnect(false);
       this.notify.onSuccess({ message: " Verifiez votre connexion internet" })
       loader.dismiss();
     });
@@ -133,20 +152,21 @@ export class CommendesPage {
   openFilter() {
     let modal = this.modalCtrl.create('FiltreVentePage', { filtre: this.filtre })
     modal.onDidDismiss(data => {
-      let nbrecriteres=0;
       if(!data)
       return;
-    Object.keys(data).forEach(key => {
-      if(data[key])
-        nbrecriteres++;
-    });
-    this.nbrecriteres=nbrecriteres;
-
     return this.loadRemoteData();
     });
     modal.present()
   }
 
+  countCricteres(data:any){
+    let nbrecriteres=0;
+    Object.keys(data).forEach(key => {
+      if(data[key])
+        nbrecriteres++;
+    });
+    this.nbrecriteres=nbrecriteres;
+  }
 
   openCart(commende) {
     this.navCtrl.push('CommendesViewPage', { commende: commende })
@@ -157,6 +177,7 @@ export class CommendesPage {
   }
 
   add() {
+    this.openAddPage=false;
     let commende: any = { lignes: [], date: new Date() };
     let modal = this.modalCtrl.create('SelectclientPage')
     modal.onDidDismiss(data => {
@@ -196,18 +217,6 @@ export class CommendesPage {
 
 
 openMap(){
-  let points:any[]=[];
-  this.commendes.forEach(commende => {
-    if (commende.pointVente.lat&&commende.pointVente.long) {
-      points.push({pos:{lat:commende.pointVente.lat,long:commende.pointVente.long},
-                    title:commende.pointVente.nom,
-                    address:commende.pointVente.adresse,
-                    type:commende.pointVente.type,
-                    quartier:commende.pointVente.quartier,
-                    visited:commende.pointVente.lastCommende,
-                   })
-             }
-       });
-  this.navCtrl.push('MapPage',{points: points,title:`Interactions`});
+  this.navCtrl.push('MapPage',{target: 'commendes',points:  this.commendes,title:`Livraisons effectuées`,filtre: this.filtre});
 }
 }

@@ -1,7 +1,7 @@
 <ion-header no-border no-shadow>
 
     <ion-navbar>
-        <ion-title><span *ngIf="!pointVente.nom">Créer un point de vente</span><span
+        <ion-title><span *ngIf="!pointVente.nom">Créer un client</span><span
                 *ngIf="pointVente.nom">{{pointVente.nom}}</span></ion-title>
         <ion-buttons end>
             <button ion-button (click)="dismiss()" icon-left>
@@ -12,19 +12,10 @@
     </ion-navbar>
 </ion-header>
 <ion-content>
-        <ion-card>
-                <ion-card-header text-wrap>Créer ou modifier un point de vente</ion-card-header>
-        </ion-card> 
     <form #form="ngForm" novalidate="novalidate">
         <ion-list>
-
             <ion-item>
-                <ion-label>J'y suis maintenant</ion-label>
-                <ion-toggle item-right (ionChange)="getCurrentPosition()" [(ngModel)]="pointVente.atnow" name="atnow" #atnow="ngModel" color="primary">
-                </ion-toggle>
-            </ion-item>
-            <ion-item>
-                <ion-label color="primary" floating><span>Nom du point de vente </span> </ion-label>
+                <ion-label color="primary" floating><span>Nom du client</span> </ion-label>
                 <ion-input [(ngModel)]="pointVente.nom" name="nom" type="text" placeholder="" #nom="ngModel">
                 </ion-input>
             </ion-item>
@@ -32,14 +23,15 @@
                 <ion-label color="primary" floating>
                     <span>Categorie</span>
                 </ion-label>
-                <ion-select [(ngModel)]="pointVente.type" name="type" #type="ngModel">
+                <ion-select [(ngModel)]="pointVente.type" name="type" #type="ngModel"> 
+                    <ion-option value="Boutique">Boutique</ion-option>
                     <ion-option value="Super-Marche">Super-Marché</ion-option>
-                    <ion-option value="Boutique-de-Quartier">Boutique-de-Quartier</ion-option>
                     <ion-option value="Kiosque">Kiosque</ion-option>
+                    <ion-option value="Menage">Menage</ion-option>
                     <ion-option value="Boulangerie">Boulangerie</ion-option>
-                    <ion-option value="Debit-de-boisson">Debit-de-boisson</ion-option>
+                    <ion-option value="Debit de boisson">Debit-de-boisson</ion-option>
                     <ion-option value="Station-service">Station-service</ion-option>
-                    <ion-option value="Etalage-de-marché">Etalage-de-marché</ion-option>
+                    <ion-option value="Point de vente">Point de vente</ion-option>
                 </ion-select>
             </ion-item>
             <ion-item>
@@ -78,8 +70,13 @@
                 <ion-input [(ngModel)]="pointVente.quartier" name="quartier" type="text" placeholder=""
                     #quartier="ngModel"></ion-input>
             </ion-item>
+            <ion-item>
+                    <ion-label>J'y suis maintenant</ion-label>
+                    <ion-toggle item-right (ionChange)="getCurrentPosition()" [(ngModel)]="pointVente.atnow" name="atnow" #atnow="ngModel" color="primary">
+                    </ion-toggle>
+            </ion-item>            
             <button ion-item (click)="getCurrentPosition()" [hidden]="!pointVente.atnow">
-                <ion-icon name="marker"></ion-icon>
+                <ion-icon name="pin" item-left></ion-icon>
                 <h2>Position géographique</h2>
                 <p  *ngIf="!fetching&&pointVente.long&&pointVente.lat">l
                     atitude: {{pointVente.lat}}, longitude: {{pointVente.long}}</p>
@@ -94,22 +91,20 @@
                 </ion-textarea>
             </ion-item>
         </ion-list>
-        <div padding="padding" *ngIf="!inset">
-            <button ion-button block icon-right [disabled]="isInvalid()" (click)="onSubmit()">
-                <span *ngIf="!pointVente.id">Creer un point de vente</span>
-                <span *ngIf="pointVente.id">Enregistrer les changements</span>
-                <ion-icon name="md-done-all"></ion-icon>
-            </button>
+        <div padding="padding" >
             <br>
-            <button *ngIf="pointVente.id" ion-button outline block icon-right color="danger" (click)="deleteItem()">
-                <span>Supprimer ce point de vente
+            <button  *ngIf="pointVente.id" ion-button outline block icon-right color="danger" (click)="deleteItem()">
+                <span>Désactiver ce point de vente
                     <ion-icon name="close"></ion-icon>
                 </span>
             </button>
         </div>
     </form>
 </ion-content>
-<ion-footer *ngIf="inset">
-    <button ion-button full [disabled]="isInvalid()" (click)="onSubmit()">Creer un point de vente
-    </button>
+<ion-footer >
+    <button ion-button full icon-right [disabled]="isInvalid()" (click)="onSubmit()">
+            <span *ngIf="!pointVente.id">Creer un point de vente</span>
+            <span *ngIf="pointVente.id">Enregistrer les changements</span>
+            <ion-icon name="md-done-all"></ion-icon>
+        </button>
 </ion-footer>

@@ -3,6 +3,7 @@ import {Events, IonicPage, NavController, NavParams,ModalController, ViewControl
 import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
+import { LocalisationProvider } from '../../providers/localisation/localisation';
 /**
  * Generated class for the PointventesPage page.
  *
@@ -18,17 +19,19 @@ import { AppNotify } from '../../app/app-notify';
 export class SelectclientPage {
   pointventes: any[] = []
   queryText = '';
+  loading:boolean=false;
   constructor(
     public navCtrl: NavController,
     public manager: ManagerProvider,
     public viewCtrl: ViewController,
     public events:Events,
-     public modalCtrl: ModalController,
+    public localisation:LocalisationProvider,
+    public modalCtrl: ModalController,
     public notify: AppNotify,
     public storage: Storage,    
     public navParams: NavParams) {
       this.events.subscribe('loaded:pointvente:new',()=>{
-        this.loadData();
+        //this.loadData();
        })
   }
 
@@ -40,11 +43,15 @@ export class SelectclientPage {
     this.viewCtrl.dismiss(data);
 }
 
-  loadData(onlineIfEmpty?:boolean){    
-
-    this.manager.get('pointvente').then(data=>{
-      this.pointventes=data?data:[]   
+  loadData(){    
+   this.loading=true;
+    this.manager.get('pointvente',this.localisation.isOnline()).then(data=>{
+      this.pointventes=data?data:[]  
+      this.loading=false; 
+      this.localisation.onConnect(this.localisation.isOnline());
     },error=>{
+      this.localisation.onConnect(false);
+      this.loading=false;
       this.notify.onError({message:"Verifiez votre connexion internet"})
   });
   }

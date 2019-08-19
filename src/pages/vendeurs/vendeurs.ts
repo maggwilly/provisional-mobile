@@ -4,12 +4,7 @@ import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import {UserProvider } from '../../providers/user/user';
 import { AppNotify } from '../../app/app-notify'
-/**
- * Generated class for the VendeursPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { LocalisationProvider } from '../../providers/localisation/localisation';
 
 @IonicPage()
 @Component({
@@ -20,10 +15,12 @@ export class VendeursPage {
    vendeurs:any[]=[]
    requesteds:any[]=[]
    queryText = '';
+   loading:boolean=false;
   constructor(
      public navCtrl: NavController,
      public loadingCtrl: LoadingController,
      public manager: ManagerProvider,
+     public localisation:LocalisationProvider,
       public userService:UserProvider,
      public notify: AppNotify,
      public storage: Storage,
@@ -35,12 +32,14 @@ export class VendeursPage {
     this.loadData()
   }
 
-  loadData(){    
-    this.manager.get('user',true).then(data=>{
-      console.log(data);
+  loadData(){   
+    this.loading =true;
+    this.manager.get('vendeur',this.localisation.isOnline()).then(data=>{
       this.vendeurs=data?data:[];
-     // this.requesteds=data&&data.requests?data.requests:[];   
+      this.loading=false;
+      this.localisation.onConnect(this.localisation.isOnline());
     },error=>{
+      this.localisation.onConnect(false);
       this.notify.onError({message:" Verifiez votre connexion internet"})
     })
 
@@ -49,13 +48,15 @@ export class VendeursPage {
   loadRemoteData(){
     let loader= this.notify.loading({
       content: "chargement...",
-    });    
-    this.manager.get('user',true).then(data=>{
-      console.log(data);
+    }); 
+    this.loading =true;   
+    this.manager.get('vendeur',true).then(data=>{
       this.vendeurs=data?data:[];
-     // this.requesteds=data&&data.requests?data.requests:[]; 
+      this.loading=false;   
       loader.dismiss();       
+      this.localisation.onConnect(this.localisation.isOnline());
     },error=>{
+      this.localisation.onConnect(false);
       loader.dismiss();   
       this.notify.onError({message:"Verifiez votre connexion internet"})
     })
@@ -99,7 +100,7 @@ export class VendeursPage {
                  let loader= this.notify.loading({
                    content: "Invitation...",
                       });
-            self.manager.save('request',data,true).then((req)=>{
+            self.manager.save('request',data,this.localisation.isOnline()).then((req)=>{
               loader.dismiss().then(()=>{
                 if(!req.id)
                    return 
@@ -123,7 +124,7 @@ export class VendeursPage {
     let loader= this.notify.loading({
       content: "Suppression...",
           }); 
-this.manager.delete('request',requested,'delete',true).then(data=>{
+this.manager.delete('request',requested,'delete',this.localisation.isOnline()).then(data=>{
  if(data.ok){
    loader.dismiss().then(()=>{
      let  index= this.requesteds.findIndex(item=>item.id==data.deletedId);

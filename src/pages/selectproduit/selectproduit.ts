@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, AlertController, LoadingController
 import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
+import { LocalisationProvider } from '../../providers/localisation/localisation';
 
 @IonicPage()
 @Component({
@@ -13,33 +14,37 @@ export class SelectproduitPage {
 
   produits: any[] = []
   queryText = '';
+  loading:boolean=false;
   constructor(
     public navCtrl: NavController,
     public alertCtrl: AlertController,
     public navParams: NavParams,
     public modalCtrl: ModalController,
     public viewCtrl: ViewController,
+    public localisation:LocalisationProvider,
     public events:Events,
     public manager: ManagerProvider,
     public loadingCtrl: LoadingController,
     public notify: AppNotify,
     public storage: Storage) {
       this.events.subscribe('loaded:produit:new',()=>{
-        this.loadData();
+        //this.loadData();
        })
   }
 
   ionViewDidLoad() {
-      this.loadData(true)
+      this.loadData()
   }
 
-  loadData(onlineIfEmpty?:boolean){    
-
-    this.manager.get('produit').then(data=>{
+  loadData(){ 
+    this.loading=true;   
+    this.manager.get('produit',this.localisation.isOnline()).then(data=>{
       this.produits=data?data:[]
-      if(onlineIfEmpty&&(!data||data.length))
-      return this.loadRemoteData();
+      this.loading=false; 
+      this.localisation.onConnect(this.localisation.isOnline());
     },error=>{
+      this.localisation.onConnect(false);
+      this.loading=false; 
       this.notify.onError({message:" Verifiez votre connexion internet"})
     })
 
@@ -53,7 +58,7 @@ export class SelectproduitPage {
     let loader= this.notify.loading({
       content: "chargement...",
     });    
-    this.manager.get('produit',true).then(data=>{
+    this.manager.get('produit',this.localisation.isOnline()).then(data=>{
       this.produits=data?data:[]
       loader.dismiss();     
     },error=>{

@@ -14,7 +14,7 @@ import { ManagerProvider} from '../../providers/manager/manager';
   templateUrl: 'filtre-pointvente.html',
 })
 export class FiltrePointventePage {
-   filtre:any={};
+   filtre:any={user:""};
    secteurs:any[]=[];
    users:any[]=[]
   constructor(public navCtrl: NavController,
@@ -22,7 +22,7 @@ export class FiltrePointventePage {
     public viewCtrl: ViewController,
      public manager: ManagerProvider,
      public navParams: NavParams) {
-    this.filtre=navParams.get('filtre')?navParams.get('filtre'):{};
+    this.filtre=navParams.get('filtre')?navParams.get('filtre'):{user:""};
   }
 
 

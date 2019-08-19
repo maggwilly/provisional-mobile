@@ -5,6 +5,7 @@ import { Storage } from '@ionic/storage';
 import { Events, App } from 'ionic-angular';
 import { Firebase } from '@ionic-native/firebase/ngx';
 import { BehaviorSubject } from 'rxjs';
+import { LocalisationProvider } from '../localisation/localisation';
 
 
 
@@ -23,27 +24,32 @@ export class UserProvider {
   complete = null
   constructor(
     public manager: ManagerProvider,
+    public connectivityService: LocalisationProvider,
     public storage: Storage,
     public app: App,
     private firebase: Firebase,
     public events: Events) {
-    
+      this.events.subscribe('last:status',(isConnected)=>{
+        this.unavailable();
+     })
     this.resetObserver();
   }
 
   public resetObserver() {
     this.complete = this.makeComplete(); 
     //this.user = null;
-    if(!this.manager.getUserId())
-      return this.events.publish('auth', null);
-    this.manager.getEntitieLocally('user',this.manager.getUserId()).then((data) => {
+    console.log(this.manager.getUserId());
+    if(!this.manager.getUserId()||"null"==this.manager.getUserId())
+        return this.events.publish('auth', null);
+        console.log(this.manager.getUserId());
+    this.manager.show('token',this.manager.getUserId(),this.connectivityService.isOnline()).then((data) => {
       if (!data)
       return this.events.publish('auth', null)
-      this.user = data;
-      this.authenticatedUser.next(this.user)
-      this.manager.show('user', this.manager.getUserId(),true).then((user) => {      
+        this.user = data;
+        this.authenticatedUser.next(this.user)
+        this.manager.show('user', this.manager.getUserId(),this.connectivityService.isOnline()).then((user) => {      
         if (!this.user)
-          return  this.go();
+          return  this.go(user);
         this.user.parent = user.parent;
         this.user.receiveRequests = user.receiveRequests;
         this.manager.storeEntityLocally(`user`,this.user)
@@ -54,6 +60,8 @@ export class UserProvider {
       }, error => {
         this.events.publish('error', error)
       })
+    }, error => {
+      this.events.publish('error', error)
     })
    
   }
@@ -64,7 +72,9 @@ export class UserProvider {
     
   }
 
-  public go() {
+  public go(user) {
+    console.log(user);
+    
     this.app.getRootNav().setRoot('SignupPage', {}, { animate: false })
   }
 
@@ -106,7 +116,7 @@ export class UserProvider {
        resolve(pb);
       });
       self.events.subscribe('error', (error) => {
-        resolve(error);
+        reject(error);
        });
     })
   };
@@ -135,7 +145,7 @@ export class UserProvider {
     this.manager.removeUser().then(() => {
       this.storage.clear();
       this.authenticatedUser.next(null)
-      this.go();
+      this.go(this.user);
     }
     )
   }

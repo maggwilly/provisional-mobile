@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, ModalController, Events } from 'ionic-angular';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { Storage } from '@ionic/storage';
 import { AppNotify } from '../../app/app-notify';
@@ -13,39 +13,46 @@ import leaflet from 'leaflet';
 export class PointVenteDetailPage {
   pointVente: any = {};
   map: any;
- 
+  queryText:string;
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
     public manager: ManagerProvider,
     public loadingCtrl: LoadingController,
     public modalCtrl: ModalController,
+    public events: Events,
     public notify: AppNotify,
     public storage: Storage
   ) {
-    this.pointVente = navParams.get('pointVente');
-    console.log(this.pointVente );
     
+    if(navParams.get('pointVente')){
+      this.pointVente = navParams.get('pointVente');
+      this.storage.set('displayed',this.pointVente)
+    }else
+     this.storage.get('displayed').then((displayed)=>{
+      this.pointVente =displayed;
+    })
   }
 
-  ionViewDidEnter() {
-    this.manager.get('commende',false, this.pointVente.id,'pointVente').then((data) => {
-    //  let commendes:any[]=data;
-    }, error => {
-      this.notify.onError({ message: "probleme inconu" })
-    })
+  ionViewDidLoad() {
 
+    this.events.subscribe('commende.added', (data) => {
+      this.pointVente.lastCommende=data;
+      this.manager.storeEntityLocally('pointvente', this.pointVente)
+      })
     this.loadmap();
   }
 
-  getLignes(commendes:any[]){
-    
-    let lignes:any[]=[];
-    commendes.forEach(commende=>{
-          console.log(commende);
-    })
-  return lignes;
+  openCart(commende) {
+    this.navCtrl.push('CommendesViewPage', { commende: commende })
   }
+
+  add() {
+    let commende: any = { lignes: [], date: new Date(), pointVente:this.pointVente };
+    this.navCtrl.push('CommendesViewPage', { commende: commende })
+  }
+
+
 
   cancelRdv() {
     let loader = this.notify.loading({
@@ -90,6 +97,8 @@ export class PointVenteDetailPage {
     modal.present()
   }
 
+
+
   edit() {
     let modal = this.modalCtrl.create('PointVentePage', { pointVente: this.pointVente })
     modal.onDidDismiss(data => {
@@ -99,34 +108,62 @@ export class PointVenteDetailPage {
     modal.present()
   }
 
+
   loadmap() {
     this.map=null;
     if(!this.pointVente.lat||!this.pointVente.long)
       return
-    this.map = leaflet.map('map', {
+    this.map = leaflet.map('mapdetail', {
       center: [this.pointVente.lat, this.pointVente.long],
-      zoom: 45
+      zoom: 13
   });
    leaflet.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attributions: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      zoom: 45,
-      minResolution: 4891.96981025128,
-      maxResolution: 39135.75848201024,
+      zoom: 13,
+    /*  minResolution: 4891.96981025128,
+      maxResolution: 39135.75848201024,*/
       doubleClickZoom: true,
       center: [this.pointVente.lat, this.pointVente.long]
     }).addTo(this.map)
 
       let markerGroup = leaflet.featureGroup();
-    let marker: any = leaflet.marker([this.pointVente.lat, this.pointVente.long], {icon: blueIcon}).on('click', () => {
-      alert('Marker clicked');
-    })
+    let marker: any = leaflet.marker([this.pointVente.lat, this.pointVente.long], {icon: blueIcon}).bindPopup(
+      `<h2 style="font-weight: bold; font-size:1.9em">${this.pointVente.nom}</h2>
+      <p style="color:dimgray;font-size: 1.0em">${this.pointVente.telephone}, ${this.pointVente.type},${this.pointVente.ville}, ${this.pointVente.quartier}</p>
+      <p style=""> ${this.pointVente.adresse}</p>`)
+      .openPopup()
+      .on('click', () => {
+        
+      })
     markerGroup.addLayer(marker);
     this.map.addLayer(markerGroup);
-
-
-
-
   }
 
+  search() {
+    if(!this.pointVente.rendezvous||!this.pointVente.rendezvous.previsions||!this.pointVente.rendezvous.previsions.length)
+       return;
+    let queryText = this.queryText.toLowerCase().replace(/,|\.|-/g, ' ');
+    let queryWords = queryText.split(' ').filter(w => !!w.trim().length);
+    this.pointVente.rendezvous.previsions.forEach(item => {
+      item.hide = true;
+      this.filter(item, queryWords);
+    });
+
+  }
+  filter(item, queryWords) {
+    let matchesQueryText = false;
+    if (queryWords.length) {
+      // of any query word is in the session name than it passes the query test
+      queryWords.forEach(queryWord => {
+        if (item.nom.toLowerCase().indexOf(queryWord) > -1) {
+          matchesQueryText = true;
+        }
+      });
+    } else {
+      // if there are no query words then this session passes the query test
+      matchesQueryText = true;
+    }
+    item.hide = !(matchesQueryText);
+  }
 }
 

@@ -25,6 +25,7 @@ export class PointVentePage {
     public viewCtrl: ViewController,
     public notify: AppNotify,
     public modalCtrl:ModalController,
+    public localisation:LocalisationProvider,
     public userService:UserProvider,
     public manager: ManagerProvider,
     public location:LocalisationProvider
@@ -88,7 +89,7 @@ onSubmit(){
       let loader= this.notify.loading({
       content: "Enregistrement...",
     }); 
-  this.manager.save('pointvente',this.pointVente).then((data)=>{
+  this.manager.save('pointvente',this.pointVente,this.localisation.isOnline()).then((data)=>{
     loader.dismiss().then(()=>{
       if(!data.error){
         self.dismiss(data);

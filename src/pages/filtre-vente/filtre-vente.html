@@ -11,7 +11,7 @@
 </ion-header>
 <ion-content padding>
         <ion-item>
-                <ion-label>Visites terminées</ion-label>
+                <ion-label>Livraison ou visite terminées</ion-label>
                 <ion-toggle item-right  [(ngModel)]="filtre.terminated" name="terminated" #terminated="ngModel" color="primary">
                 </ion-toggle>
             </ion-item>    
@@ -39,18 +39,18 @@
             <ion-option *ngFor="let secteur of secteurs" [value]="secteur.id">{{secteur.nom}}</ion-option>
         </ion-select>
     </ion-item>
-    <ion-item-divider> Date de la visite</ion-item-divider>
+    <ion-item-divider>Date de la livraison ou visite</ion-item-divider>
         <ion-row>
                 <ion-col>
                     <ion-item>
-                        <ion-label color="primary" floating><span>Effectuéés le, ou après le  </span></ion-label>
+                        <ion-label color="primary" floating><span>Livré ou visité après le  </span></ion-label>
                         <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="D MMM  YYYY" min="2019" doneText="Terminé"
                             cancelText="Annuler" name="afterdate" [(ngModel)]="filtre.afterdate" #date="ngModel"></ion-datetime>
                     </ion-item>
                 </ion-col>
                 <ion-col>
                     <ion-item>
-                        <ion-label color="primary" floating><span>Effectuée le, ou avant le </span></ion-label>
+                        <ion-label color="primary" floating><span>Livré ou visité avant le </span></ion-label>
                         <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="D MMM  YYYY" min="2019" doneText="Terminé"
                             cancelText="Annuler" name="beforedate" [(ngModel)]="filtre.beforedate" #date="ngModel">
                         </ion-datetime>
@@ -59,9 +59,9 @@
             </ion-row>            
     <ion-item *ngIf="users&&users.length">
         <ion-label color="primary" >
-            <span>Effectuée par</span>
+            <span>Livré ou visité par</span>
         </ion-label>
-        <ion-select [(ngModel)]="filtre.user" name="user" #user="ngModel">
+        <ion-select [(ngModel)]="filtre.visitedBy" name="visitedBy" #user="ngModel">
             <ion-option  value="">Tout le monde</ion-option>
             <ion-option *ngFor="let user of users" [value]="user.id">{{user.nom}}</ion-option>
         </ion-select>

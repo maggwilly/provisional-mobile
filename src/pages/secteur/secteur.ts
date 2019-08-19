@@ -59,7 +59,7 @@ export class SecteurPage {
     let loader = this.notify.loading({
       content: "Enregistrement...",
     });
-    this.manager.save('secteur', this.secteur).then((data) => {
+    this.manager.save('secteur', this.secteur, this.location.isOnline()).then((data) => {
       loader.dismiss().then(() => {
         if (!data.error) {
           self.dismiss(data);

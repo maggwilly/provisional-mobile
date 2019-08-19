@@ -39,7 +39,8 @@ export class SignupPage {
   public error: any;
   public loading;
   public masks: any;
-  constructor(public navCtrl: NavController,
+  constructor(
+    public navCtrl: NavController,
   public alertCtrl: AlertController,
   public loadingCtrl: LoadingController,
   public formBuilder: FormBuilder,
@@ -151,8 +152,11 @@ onSubmit(){
         code.user = this.data.user.id;
         this.manager.post('token', code, 'check',true).then(data => {
           this.submitted = false;
-          if(data.error_code)
-             return
+          if(data.error_code){
+            this.appNotify.showAlert({message:data.message})
+            return
+          }
+            
           this.manager.storeUser(data).then(()=>{
             this.navCtrl.setRoot('MenuPage', {}, {animate: true, direction: 'forward'});
           }, error => {

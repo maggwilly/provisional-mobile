@@ -1,5 +1,28 @@
 page-point-vente-detail {
-#map{
-    height: 50vh;
+    .scroll-content{
+        margin-top: $toolbar-md-height ;
+    }
+
+#mapdetail,#mapempty{
+    min-height: 50vh;
+    width: 100%;
+    position: fixed;
+    top: 0%;
+    right: 0%;
+}
+
+.rendez-vous{
+    background-color: map-get($colors, primary);
+    font-weight: bold;
+    ion-item{
+       background: transparent !important;
+    }
+    .card-header-md{
+        font-size: 2.1rem;
+        padding: 16px;
+    }
+    .card-header-md, p{
+    color: white;
+   }
 }
 }

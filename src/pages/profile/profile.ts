@@ -3,8 +3,8 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { AppNotify } from '../../app/app-notify';
 import { ManagerProvider} from '../../providers/manager/manager';
 import {UserProvider } from '../../providers/user/user';
-import { Storage } from '@ionic/storage';
 
+import { LocalisationProvider } from '../../providers/localisation/localisation';
 /**
  * Generated class for the ProfilePage page.
  *
@@ -23,7 +23,7 @@ export class ProfilePage {
      public navParams: NavParams,
      public notify: AppNotify,
      public userService:UserProvider,
-     public storage: Storage,
+     public localisation: LocalisationProvider,
      public manager: ManagerProvider,) {
       this.user=this.navParams.get('user')
       if(!this.userService.amIMyParent())
@@ -44,17 +44,11 @@ export class ProfilePage {
   }
 
 dismiss(skippecheck=true){
-  this.navCtrl.setRoot('TabsPage', {skippecheck:skippecheck}, {animate: true, direction: 'forward'}); 
+  this.navCtrl.setRoot('MenuPage', {skippecheck:skippecheck}, {animate: true, direction: 'forward'}); 
 }
   onSubmit(){
-   this.manager.put('user',this.user,true).then((data)=>{
-     if(data.id){
-        this.storage.set('user',data).then(()=>{
-          this.dismiss(false);
-        })
-
-     }
-       
+   this.manager.save('user',this.user,this.localisation.isOnline()).then((data)=>{
+    this.dismiss(false);  
    },error=>{
      console.log(error);
      

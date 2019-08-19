@@ -1,3 +1,8 @@
 page-pointventes {
     $searchbar-md-input-background-color:inherit;
+    md{
+        .scroll-content{
+            margin-top: $content-md-marging-top ;
+        }
+    }
 }

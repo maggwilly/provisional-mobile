@@ -16,7 +16,7 @@ import { ManagerProvider} from '../../providers/manager/manager';
   templateUrl: 'produit.html',
 })
 export class ProduitPage {
-   produit:any={}
+   produit:any={enabled:true, unite:'Unité'}
   inset:boolean;
   test_1:boolean;
   openAddPage:boolean
@@ -27,13 +27,12 @@ export class ProduitPage {
        public viewCtrl: ViewController,
        public notify: AppNotify,
        public manager: ManagerProvider,) {
-       this.produit=this.navParams.get('produit')?this.navParams.get('produit'):{}
+       this.produit=this.navParams.get('produit')?this.navParams.get('produit'):this.produit
        if(!this.inset)
        this.inset=this.navParams.get('inset');
   }
   ionViewDidLoad() { 
-        console.log(  this.produit);
-        
+  
   }
 
 

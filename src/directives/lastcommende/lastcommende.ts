@@ -12,18 +12,18 @@ import { ManagerProvider } from '../../providers/manager/manager';
 export class LastcommendeDirective {
  @Input()
  pointvente:any
-  constructor(public manager: ManagerProvider) {
-   
-  }
+  constructor(public manager: ManagerProvider) { }
+
 
   ngOnInit() {
-    console.log('Hello LastcommendeDirective Directive');
-    if(this.pointvente&&this.pointvente.lastCommende)
+    if(!this.pointvente||!this.pointvente.lastCommende)
+       return;
+       console.log('Hello LastcommendeDirective Directive');
+       this.pointvente.lastCommende.loading=true;
     this.manager.show('commende',this.pointvente.lastCommende.id).then((data)=>{
       if(data)
         this.pointvente.lastCommende=data;
-        console.log(data);
-        
+        console.log(data);      
     })
   }
 

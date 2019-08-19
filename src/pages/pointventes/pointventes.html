@@ -1,8 +1,11 @@
 
-<ion-header  no-border no-shadow>
-  <ion-navbar>
+<ion-header  no-border no-shadow #head>
+  <ion-navbar hideBackButton=true>
+      <button menuToggle  ion-button icon-only showWhen="mobile">
+          <ion-icon name="menu"></ion-icon>
+        </button>
     <ion-row no-padding>
-      <ion-col><ion-title>Liste des points de vente</ion-title></ion-col>
+      <ion-col><ion-title>Mes clients</ion-title></ion-col>
       <ion-col>
         <ion-searchbar *ngIf="pointventes" [hidden]="!pointventes.length" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un nom">
         </ion-searchbar>         
@@ -19,32 +22,38 @@
     </ion-buttons>       
   </ion-navbar>
 </ion-header>
-<ion-content>
+<ion-content padding-top hide-header [header]="head">  
       <ion-row justify-content-around>
         <ion-col col-6 >
-         <button ion-button icon-left outline small (click)="openFilter()"><ion-icon name="funnel"  ></ion-icon> Critères  
-          <span *ngIf="nbrecriteres">  -  ({{nbrecriteres}})</span></button>
+         <button ion-button icon-left outline small (click)="openFilter()" [disabled]="!isOnline"><ion-icon name="funnel"  ></ion-icon> Critères  
+          <span *ngIf="nbrecriteres&&isOnline">  -  ({{nbrecriteres}})</span></button>
         </ion-col>
         <ion-col col-6 class="item-right">
          <button float-right ion-button icon-left outline small (click)="openMap()" [disabled]="!pointventes.length"> <ion-icon name="map"></ion-icon>Carte</button>
        </ion-col>   
       </ion-row>
-    <ion-list *ngIf="pointventes.length">
-        <ion-item-sliding *ngFor="let pointvente of pointventes"  [hidden]="pointvente.hide" #slidingItem>
-        <ion-item #item (click)="show(pointvente,slidingItem)" >
-            {{pointvente.nom}}
-            <p><span>{{pointvente.telephone}}</span><span *ngIf="pointvente.ville">, {{pointvente.ville}}</span><span *ngIf="pointvente.quartier">, {{pointvente.quartier}}</span></p>
-            <p *ngIf="pointvente.adresse"><span>{{pointvente.adresse}}</span></p>
-            <button ion-button small clear  icon-only  item-right>
-              <ion-icon name="md-more" color="primary" ></ion-icon>
-          </button>            
+    <ion-list *ngIf="pointventes&&pointventes.length">
+        <ion-item-sliding *ngFor="let pointvente of pointventes"  [hidden]="pointvente.hide||!pointvente.nom" #slidingItem>
+        <ion-item #item (click)="show(pointvente,slidingItem)" text-wrap>
+            {{pointvente.nom}}  <strong *ngIf="pointvente.quartier">- {{pointvente.quartier}}</strong>
+            <span float-right><small *ngIf="pointvente.firstCommende">Engagé {{pointvente.firstCommende.date|moment}}
+              </small>
+                <small *ngIf="!pointvente.firstCommende">Créé {{pointvente.date|moment}} </small>
+                <small *ngIf="!pointvente.firstCommende&&pointvente.user&&pointvente.user.nom"> par {{pointvente.user.nom}}</small>    
+              </span>
+            <p><a href="tel: {{pointvente.telephone}}">{{pointvente.telephone}}</a>
+              <span *ngIf="pointvente.ville">, {{pointvente.ville}}</span>
+              <span *ngIf="pointvente.type">{{pointvente.type}}</span>
+              <span *ngIf="pointvente.adresse">, {{pointvente.adresse}}</span>
+            </p>  
+
         </ion-item>
         <ion-item-options side="left">
           <button ion-button color="danger" style="text-transform: none;" (click)="delete(pointvente,slidingItem)">
-            <ion-icon name="trash"></ion-icon> supprimer
+            <ion-icon name="trash"></ion-icon> 
           </button>
           <button ion-button color="primary" style="text-transform: none;" (click)="add(pointvente,slidingItem)">
-              <ion-icon name="create"></ion-icon> Modifier
+              <ion-icon name="create"></ion-icon> 
             </button>            
       </ion-item-options>        
      </ion-item-sliding> 
@@ -52,14 +61,19 @@
        <button ion-button block small clear (click)="refresh()" style="text-transform: none;">Afficher plus</button>   
       </div>    
     </ion-list>
-    <ion-grid style="height: 80%;justify-content: center;position:absolute;top:20%" *ngIf="!pointventes.length">
-        <ion-row style="height: 100%;justify-content: center;" justify-content-center align-items-center>
-            <div text-center text-wrap  class="empty" padding>
-              Aucun element correspondant aux critères.
-            </div>
+    <ion-grid style="justify-content: center; height: 100%;" *ngIf="loading">
+        <ion-row style="justify-content: center;height: 100%;" justify-content-center align-items-center>
+            <ion-spinner name="ios"></ion-spinner>
         </ion-row>
-      </ion-grid>    
+      </ion-grid>  
+        <ion-grid style="height: 80%;justify-content: center;position:absolute;top:20%" *ngIf="!pointventes.length&&!loading">
+            <ion-row style="height: 100%;justify-content: center;" justify-content-center align-items-center>
+                <div text-center text-wrap  class="empty" padding>
+                  Aucun element a afficher.
+                </div>
+            </ion-row>
+          </ion-grid>    
 </ion-content>
-<ion-footer >
+<ion-footer showWhen="core">
     <ion-row><ion-col>{{pointventes.length}} lignes</ion-col><ion-col></ion-col><ion-col></ion-col></ion-row>
-  </ion-footer>
+</ion-footer>

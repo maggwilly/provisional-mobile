@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
 import * as moment from 'moment';
+import { LocalisationProvider } from '../../providers/localisation/localisation';
 
 @IonicPage()
 @Component({
@@ -13,57 +14,81 @@ import * as moment from 'moment';
 export class PointventesPage {
   pointventes: any[] = []
   openAddPage: boolean;
-  filtre:any={type:'',user:'',secteur:'',ville:'',beforedate:moment().format("YYYY-MM-DD"),beforelastvisitedate:moment().format("YYYY-MM-DD")}
+  filtre:any
   queryText = '';
   nbrecriteres:number;
+  loading:boolean;
+  isOnline:boolean;
   constructor(
     public navCtrl: NavController,
     public manager: ManagerProvider,
     public loadingCtrl: LoadingController,
+    public localisation:LocalisationProvider,
     public modalCtrl: ModalController,
     public events: Events,
     public notify: AppNotify,
     public storage: Storage,
     public navParams: NavParams) {
+      this.isOnline=this.localisation.isOnline();
     this.openAddPage = this.navParams.get('openAddPage')
+    this.filtre = this.navParams.get('filtre');
     this.events.subscribe('loaded:pointvente:new', () => {
-      this.loadData();
+     /* if(!this.nbrecriteres)
+      this.loadData();*/
+  
     })
   }
 
   ionViewDidLoad() {
-    if (this.openAddPage)
-      this.add()
-    this.loadData(true)
+    this.refresh();
   }
 
-  loadData(onlineIfEmpty?: boolean) {
-    this.manager.get('pointvente').then(data => {
+
+  loadData() {
+    this.loading=true;
+    this.manager.get('pointvente',this.localisation.isOnline()).then(data => {
       this.pointventes = data ? data : []
-      if (onlineIfEmpty && (!data || data.length))
-        return this.loadRemoteData();
-    }, error => {
+      this.loading=false;
+      this.search()
+      this.localisation.onConnect(this.localisation.isOnline());
+    },error=>{
+      this.localisation.onConnect(false);
       this.notify.onError({ message: "Verifiez votre connexion internet" })
     })
   }
 
   refresh(){
-    this.filtre={type:'',user:'',secteur:'',ville:'',beforedate:moment().format("YYYY-MM-DD"),beforelastvisitedate:moment().format("YYYY-MM-DD")};
+    if(!this.filtre)
+    this.filtre={type:'',user:'',
+    secteur:'',ville:'',
+    afterdate:moment().startOf('year').format("YYYY-MM-DD"),
+    beforedate:moment().endOf('week').format("YYYY-MM-DD")
+  };
     this.nbrecriteres=0;
     this.queryText='';
-    return this.loadRemoteData();
+    if (this.openAddPage){
+         this.add()
+        return this.loadData()
+  }
+    if(this.localisation.isOnline())
+       return this.loadRemoteData();
+       return this.loadData()
   }
 
   loadRemoteData() {
+    this.countCricteres(this.filtre);
     let loader = this.notify.loading({
       content: "chargement...",
     });
+    this.loading=true;
     this.manager.get('pointvente',true,null,null,this.filtre,this.nbrecriteres).then(data => {
       this.pointventes = data ? data : []
+      this.loading=false;
+      this.search()
       loader.dismiss();
-    }, error => {
-      console.log(error);
-
+      this.localisation.onConnect(this.localisation.isOnline());
+    },error=>{
+      this.localisation.onConnect(false);
       loader.dismiss();
       this.notify.onError({ message: "Verifiez votre connexion internet" })
     })
@@ -118,6 +143,7 @@ export class PointventesPage {
 
   }
   add(pointVente = {}, slidingItem?: ItemSliding) {
+    this.openAddPage=false;
     if (slidingItem)
       slidingItem.close();
     let modal = this.modalCtrl.create('PointVentePage', { pointVente: pointVente })
@@ -140,17 +166,19 @@ export class PointventesPage {
     modal.onDidDismiss(data => {
       if(!data)
       return;
-      let nbrecriteres=0;
-    Object.keys(data).forEach(key => {
-      if(data[key])
-        nbrecriteres++;
-    });
-    this.nbrecriteres=nbrecriteres;
     return this.loadRemoteData();
     });
     modal.present()
   }
 
+  countCricteres(data:any){
+    let nbrecriteres=0;
+    Object.keys(data).forEach(key => {
+      if(data[key])
+        nbrecriteres++;
+    });
+    this.nbrecriteres=nbrecriteres;
+  }
 
   findRemove(data: any) {
     let index = this.pointventes.findIndex(item => item.id == data.deletedId);
@@ -187,20 +215,7 @@ export class PointventesPage {
   }
 
   openMap() {
-    let points: any[] = [];
-    this.pointventes.forEach(point => {
-      if (point.lat && point.long) {
-        points.push({
-          pos: { lat: point.lat, long: point.long },
-          title: point.nom,
-          address: point.adresse,
-          type: point.type,
-          quartier: point.quartier,
-          visited: point.lastCommende,
-        })
-      }
-    });
-    this.navCtrl.push('MapPage', { points: points, title: `Les points de vente` });
+    this.navCtrl.push('MapPage', { target: 'pointvente',points: this.pointventes, title: `Points de vente créés`,filtre: this.filtre });
   }
 
   doScroll(env){

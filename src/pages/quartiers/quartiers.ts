@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, ViewController, AlertController, NavParams } from 'ionic-angular';
 import { ManagerProvider } from '../../providers/manager/manager';
 import {Config} from '../../app/config'
+import { AppNotify } from '../../app/app-notify';
 /*
   Generated class for the Select page.
 
@@ -22,6 +23,7 @@ export class QuartiersPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public viewCtrl: ViewController,
+    public notify: AppNotify,
     public alertCtrl: AlertController,
     public manager: ManagerProvider, ) {
     this.ville = this.navParams.get('ville')
@@ -75,9 +77,33 @@ export class QuartiersPage {
     return item;
   }
 
-  newQuartier() {
-    if (this.exist(this.newQuartiers, this.queryText))
-      return this.dismiss(this.queryText)
-    this.dismiss(this.queryText)
-  }
+  add() {
+    let self=this;
+    this.notify.showAlert({
+      subTitle:"Nouveau quartier",
+      message:'Ajouter un nouveau quartier',
+      inputs: [
+        {
+          name: 'nom',
+          type: 'text',
+          placeholder: 'Saisir le nom',
+          value: ''
+        }
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          handler: () => {
+            console.log('Disagree clicked');
+          }
+        },
+        {
+          text: 'Ajouter',
+          handler: (data) => {
+            self.dismiss(data.nom)
+          }
+        }
+      ]
+    })
+}
 }

@@ -1,0 +1,38 @@
+
+<ion-header>
+    <ion-navbar>
+        <button menuToggle  ion-button icon-only showWhen="mobile">
+            <ion-icon name="menu"></ion-icon>
+          </button>      
+      <ion-title>Cartographie</ion-title>
+      <ion-buttons end>
+          <button ion-button icon-left (click)="refresh()"> 
+            <ion-icon name="refresh"></ion-icon><span showWhen="core">Actualiser</span> 
+          </button> 
+          <button ion-button icon-only (click)="openFilter()" [disabled]="!isOnline">
+              <ion-icon name="funnel"></ion-icon><span showWhen="core">Seletionnez</span> 
+            </button>                
+        </ion-buttons>      
+    </ion-navbar>
+  </ion-header>
+  <ion-content >
+    <div class="map-title-box">
+      <ion-card  class="map-title" item-center>
+            <ion-item text-wrap>
+                <strong *ngIf="filtre"><span *ngIf="filtre.afterdate">Entre le {{filtre.afterdate|date:'dd/MM/yyyy'}}</span>
+                  <span *ngIf="filtre.beforedate"> <span *ngIf="filtre.afterdate">et</span><span *ngIf="!filtre.afterdate">, Avant</span> le {{filtre.beforedate|date:'dd/MM/yyyy'}}</span></strong>
+                <p *ngIf="filtre">
+                    <span *ngIf="filtre.type">, {{filtre.type}}</span><span *ngIf="!filtre.type">Toutes catégories</span>
+                    <span *ngIf="filtre.ville">{{filtre.ville}}</span><span *ngIf="!filtre.ville">, toutes les villes</span>
+                   <span *ngIf="filtre.quartier">, {{filtre.quartier}}</span><span *ngIf="!filtre.quartier">, tous les quartiers</span>
+                </p>
+            </ion-item>
+        </ion-card> 
+      </div>  
+
+  <div #map id="map" >
+  </div>
+  <ion-fab right bottom>
+      <button ion-fab  color="danger" (click)="openFilter()"><ion-icon name="funnel" ></ion-icon></button>
+    </ion-fab> 
+  </ion-content>

@@ -1,0 +1,57 @@
+
+<ion-header #head>
+  <ion-navbar>
+      <button menuToggle  ion-button icon-only showWhen="mobile">
+          <ion-icon name="menu"></ion-icon>
+        </button>
+      <ion-row no-padding>
+          <ion-col> <ion-title >Prévisions de livraisons</ion-title></ion-col>
+          <ion-col>
+            <ion-searchbar [hidden]="!previsions.length"  [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un produit">
+            </ion-searchbar>         
+          </ion-col>
+        </ion-row>
+        <ion-buttons end>
+            <button ion-button icon-left (click)="refresh()"> 
+              <ion-icon name="refresh"></ion-icon><span showWhen="core">Actualiser</span> 
+            </button> 
+            <button ion-button icon-only (click)="openFilter()" [disabled]="!isOnline">
+                <ion-icon name="funnel"></ion-icon><span showWhen="core">Seletionnez</span> 
+              </button>                
+          </ion-buttons>       
+  </ion-navbar>
+</ion-header>
+<ion-content padding-top hide-header [header]="head">
+    <ion-card>
+          <ion-item text-wrap>
+              <strong *ngIf="filtre"><span *ngIf="filtre.afterdate"> Entre le {{filtre.afterdate|date:'dd/MM/yyyy'}}</span>
+                <span *ngIf="filtre.beforedate"> <span *ngIf="filtre.afterdate">et</span><span *ngIf="!filtre.afterdate">, Avant</span> le {{filtre.beforedate|date:'dd/MM/yyyy'}}</span></strong>
+              <p *ngIf="filtre">
+                  <span *ngIf="filtre.type">, {{filtre.type}}</span><span *ngIf="!filtre.type">Toutes catégories</span>
+                  <span *ngIf="filtre.ville">{{filtre.ville}}</span><span *ngIf="!filtre.ville">, toutes les villes</span>
+                 <span *ngIf="filtre.quartier">, {{filtre.quartier}}</span><span *ngIf="!filtre.quartier">, tous les quartiers</span>
+              </p>
+          </ion-item>
+      </ion-card>  
+    <ion-list *ngIf="previsions.length">
+        <ion-item  *ngFor="let produit of previsions"  [hidden]="produit.hide" (click)="openDetail(produit)" text-wrap> 
+            {{produit.nom}}<ion-badge  color="light"> {{produit.next_cmd_quantity}} {{produit.unite}}(s)</ion-badge>
+            <p>{{produit.description}}</p>
+            <p *ngIf="produit.next_cmd_date">{{produit.next_cmd_quantity}} {{produit.unite}}(s) à partir de 
+              <ion-badge> {{produit.next_cmd_date|moment}} </ion-badge>
+              </p>      
+        </ion-item>  
+    </ion-list>
+    <ion-grid style="justify-content: center;height: 100%;" *ngIf="loading"> 
+        <ion-row style="justify-content: center;height: 100%;" justify-content-center align-items-center>
+            <ion-spinner name="ios"></ion-spinner>
+        </ion-row>
+      </ion-grid> 
+      <ion-grid style="height: 80%;justify-content: center;position:absolute;top:20%" *ngIf="!previsions.length&&!loading">
+          <ion-row style="height: 100%;justify-content: center;" justify-content-center align-items-center>
+              <div text-center text-wrap  class="empty" padding>
+                Aucune prévision possible à partir des données connues.
+              </div>
+          </ion-row>
+        </ion-grid>        
+</ion-content>

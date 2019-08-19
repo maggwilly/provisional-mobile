@@ -1,53 +1,85 @@
-<ion-header >
+<ion-header #head>
   <ion-navbar>
-    <button menuToggle  ion-button icon-only>
+    <button menuToggle ion-button icon-only showWhen="mobile">
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-row no-padding>
-        <ion-col ><ion-title>Accueil</ion-title></ion-col>
-        <ion-col>
-          <ion-searchbar *ngIf="rendezvous" [hidden]="!rendezvous.length" [(ngModel)]="queryText" (ionInput)="search()" placeholder="Recherchez un nom">
-          </ion-searchbar>         
-        </ion-col>
-      </ion-row>    
+      <ion-col>
+        <ion-title>Prévisions de passages</ion-title>
+      </ion-col>
+      <ion-col>
+        <ion-searchbar *ngIf="rendezvous" [hidden]="!rendezvous.length" [(ngModel)]="queryText" (ionInput)="search()"
+          placeholder="Recherchez un nom">
+        </ion-searchbar>
+      </ion-col>
+    </ion-row>
     <ion-buttons end>
       <button ion-button icon-only (click)="refresh()">
         <ion-icon name="refresh"></ion-icon>
       </button>
       <button ion-button icon-only (click)="presentPopover($event)">
-          <ion-icon name="more"></ion-icon>
-        </button>       
+        <ion-icon name="more"></ion-icon>
+      </button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
-<ion-content>
-    <ion-row justify-content-around>
-        <ion-col col-6 >
-         <button ion-button icon-left outline small (click)="openFilter()"><ion-icon name="funnel"></ion-icon> 
-          Critères  
-          <span *ngIf="nbrecriteres"> - ({{nbrecriteres}})</span></button>
-        </ion-col>
-        <ion-col col-6 class="item-right">
-         <button float-right ion-button icon-left outline small (click)="openMap()" [disabled]="!rendezvous.length"> <ion-icon name="map"></ion-icon>Carte</button>
-       </ion-col>   
-      </ion-row>
-   <ion-list *ngIf="rendezvous.length">
-    <ion-item *ngFor="let pointVente of rendezvous" (click)="show(pointVente)" [hidden]="pointVente.hide">
-      <h2 >{{pointVente.nom}}</h2>
-      <p>{{pointVente.telephone}}</p>
-    </ion-item>
+<ion-content padding-top hide-header [header]="head">
+  <ion-row justify-content-around>
+    <ion-col col-6>
+      <button ion-button icon-left outline small (click)="openFilter()" [disabled]="!isOnline">
+        <ion-icon name="funnel"></ion-icon>
+        Critères
+        <span *ngIf="nbrecriteres&&isOnline"> - ({{nbrecriteres}})</span>
+      </button>
+    </ion-col>
+    <ion-col col-6 class="item-right">
+      <button float-right ion-button icon-left outline small (click)="openMap()" [disabled]="!rendezvous.length">
+        <ion-icon name="map"></ion-icon>Carte
+      </button>
+    </ion-col>
+  </ion-row>
+  <ion-list *ngIf="groups.length">
+    <ion-item-group *ngFor="let group of groups" [hidden]="!group.poinventes">
+      <ion-item-divider color="light">{{group.secteur}} ({{group.poinventes.length}})</ion-item-divider>
+      <ion-item #item *ngFor="let pointvente of group.poinventes" (click)="show(pointvente)"
+        [hidden]="pointvente.hide||!pointvente.nom" text-wrap>
+        {{pointvente.nom}} <strong *ngIf="pointvente.quartier"><span> - {{pointvente.quartier}}</span></strong>
+        <ion-badge *ngIf="pointvente.rendezvous&&pointvente.rendezvous.dateat"
+          [ngClass]="{'passed': pointvente.rendezvous.passdays<0, 'today':pointvente.rendezvous.passdays==0 , 'future':pointvente.rendezvous.passdays>0}">
+          <span> {{pointvente.rendezvous.dateat |moment}}</span>
+        </ion-badge>
+        <p><a href="tel: {{pointvente.telephone}}">{{pointvente.telephone}}</a><span *ngIf="pointvente.ville">,
+            {{pointvente.ville}}</span>
+          <span *ngIf="pointvente.type">, {{pointvente.type}}</span><span *ngIf="pointvente.adresse">,
+            {{pointvente.adresse}}</span>
+          - <small *ngIf="pointvente.firstCommende">Engagé {{pointvente.firstCommende.date|moment:'fromnow'}}</small>
+          <small *ngIf="!pointvente.firstCommende">Prospecté {{pointvente.date|moment:'fromnow'}}</small>
+        </p>
+        <p *ngIf="pointvente.rendezvous&&pointvente.rendezvous.dateat">
+          <span
+            [ngClass]="{'passed': pointvente.rendezvous.passdays<0, 'today':pointvente.rendezvous.passdays==0 , 'future':pointvente.rendezvous.passdays>0}">
+            Livraison prévue pour {{pointvente.rendezvous.dateat |moment}}</span>
+          <ion-icon *ngIf="pointvente.rendezvous.persist" name="md-checkmark-circle"></ion-icon>
+        </p>
+        <p *ngIf="pointvente.rendezvous&&!pointvente.rendezvous.dateat">
+          <span *ngIf="pointvente.rendezvous.produitnonvendu&&pointvente.lastCommende"> Dernier livraison
+            {{pointvente.lastCommende.date |moment}}, <span class="danger">{{pointvente.rendezvous.produitnonvendu}} non
+              livré(s)</span> </span>
+          <span *ngIf="!pointvente.rendezvous.produitnonvendu&&pointvente.lastCommende"> Dernier passage
+            {{pointvente.lastCommende.date |moment}} </span>
+          <span class="danger" *ngIf="!pointvente.lastCommende">Pas encore engagé</span>
+        </p>
+      </ion-item>
+    </ion-item-group>
     <div padding>
-      <button ion-button block small clear (click)="refresh()" style="text-transform: none;">Afficher plus</button>   
-     </div>  
+      <button ion-button block small clear (click)="refresh()" style="text-transform: none;">Afficher plus</button>
+    </div>
   </ion-list>
-  <ion-grid style="height: 80%;justify-content: center;position:absolute;top:20%" *ngIf="!rendezvous.length">
+  <ion-grid style="height: 80%;justify-content: center;position:absolute;top:20%" *ngIf="!groups.length&&!loading">
     <ion-row style="height: 100%;justify-content: center;" justify-content-center align-items-center>
-        <div text-center text-wrap  class="empty" padding>
-          Aucun element correspondant aux critères.
-        </div>
+      <div text-center text-wrap class="empty" padding>
+        Aucun element correspondant aux critères.
+      </div>
     </ion-row>
   </ion-grid>
 </ion-content>
-<ion-footer >
-  <ion-row><ion-col>{{rendezvous.length}} lignes</ion-col><ion-col></ion-col><ion-col></ion-col></ion-row>
-</ion-footer>

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams ,ViewController} from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController, MenuController } from 'ionic-angular';
 import {UserProvider } from '../../providers/user/user';
 /**
  * Generated class for the PopOverMenuPage page.
@@ -15,6 +15,7 @@ import {UserProvider } from '../../providers/user/user';
 })
 export class PopOverMenuPage {
    navCtrl: NavController;
+   menu:MenuController
    user:any;
   pages:any[]=[
     {name:'A propos', component:'AboutPage'},
@@ -26,6 +27,7 @@ export class PopOverMenuPage {
     public navParams: NavParams ,
     public userService:UserProvider) {
      this. navCtrl=this.navParams.get('navCtrl')
+     this. menu=this.navParams.get('menu')
   }
 
   ionViewDidLoad() {
@@ -33,6 +35,7 @@ export class PopOverMenuPage {
   }
   openPage(p:any){
     this.viewCtrl.dismiss();
+    this.menu.close()
     this.navCtrl.push(p.component,{user:this.userService.user})
   }
 

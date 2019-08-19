@@ -16,13 +16,16 @@ import { Diagnostic } from '@ionic-native/diagnostic';
 import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import { LocalisationProvider } from '../providers/localisation/localisation';
 import { Network } from '@ionic-native/network';
+import { PipesModule} from '../pipes/pipes.module';
+import { DirectivesModule} from '../directives/directives.module';
+
 import {
   GoogleMaps
 } from '@ionic-native/google-maps';
 
 @NgModule({
   declarations: [
-    MyApp,
+    MyApp
   ],
   imports: [
     BrowserModule,
@@ -31,7 +34,8 @@ import {
       tabsHideOnSubPages:true
     }),
      HttpModule,
-   
+     PipesModule,
+     DirectivesModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

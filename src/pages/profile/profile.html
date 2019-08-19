@@ -5,18 +5,17 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-
-  <ion-navbar>
-    <ion-title>Information</ion-title>
+  <ion-navbar>     
+    <ion-title>Informations génerales</ion-title>
     <ion-buttons end>
             <button ion-button="ion-button" (click)="dismiss()" icon-left>
-                <ion-icon name="md-close" color="danger" showwhen="android,windows,core"></ion-icon> 
+                <ion-icon name="md-close" color="danger" showWhen="android,windows,core"></ion-icon> 
                 Fermer
             </button>
         </ion-buttons>
   </ion-navbar>
 </ion-header>
-<ion-content >
+<ion-content padding>
         <ion-card>
                 <ion-card-header text-wrap>Modifiez ou completez vos informations </ion-card-header>
         </ion-card>     
@@ -59,13 +58,12 @@
             <ion-textarea rows="2" [(ngModel)]="user.adresse" placeholder="Adresse" name="adresse" #adresse="ngModel"></ion-textarea>
         </ion-item>
     </ion-list>
-    <div padding="padding">
-        <button ion-button block icon-right [disabled]="isInvalid()" (click)="onSubmit()">
-            <span>Enrégistrer les changements
-                <ion-icon name="md-done-all"></ion-icon>
-            </span>
-        </button>
-      
-    </div>
 </form>
 </ion-content>
+<ion-footer>
+        <button ion-button full icon-right [disabled]="isInvalid()" (click)="onSubmit()">
+                <span>Enrégistrer les changements
+                    <ion-icon name="md-done-all"></ion-icon>
+                </span>
+            </button>
+    </ion-footer>

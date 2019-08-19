@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, } from '@angular/http';
-
 import { Storage } from '@ionic/storage';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/map';
-import { Events } from 'ionic-angular';
+import { Events, Platform } from 'ionic-angular';
 import { Config } from "../../app/config";
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { Guid } from "guid-typescript";
@@ -14,20 +13,23 @@ export class ManagerProvider {
   public keys: any[] = [];
   public isAscing: boolean = false;
   public connected: boolean = true;
-  //baseUrl: string = 'http://localhost:8000';
-  constructor(public http: Http, public storage: Storage, public events: Events) {
-    // console.log(window.localStorage.getItem('_user_token'));
-    this.headers.set('X-Auth-Token', window.localStorage.getItem('_user_token'))
+  constructor(public http: Http, public storage: Storage, public events: Events,public platform: Platform,) {
+    
+    this.headers.set('X-Auth-Token', this.getUserToken());
+
+    this.storeUser({id:this.getUserId(),apiKey:this.getUserToken()})
+
     this.storage.keys().then((keys) => {
       this.keys = keys;
     })
+
     this.listenEvents();
-    //this.clearStorage()
   }
 
   clearStorage() {
     this.storage.clear();
   }
+
   listenEvents() {
     Config.entityNames.forEach(entityName => {
       this.events.subscribe(`entity:${entityName}:change`, (data) => {
@@ -38,9 +40,9 @@ export class ManagerProvider {
         this.delete(entityName, data, 'delete', true);
       })
     })
-
-
   }
+
+
 
   ascync() {
     let promises: any[] = [];
@@ -101,10 +103,15 @@ export class ManagerProvider {
       this.headers.delete('X-Auth-Token')
     })
   }
-
+  getUserToken(): string {
+    if(this.platform.is('android')||this.platform.is('mobileweb'))
+        return   window.localStorage.getItem('_user_token');
+    return this.readCookie('_user_token'); //
+  }
   getUserId(): string {
-    let _user_id = window.localStorage.getItem('_user_id_');
-    return _user_id;
+    if(this.platform.is('android')||this.platform.is('mobileweb'))
+        return   window.localStorage.getItem('_user_id_');
+    return this.readCookie('_user_id_'); //
   }
 
   get(entityName: any, online?: boolean, id?: any, keyIndex?: any, filter: any = {},nbrecritere:number=0) {
@@ -116,11 +123,9 @@ export class ManagerProvider {
           criteria =  `${criteria}&${key}=${filter[key]}`;
         });
         criteria =  (id && keyIndex) ? `${criteria}&${keyIndex}=${id}` :criteria ; 
-        console.log(`${Config.server}/${entityName}/json?${criteria}`);
         return this.http.get(`${Config.server}/${entityName}/json?${criteria}`, { headers: this.headers })
           .toPromise()
           .then(response => {
-            let res:any[]=[];
             return this.storeEntityLocally(entityName, response.json()).then(() =>{
               if(nbrecritere)
                   return resolve(response.json())
@@ -153,10 +158,15 @@ export class ManagerProvider {
   }
 
 
-  show(entityName: any, entityid, online?: boolean) {
-    if (online || this.connected)
+  show(entityName: any, entityid, online?: boolean, filter: any = {}) {
+    if (online)
       return new Promise<any>((resolve, reject) => {
-        return this.http.get(`${Config.server}/${entityName}/${entityid}/show/json?id=${entityid}`, { headers: this.headers })
+        let criteria: string ='';
+        Object.keys(filter).forEach(key => {
+          if(filter[key])
+          criteria =  `${criteria}&${key}=${filter[key]}`;
+        });   
+        return this.http.get(`${Config.server}/${entityName}/${entityid}/show/json?id=${entityid}${criteria}`, { headers: this.headers })
           .toPromise()
           .then(response => {
             let data = response.json();
@@ -215,8 +225,6 @@ export class ManagerProvider {
         this.http.post(Config.server + '/' + entityName + '/' + action + '/json', JSON.stringify(entity), { headers: this.headers })
           .toPromise()
           .then(response => {
-            if(!response.json().id)
-              return reject({});
             this.keys.push(`${entityName}_id_${entity.id}`);
             return this.storeEntityLocally(entityName, response.json()).then(() => { resolve(response.json()) })
           }, error => {
@@ -293,5 +301,21 @@ export class ManagerProvider {
       .toPromise()
       .then(res => res.json());
   }
+
+
+
+
+  readCookie(name) {
+    var cookiename = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++)
+    {
+      var c = ca[i];
+      while (c.charAt(0)==' ') c = c.substring(1,c.length);
+      if (c.indexOf(cookiename) == 0) return c.substring(cookiename.length,c.length);
+    }
+    return null;
+  }
+
 }
 

@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, AlertController, LoadingController
 import { Storage } from '@ionic/storage';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { AppNotify } from '../../app/app-notify';
+import { LocalisationProvider } from '../../providers/localisation/localisation';
 
 
 @IonicPage()
@@ -14,34 +15,38 @@ export class ProduitsPage {
   produits: any[] = []
   queryText = '';
   openAddPage:boolean
+  loading:boolean=false;
   constructor(
     public navCtrl: NavController,
     public alertCtrl: AlertController,
     public navParams: NavParams,
     public modalCtrl: ModalController,
     public manager: ManagerProvider,
+    public localisation:LocalisationProvider,
     public events: Events,
     public loadingCtrl: LoadingController,
     public notify: AppNotify,
     public storage: Storage) {
       this.openAddPage=this.navParams.get('openAddPage')
       this.events.subscribe('loaded:produit:new',()=>{
-        this.loadData();
+      //  this.loadData();
        })
   }
 
   ionViewDidLoad() {
     if(this.openAddPage)
        this.add()
-    this.loadData(true)
+    this.loadData()
   }
 
-  loadData(onlineIfEmpty?:boolean){    
-    this.manager.get('produit').then(data=>{
+  loadData(){  
+    this.loading=true;  
+    this.manager.get('produit',this.localisation.isOnline()).then(data=>{
       this.produits=data?data:[]  
-      if(onlineIfEmpty&&(!data||data.length))
-      return this.loadRemoteData(); 
+      this.loading=false; 
+      this.localisation.onConnect(this.localisation.isOnline());
     },error=>{
+      this.localisation.onConnect(false);
       this.notify.onError({message:" Verifiez votre connexion internet"})
     })
 
@@ -51,10 +56,14 @@ export class ProduitsPage {
     let loader= this.notify.loading({
       content: "chargement...",
     });    
+    this.loading=true;  
     this.manager.get('produit',true).then(data=>{
       this.produits=data?data:[]
+      this.loading=false;
       loader.dismiss();     
+      this.localisation.onConnect(this.localisation.isOnline());
     },error=>{
+      this.localisation.onConnect(false);
       loader.dismiss();   
       this.notify.onError({message:"Verifiez votre connexion internet"})
     })

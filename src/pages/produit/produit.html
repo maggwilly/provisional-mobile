@@ -22,20 +22,36 @@
             <ion-item>
                 <ion-label color="primary"><span>Prix de vente </span> </ion-label>
                 <ion-input [(ngModel)]="produit.cout" name="cout" type="number" placeholder="" #nom="ngModel"></ion-input>
-            </ion-item>  
+            </ion-item> 
             <ion-item>
-                    <ion-textarea rows="1" [(ngModel)]="produit.description" placeholder="Description ddu produit"
+                    <ion-label color="primary" >
+                        <span>Unité de vente</span>
+                    </ion-label>
+                    <ion-select [(ngModel)]="produit.unite" name="unite" #type="ngModel"> 
+                        <ion-option value="Unité">Unité</ion-option>
+                        <ion-option value="Colis">Colis</ion-option>
+                        <ion-option value="Carton">Carton</ion-option>
+                        <ion-option value="Bouteille">Bouteille</ion-option>
+                        <ion-option value="Palette">Palette</ion-option>
+                        <ion-option value="Pack">Pack</ion-option>
+                        <ion-option value="Paquet">Paquet</ion-option>
+                        <ion-option value="Litre">Litre</ion-option>
+                        <ion-option value="Kilograme">Kilograme</ion-option>
+                        <ion-option value="Pièce">Pièce</ion-option>
+                        <ion-option value="Boîte">Boîte</ion-option>
+                    </ion-select>
+                </ion-item>             
+            <ion-item>
+                    <ion-textarea rows="1" [(ngModel)]="produit.description" placeholder="Description du produit"
                         name="description" #description="ngModel"></ion-textarea>
-              </ion-item>                      
+            </ion-item> 
+            <ion-item>
+                    <ion-label>Activer les prévision</ion-label>
+                    <ion-toggle item-right  [(ngModel)]="produit.control" name="control" #control="ngModel" color="secondary">
+                    </ion-toggle>
+            </ion-item>                                  
         </ion-list>
         <div padding="padding" >
-            <button *ngIf="!inset" ion-button block icon-right [disabled]="isInvalid()" (click)="onSubmit()">
-                    <span *ngIf="!produit.id">Creer un produit</span>
-                    <span *ngIf="produit.id">Enregistrer les changements</span>
-                    <ion-icon name="md-done-all"></ion-icon>
-               
-            </button>
-             <br>
             <button  *ngIf="produit.id" ion-button outline block icon-right color="danger" (click)="deleteItem()">
                     <span>Supprimer ce produit
                         <ion-icon name="close"></ion-icon>
@@ -44,7 +60,10 @@
         </div>
     </form>
 </ion-content>
-<ion-footer *ngIf="inset">
-    <button ion-button full [disabled]="isInvalid()" (click)="onSubmit()">Creer un produit
+<ion-footer >
+    <button  ion-button full icon-right [disabled]="isInvalid()" (click)="onSubmit()">
+            <span *ngIf="!produit.id">Créer un produit</span>
+            <span *ngIf="produit.id">Enregistrer les changements</span>
+            <ion-icon name="md-done-all"></ion-icon> 
     </button>
   </ion-footer>

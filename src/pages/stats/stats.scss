@@ -1,3 +1,43 @@
 page-stats {
+    .scroll-content{
+        margin-top: $toolbar-md-height ;
+    }    
+.kpi{
+   .label{
+      font-size:1.9em;
+        color:dimgray;
+        font-weight: bold;
+   }
+   p{
+    font-size: 1.0em;
+    margin-top: 9px;
+   }
+ }
+
+.circle-text {
+    display: table-cell;
+    width: 50px;
+    height: 50px;
+    border-radius: 10%;
+    font: 20px "josefin sans", arial;
+    color: #fff;
+    vertical-align: middle;
+    text-align: center;
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
+  }
+.primary{
+    background: map-get($colors, primary);
+}
+.orange{
+    background: map-get($colors, orange);
+}
+.secondary{
+    background: map-get($colors, secondary);
+}
+.danger{
+    background: map-get($colors, danger);
+}
+
+
 
 }

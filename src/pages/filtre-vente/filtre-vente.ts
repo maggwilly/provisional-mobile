@@ -8,7 +8,7 @@ import { ManagerProvider } from '../../providers/manager/manager';
   templateUrl: 'filtre-vente.html',
 })
 export class FiltreVentePage {
-  filtre: any = {};
+  filtre: any = {visitedBy:""};
   users: any[] = []
   secteurs: any[] = [];
   constructor(
@@ -16,7 +16,7 @@ export class FiltreVentePage {
     public manager: ManagerProvider,
     public viewCtrl: ViewController,
     public navParams: NavParams) {
-    this.filtre = navParams.get('filtre') ? navParams.get('filtre') : {};
+    this.filtre = navParams.get('filtre') ? navParams.get('filtre') : {visitedBy:""};
   }
 
   ionViewDidLoad() {

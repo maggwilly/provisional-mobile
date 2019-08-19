@@ -32,14 +32,17 @@ export class RendezvousPage {
 
   ionViewDidLoad() {
     var datePipe = new DatePipe('en');
-    this.rendezvous.date = datePipe.transform(new Date(), 'yyyy-MM-dd');
-    if(!this.rendezvous.dateat)
-    this.rendezvous.dateat = datePipe.transform(new Date(), 'yyyy-MM-dd');
+    
+    if(!this.rendezvous.dateat){
+      this.rendezvous.dateat = datePipe.transform(new Date(), 'yyyy-MM-dd');
+      this.rendezvous.date = datePipe.transform(new Date(), 'yyyy-MM-dd');
+    }
+   
    
     if(this.rendezvous.user&&this.rendezvous.user.id)
         this.rendezvous.user=this.rendezvous.user.id;    
     this.manager.get('user').then(data=>{
-    this.users=data?data:[] ;
+         this.users=data?data:[] ;
     },error=>{
     })
 
@@ -54,7 +57,7 @@ export class RendezvousPage {
     let loader= this.notify.loading({
      content: "Enregistrement...",
   }); 
-  this.rendezvous.id = this.pointVente.id;
+  this.rendezvous.pointVente = this.pointVente.id;
   this.manager.save('rendezvous',this.rendezvous).then((data)=>{
       loader.dismiss().then(()=>{
         if(!data.error){

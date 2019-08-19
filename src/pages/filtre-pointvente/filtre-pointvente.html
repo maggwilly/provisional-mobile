@@ -10,22 +10,23 @@
     </ion-navbar>
 </ion-header>
 <ion-content padding>
+        <ion-item>
+                <ion-label color="primary" floating>
+                    <span>Categorie</span>
+                </ion-label>
+                <ion-select [(ngModel)]="filtre.type" name="type" #type="ngModel"> 
+                    <ion-option value="Boutique">Boutique</ion-option>
+                    <ion-option value="Super-Marche">Super-Marché</ion-option>
+                    <ion-option value="Kiosque">Kiosque</ion-option>
+                    <ion-option value="Menage">Menage</ion-option>
+                    <ion-option value="Boulangerie">Boulangerie</ion-option>
+                    <ion-option value="Debit de boisson">Debit-de-boisson</ion-option>
+                    <ion-option value="Station-service">Station-service</ion-option>
+                    <ion-option value="Point de vente">Point de vente</ion-option>
+                </ion-select>
+            </ion-item>
     <ion-item>
-        <ion-label color="primary">
-            <span>Categorie</span>
-        </ion-label>
-        <ion-select [(ngModel)]="filtre.type" name="type" #type="ngModel">
-            <ion-option value="">Toutes catégories</ion-option>
-            <ion-option value="Boutique-de-Quartier">Boutique-de-Quartier</ion-option>
-            <ion-option value="Kiosque">Kiosque</ion-option>
-            <ion-option value="Super-Marche">Super-Marché</ion-option>
-            <ion-option value="Boulangerie">Boulangerie</ion-option>
-            <ion-option value="Debit-de-boisson">Debit-de-boisson</ion-option>
-            <ion-option value="Station-service">Station-service</ion-option>
-            <ion-option value="Etalage-de-marché">Etalage-de-marché</ion-option>
-        </ion-select>
-    </ion-item>
-    <ion-item>
+        
         <ion-label color="primary">
             <span>Dans la ville de </span>
         </ion-label>
@@ -55,46 +56,65 @@
         <ion-input [(ngModel)]="filtre.quartier" name="quartier" type="text" placeholder="" #quartier="ngModel">
         </ion-input>
     </ion-item>
-    <ion-item-divider> Date de création</ion-item-divider>
+    <ion-item-divider> Prospectés </ion-item-divider>
     <ion-row>
         <ion-col>
             <ion-item>
-                <ion-label color="primary" floating><span>Créés le, ou après le </span></ion-label>
+                <ion-label color="primary" floating><span>Prospectés  après le </span></ion-label>
                 <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="D MMM  YYYY" min="2019" doneText="Terminé"
-                    cancelText="Annuler" name="afterdate" [(ngModel)]="filtre.afterdate" #date="ngModel"></ion-datetime>
+                    cancelText="Annuler" name="afterdate" [(ngModel)]="filtre.afterdate" #date="ngModel" placeholder="Date"></ion-datetime>
             </ion-item>
         </ion-col>
         <ion-col>
             <ion-item>
-                <ion-label color="primary" floating><span>Créés le, ou avant le </span></ion-label>
-                <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="D MMM  YYYY" min="2019" doneText="Terminé"
+                <ion-label color="primary" floating><span>Prospectés  avant le </span></ion-label>
+                <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="D MMM  YYYY" min="2019" doneText="Terminé" placeholder="Date"
                     cancelText="Annuler" name="beforedate" [(ngModel)]="filtre.beforedate" #date="ngModel">
                 </ion-datetime>
             </ion-item>
         </ion-col>
     </ion-row>
-    <ion-item-divider> Dernière visite</ion-item-divider>
+    <ion-item-divider>Livré ou visité</ion-item-divider>
     <ion-row>
         <ion-col>
             <ion-item>
-                <ion-label color="primary" floating><span>Visités le,  ou depuis le </span></ion-label>
+                <ion-label color="primary" floating><span>Livrés ou visité après le </span></ion-label>
                 <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="D MMM  YYYY" min="2019" doneText="Terminé"
-                    cancelText="Annuler" name="afterlastvisitedate" [(ngModel)]="filtre.afterlastvisitedate"
-                    #date="ngModel"></ion-datetime>
+                    cancelText="Annuler" name="aftervisitedate" [(ngModel)]="filtre.aftervisitedate"
+                    #aftervisitedate="ngModel"></ion-datetime>
             </ion-item>
         </ion-col>
         <ion-col>
             <ion-item>
-                <ion-label color="primary" floating><span>Visités le,  ou avant le </span></ion-label>
+                <ion-label color="primary" floating><span>Livrés ou visité avant le </span></ion-label>
                 <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="D MMM  YYYY" min="2019" doneText="Terminé"
-                    cancelText="Annuler" name="beforelastvisitedate" [(ngModel)]="filtre.beforelastvisitedate"
-                    #date="ngModel"></ion-datetime>
+                    cancelText="Annuler" name="beforevisitedate" [(ngModel)]="filtre.beforevisitedate"
+                    #beforevisitedate="ngModel"></ion-datetime>
             </ion-item>
         </ion-col>
     </ion-row>
+    <ion-item-divider>Prochaine livraison prévue</ion-item-divider>
+    <ion-row>
+        <ion-col>
+            <ion-item>
+                <ion-label color="primary" floating><span>Prochaine livraison après le </span></ion-label>
+                <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="D MMM  YYYY" min="2019" doneText="Terminé"
+                    cancelText="Annuler" name="afterrendevousdate" [(ngModel)]="filtre.afterrendevousdate"
+                    #afterrendevousdate="ngModel"></ion-datetime>
+            </ion-item>
+        </ion-col>
+        <ion-col>
+            <ion-item>
+                <ion-label color="primary" floating><span>Prochaine livraison  avant le </span></ion-label>
+                <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="D MMM  YYYY" min="2019" doneText="Terminé"
+                    cancelText="Annuler" name="beforrendezvousdate" [(ngModel)]="filtre.beforrendezvousdate"
+                    #beforrendezvousdate="ngModel"></ion-datetime>
+            </ion-item>
+        </ion-col>
+    </ion-row>    
     <ion-item *ngIf="users&&users.length">
         <ion-label color="primary">
-            <span>Créé par</span>
+            <span>Prospecté par</span>
         </ion-label>
         <ion-select [(ngModel)]="filtre.user" name="user" #user="ngModel">
             <ion-option value="">Tout le monde</ion-option>

@@ -1,6 +1,9 @@
 
-<ion-header  no-border no-shadow>
+<ion-header  no-border no-shadow #head>
   <ion-navbar>
+      <button menuToggle  ion-button icon-only showWhen="mobile">
+          <ion-icon name="menu"></ion-icon>
+        </button>
       <ion-row no-padding>
           <ion-col> <ion-title >Les produits</ion-title></ion-col>
           <ion-col>
@@ -19,8 +22,9 @@
 </ion-buttons>    
   </ion-navbar>
 </ion-header>
-<ion-content >     
-    <ion-list>
+<ion-content padding-top hide-header [header]="head"> 
+    <ion-list *ngIf="produits.length">
+      <ion-list-header>Liste des produits ({{produits.length }})</ion-list-header>
         <ion-item  *ngFor="let produit of produits" (click)="add(produit)" [hidden]="produit.hide">
             {{produit.nom}}
             <p>{{produit.description}}</p>
@@ -30,7 +34,19 @@
           <button ion-button block small clear (click)="doScroll()" style="text-transform: none;">Afficher plus</button>   
          </div>    
     </ion-list>
+    <ion-grid style="justify-content: center; height: 100%;" *ngIf="loading">
+        <ion-row style="justify-content: center;height: 100%;" justify-content-center align-items-center>
+            <ion-spinner name="ios"></ion-spinner>
+        </ion-row>
+      </ion-grid>  
+        <ion-grid style="height: 80%;justify-content: center;position:absolute;top:20%" *ngIf="!produits.length&&!loading">
+            <ion-row style="height: 100%;justify-content: center;" justify-content-center align-items-center>
+                <div text-center text-wrap  class="empty" padding>
+                  Aucun element a afficher.
+                </div>
+            </ion-row>
+          </ion-grid>   
 </ion-content>
-<ion-footer >
+<ion-footer showWhen="core">
     <ion-row><ion-col>{{produits.length}} lignes</ion-col><ion-col></ion-col><ion-col></ion-col></ion-row>
   </ion-footer>

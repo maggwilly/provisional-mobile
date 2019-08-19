@@ -22,6 +22,7 @@ export class CreatelignePage {
        this.produit=this.navParams.get('produit');
       this.ligne.produit=this.produit;
       this.ligne.nom=this.produit.nom;
+      this.ligne.pu=this.produit.cout;
   }
 
   ionViewDidLoad() {
@@ -32,7 +33,7 @@ export class CreatelignePage {
   }
 
   total():number{
-    this.ligne.total=this.ligne.quantite*this.produit.cout;
+    this.ligne.total=this.ligne.quantite*this.ligne.pu;
     return this.ligne.total;
   }
 

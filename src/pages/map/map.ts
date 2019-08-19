@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
 import { LocalisationProvider } from '../../providers/localisation/localisation';
-import { greenIcon }  from  '../../app/icons-marker';
+import { blueIcon,greenIcon,redIcon }  from  '../../app/icons-marker';
 import leaflet from 'leaflet';
 import 'leaflet-routing-machine'
 import { AppNotify } from '../../app/app-notify';
@@ -22,14 +22,12 @@ export class MapPage {
  // map: GoogleMap;
   map: any;
   mapInitialised: boolean = false;
-  apiKey: any="AIzaSyBNIN0oMzHoNgEZz1utnM_8ut6KFjwieoo";
-   
   allpoint:boolean;
-  polyline:boolean;
-  difference:boolean;
+  filtre:any
   points:any[]=[];
   waypoints:any[]=[]
   title:string;
+  target:string;
   constructor(
     public navCtrl: NavController,
     public platform: Platform,
@@ -38,26 +36,18 @@ export class MapPage {
     public navParams: NavParams) {
     this.title=this.navParams.get('title');
     this.points=this.navParams.get('points');
-    console.log(this.points);
-    
-   // this.loadGoogleMaps();
+    this.filtre = this.navParams.get('filtre');
+    this.target = this.navParams.get('target');
   }
 
   ionViewDidEnter() {
       this.connectivityService.getCurrentPosition().then((position) => {
         console.log(position);
-     /* this.waypoints.push(leaflet.latLng(position.coords.latitude, position.coords.longitude))
-      this.points.forEach(point => {
-        this.waypoints.push(leaflet.latLng(point.pos.lat, point.pos.long))
-      });*/
-      if(this.connectivityService.isOnline()){
         if(!position.coords.latitude||!position.coords.longitude)
-        return  this.notify.onError({ message: "Problème de centralisation de la carte. Verifiez votre connexion internet", duration:500000 });
+        return  this.notify.onError({ message: "Problème de centralisation de la carte. Verifiez votre connexion internet"});
          this.loadmap(position.coords);
-      }else
-          this.notify.showAlert({ message: "Activez votre connexion internet"})
       },error=>{
-        this.notify.onError({ message: "Problème de centralisation de la carte. Verifiez votre connexion internet", duration:500000 })
+        this.notify.onError({ message: error.message})
       console.log(error); 
       })
      
@@ -68,35 +58,97 @@ export class MapPage {
 
     this.map = leaflet.map('map', {
       center: [coords.latitude, coords.longitude],
-      zoom: 45
+      zoom: 13
   });
    leaflet.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attributions: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      zoom: 45,
-      minResolution: 4891.96981025128,
-      maxResolution: 39135.75848201024,
+      zoom: 13,
+      /*minResolution: 4891.96981025128,
+      maxResolution: 39135.75848201024,*/
       doubleClickZoom: true,
       center: [coords.latitude, coords.longitude]
     }).addTo(this.map)
+    switch (this.target) {
+      case 'pointvente':
+        this.addMarkerPointventes();
+        break;
+        case 'rendezvous':
+          this.addMarkerRendezvous();
+          break;    
+      default:
+          this.addMarkerCommendes();
+        break;
+    }
 
-   this.points.forEach(point => {
-      let markerGroup = leaflet.featureGroup();
-    let marker: any = leaflet.marker([point.pos.lat, point.pos.long], {icon: greenIcon}).on('click', () => {
-      alert('Marker clicked');
-    })
-    markerGroup.addLayer(marker);
-    this.map.addLayer(markerGroup);
- });
-
-     /* leaflet.Routing.control({ 
-        waypoints: this.waypoints,
-         routeWhileDragging: false ,
-         showAlternatives:true,
-         show:false,
-    }).addTo(this.map);*/
   }
  
 
+addMarkerPointventes(){
+  this.points.forEach(point => {
+    let markerGroup = leaflet.featureGroup();
+    if(!point.lat||!point.long)
+        return;
+  let marker: any = leaflet.marker([point.lat, point.long], {icon: blueIcon}).bindPopup(
+    `<h2 style="font-weight: bold; font-size:1.9em">${point.nom}</h2>
+    <p style="color:dimgray;font-size: 1.0em">${point.telephone}, ${point.type},${point.ville}, ${point.quartier}</p>
+    <p style=""> ${point.adresse}</p>`)
+    .openPopup()
+    .on('click', () => {
+      
+    })
+  markerGroup.addLayer(marker);
+  this.map.addLayer(markerGroup);
+});
+}
+
+addMarkerRendezvous(){
+  this.points.forEach(point => {
+    let markerGroup = leaflet.featureGroup();
+    if(!point.lat||!point.long||!point.dateat)
+        return;
+  let marker: any = leaflet.marker([point.lat, point.long], {icon: this.icon(point)}).bindPopup(
+    `<h2 style="font-weight: bold; font-size:1.9em">${point.nom}</h2>
+    <p style="color:dimgray;font-size: 1.0em">${point.telephone}, ${point.type},${point.ville}, ${point.quartier}</p>
+    <p style=""> ${point.adresse}</p>
+    <p>Livraison prévue le <b>${point.rendezvous.dateat}</b></p>`)
+    .openPopup()
+    .on('click', () => {
+      
+    })
+  markerGroup.addLayer(marker);
+  this.map.addLayer(markerGroup);
+});
+}
+
+icon(point:any){
+  if(point.rendezvous.passdays<0)
+    return redIcon;
+    else if(point.rendezvous.passdays>0)
+      return blueIcon;
+    else
+    return greenIcon;
+}
+
+addMarkerCommendes(){
+  this.points.forEach(commende => {
+    let markerGroup = leaflet.featureGroup();
+    if(!commende.pointVente)
+      return;
+    if(!commende.pointVente.lat||!commende.pointVente.long)
+        return;
+  let marker: any = leaflet.marker([commende.pointVente.lat, commende.pointVente.long], {icon: blueIcon}).bindPopup(
+    `<h2 style="font-weight: bold; font-size:1.9em">${commende.pointVente.nom}</h2>
+    <p style="color:dimgray;font-size: 1.0em">${commende.pointVente.telephone}, ${commende.pointVente.type},${commende.pointVente.ville}, ${commende.pointVente.quartier}</p>
+    <p style=""> ${commende.pointVente.adresse}</p>
+    <p><b>${commende.date}</b>${commende.quantite} colis,${commende.ca} XAF</p>`)
+    .openPopup()
+    .on('click', () => {
+      
+    })
+  markerGroup.addLayer(marker);
+  this.map.addLayer(markerGroup);
+});
+}
 
   /* loadGoogleMaps(){
     this.addConnectivityListeners();

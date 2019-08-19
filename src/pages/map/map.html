@@ -4,10 +4,22 @@
   <ion-navbar>
     <ion-title>{{title}}</ion-title>
   </ion-navbar>
-
 </ion-header>
 <ion-content >
-<div #map id="map" style="height:100%;">
+    <div class="map-title-box">
+        <ion-card  class="map-title" item-center>
+              <ion-item text-wrap>
+                  {{title}}  <strong *ngIf="filtre"><span *ngIf="filtre.afterdate">, Entre le {{filtre.afterdate|date:'dd/MM/yyyy'}}</span>
+                    <span *ngIf="filtre.beforedate"> <span *ngIf="filtre.afterdate">et</span><span *ngIf="!filtre.afterdate">, Avant</span> le {{filtre.beforedate|date:'dd/MM/yyyy'}}</span></strong>
+                  <p *ngIf="filtre">
+                      <span *ngIf="filtre.type">, {{filtre.type}}</span><span *ngIf="!filtre.type">Toutes catégories</span>
+                      <span *ngIf="filtre.ville">{{filtre.ville}}</span><span *ngIf="!filtre.ville">, toutes les villes</span>
+                     <span *ngIf="filtre.quartier">, {{filtre.quartier}}</span><span *ngIf="!filtre.quartier">, tous les quartiers</span>
+                  </p>
+              </ion-item>
+          </ion-card> 
+        </div> 
+<div #map id="map">
 
 </div>
 </ion-content>
