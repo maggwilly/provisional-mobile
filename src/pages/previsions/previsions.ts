@@ -55,23 +55,23 @@ export class PrevisionsPage {
   };
 
   loadRemoteData() {
-    let loader = this.loadingCtrl.create({
+    /*let loader = this.loadingCtrl.create({
       content: "chargement...",
-    });
+    });*/
     this.loading=true;
     this.manager.get('prevision',true,null,null,this.filtre,1).then(data => {
       this.previsions = data?data:[]
       console.log(this.previsions);
       this.loading=false;
-      loader.dismiss(); 
+     // loader.dismiss(); 
       this.localisation.onConnect(this.localisation.isOnline());
     },error=>{
       this.localisation.onConnect(false);
-      loader.dismiss();
+     // loader.dismiss();
       console.log(error);
       this.notify.onSuccess({message:"PROBLEME ! Verifiez votre connexion internet"})
     });
-    loader.present();
+    //loader.present();
   }
 
   openDetail(produit){

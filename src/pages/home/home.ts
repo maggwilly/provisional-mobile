@@ -18,7 +18,7 @@ export class HomePage {
   queryText = '';
   filtre:any
   nbrecriteres:number;
-  loading:boolean;
+  loading:boolean=true;
   isOnline:boolean;
   groups:any[]=[]
   constructor(
@@ -68,21 +68,21 @@ export class HomePage {
   loadRemoteData(){
     this.countCricteres(this.filtre);
     this.loading=true;
-    let loader = this.loadingCtrl.create({ content: "chargement..."});    
+    //let loader = this.loadingCtrl.create({ content: "chargement..."});    
     this.manager.get('pointvente',true,null,null,this.filtre,this.nbrecriteres).then(data=>{
       this.rendezvous=data?data:[];
       let groups= groupby(data?data:[],'secteur.nom');
       this.groups= Object.keys(groups).map(key => ({secteur: key, poinventes: groups[key]}));
       this.search()
       this.loading=false;
-      loader.dismiss();    
+     // loader.dismiss();    
       this.localisation.onConnect(this.localisation.isOnline());
-    },error=>{
+    },()=>{
       this.localisation.onConnect(false);
-       loader.dismiss(); 
+      // loader.dismiss(); 
       this.notify.onSuccess({message:"Probleme de connexion"})
     })
-    loader.present();
+   // loader.present();
   }
 
   sort(arr:any[]){

@@ -75,7 +75,7 @@
       <button ion-button block small clear (click)="refresh()" style="text-transform: none;">Afficher plus</button>
     </div>
   </ion-list>
-  <ion-grid padding style="height: 100%;justify-content: center" [hidden]="loading">
+  <ion-grid padding style="height: 100%;justify-content: center" *ngIf="!groups.length&&loading">
     <ion-row style="justify-content: center;" justify-content-center align-items-center>    
   <ion-spinner color="royal" name="ios"></ion-spinner>
  </ion-row>    

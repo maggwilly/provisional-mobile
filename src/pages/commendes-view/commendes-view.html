@@ -33,7 +33,7 @@
        <ion-spinner color="royal" name="ios"></ion-spinner>
       </ion-row>    
       </ion-grid>  
-      <ion-card *ngIf="commende.lignes">
+      <ion-card *ngIf="commende.lignes" total [commende]="commende">
           <ion-row><ion-col>{{commende.lignes.length}} articles</ion-col><ion-col text-right>Total: {{commende.total}} FCFA</ion-col></ion-row>
         </ion-card> 
         <ion-list-header no-lines no-border *ngIf="commende.lignes" [hidden]="commende.terminated">

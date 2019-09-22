@@ -15,7 +15,7 @@ export class ProduitsPage {
   produits: any[] = []
   queryText = '';
   openAddPage:boolean
-  loading:boolean=false;
+  loading:boolean=true;
   constructor(
     public navCtrl: NavController,
     public alertCtrl: AlertController,

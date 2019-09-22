@@ -2,7 +2,7 @@
     <ion-header>
         <ion-navbar></ion-navbar>
     </ion-header>
-    <ion-grid>
+    <ion-grid class="login-box">
         <ion-row justify-content-center>
        <ion-col col-sm-12  col-md-6 col-lg-4 col-xl-3>  
     <section *ngIf="stape=='phone'">
@@ -18,7 +18,7 @@
                 <div *ngIf="!phone.valid&&phone.touched">
                     <small *ngIf="phone.errors&&phone.dirty" color="danger">Saisir un numéro de telephone valide de 09 chiffres.</small>
                 </div>
-                <button (click)="nextStape()"   [disabled]="submitted||isInvalid()" block class="login-button" color="secondary" ion-button outline>
+                <button (click)="nextStape()"   [disabled]="submitted||isInvalid()" block class="login-button" color="secondary" ion-button>
                     <span>
                         <strong>Suivant</strong>
                     </span>

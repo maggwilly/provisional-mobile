@@ -157,7 +157,9 @@ onSubmit(){
             return
           }
             
-          this.manager.storeUser(data).then(()=>{
+          this.manager.storeUser(data).then((user)=>{
+            console.log(data);
+            console.log(user);
             this.navCtrl.setRoot('MenuPage', {}, {animate: true, direction: 'forward'});
           }, error => {
             console.log(error);

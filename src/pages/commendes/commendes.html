@@ -33,10 +33,11 @@
   </ion-col>   
  </ion-row>
 <ion-list *ngIf="commendes.length&&!loading">
+    <ion-list-header>Historique des ventes ({{commendes.length }})</ion-list-header>
   <ion-item-sliding  *ngFor="let commende of commendes"  #slidingItem [hidden]="commende.deleted||commende.hide">
   <ion-item (click)="openCart(commende)" text-wrap>
     <div *ngIf="commende.pointVente&&commende.id">
-    <strong>{{commende.pointVente.nom |uppercase}}</strong> -  {{commende.date|date:'dd/MM/yyyy' }}
+    <strong>{{commende.pointVente.nom |uppercase}}</strong> -  {{commende.date|date:'dd/MM/yyyy' }} -> {{commende.total}} FCFA
     <p><span>{{commende.pointVente.type}}</span><span *ngIf="commende.pointVente.ville">,{{commende.pointVente.ville}}</span><span *ngIf="commende.pointVente.quartier">,{{commende.pointVente.quartier}}</span><span>{{commende.pointVente.adresse}}</span></p>
     <p>Effectué  {{commende.date|moment:'fromnow'}} <span *ngIf="commende.user&&commende.user.nom"> par {{commende.user.nom}}</span></p>
   </div>

@@ -70,13 +70,13 @@ export class CommendesPage {
   }
 
   refresh(){
+    if(!this.filtre)
     this.filtre={type:'',
     user:'',secteur:''
     ,ville:'',
     afterdate:moment().startOf('month').format("YYYY-MM-DD"),
     beforedate:moment().endOf('week').format("YYYY-MM-DD")
   };
-    this.nbrecriteres=0;
     this.queryText='';
     if (this.openAddPage){
       this.add()

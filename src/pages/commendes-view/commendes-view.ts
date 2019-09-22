@@ -59,6 +59,8 @@ export class CommendesViewPage {
       this.edited = false;
       this.submitted = false;
     }, error => {
+      console.log(error);
+      
       this.notify.onError({ message: "Verifiez votre connexion internet" })
     })
   }

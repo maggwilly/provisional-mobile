@@ -23,6 +23,7 @@ export class StatsPage {
   datatable:any[][];
   filtre:any
   isOnline:boolean;
+  loading:boolean=true;
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -41,8 +42,10 @@ export class StatsPage {
   }
 
   loadData() {
+    this.loading=true ;
       this.manager.show('stat','sale-satat',this.localisation.isOnline()).then(data => {
         this.stats = data
+        this.loading=false ;
          this.makeUpData().then((datatable:any[][])=>{
           this.useAngularLibrary(datatable);
          },err=>{})
@@ -89,23 +92,20 @@ makeUpData(){
 
 
   loadRemoteData() {
-    let loader = this.loadingCtrl.create({
-      content: "chargement...",
-    });
+    this.loading=true ;
     this.manager.show('stat',0,true,this.filtre).then(data => {
       this.stats = data
+      this.loading=false ;
       this.makeUpData().then((datatable:any[][])=>{
         this.useAngularLibrary(datatable);
        },err=>{})
-      loader.dismiss(); 
       this.localisation.onConnect(this.localisation.isOnline());
     },error=>{
       this.localisation.onConnect(false);
-      loader.dismiss();
       console.log(error);
       this.notify.onSuccess({message:"PROBLEME ! Verifiez votre connexion internet"})
     });
-    loader.present();
+   
   }
 
   useAngularLibrary(datatable:any[][]) {

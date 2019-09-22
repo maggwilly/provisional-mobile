@@ -12,18 +12,18 @@ export class MenuPage {
   rootPage:any= Config.HomePage;
  
   pages:any[]=[
-    {name:'Accueil', component: Config.HomePage, icon:'home'},
-    {name:'Mes Clients', component:'PointventesPage',addPage:'PointVentePage', icon:'contacts'},
-    {name:'Mes Produits', component:'ProduitsPage',addPage:'ProduitPage', icon:'md-bookmarks'},
+    {name:'Prévisions', component: Config.HomePage, icon:'home'},
+    {name:'Liste des clients', component:'PointventesPage',addPage:'PointVentePage', icon:'contacts'},
+    {name:'Liste des produits', component:'ProduitsPage',addPage:'ProduitPage', icon:'md-bookmarks'},
     {name:'Zones de vente', component:'SecteursPage', addPage:'SecteurPage',icon:'md-map'},
-    {name:'Mes Ventes', component:'CommendesPage',addPage:'SelectclientPage', icon:'ios-stats-outline'}
+    {name:'Historique des ventes', component:'CommendesPage',addPage:'SelectclientPage', icon:'ios-stats-outline'}
   ]
 
    suppages:any[]=[
-    {name:'Mon equipe', component:'VendeursPage', icon:'ios-people'},
     {name:'Tableau de bord', component:'StatsPage', icon:'md-analytics'},
     {name:'Cartographie', component:'CartographPage', icon:'ios-map-outline'},
-    {name:'Prévisions', component:'PrevisionsPage', icon:'md-pulse'}
+    {name:'Mon equipe', component:'VendeursPage', icon:'ios-people'},
+   // {name:'Prévisions', component:'PrevisionsPage', icon:'md-pulse'}
   ] 
 
 

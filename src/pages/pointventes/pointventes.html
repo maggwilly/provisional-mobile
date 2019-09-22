@@ -33,6 +33,7 @@
        </ion-col>   
       </ion-row>
     <ion-list *ngIf="pointventes&&pointventes.length&&!loading">
+        <ion-list-header>Liste des clients ({{pointventes.length }})</ion-list-header>
         <ion-item-sliding *ngFor="let pointvente of pointventes"  [hidden]="pointvente.hide||!pointvente.nom" #slidingItem>
         <ion-item #item (click)="show(pointvente,slidingItem)" text-wrap>
             {{pointvente.nom}}  <strong *ngIf="pointvente.quartier">- {{pointvente.quartier}}</strong>

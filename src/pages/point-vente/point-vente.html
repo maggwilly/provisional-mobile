@@ -60,6 +60,7 @@
                     <span>Zone</span>
                 </ion-label>
                 <ion-select [(ngModel)]="pointVente.secteur" name="secteur" #secteur="ngModel">
+                        <ion-option value="">Toute la ville</ion-option>
                     <ion-option *ngFor="let secteur of secteurs" [value]="secteur.id">{{secteur.nom}}</ion-option>
                 </ion-select>
             </ion-item>

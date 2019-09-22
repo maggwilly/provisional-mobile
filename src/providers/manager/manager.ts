@@ -13,8 +13,7 @@ export class ManagerProvider {
   public keys: any[] = [];
   public isAscing: boolean = false;
   public connected: boolean = true;
-  constructor(public http: Http, public storage: Storage, public events: Events,public platform: Platform,) {
-    
+  constructor(public http: Http, public storage: Storage, public events: Events,public platform: Platform,) {  
     this.headers.set('X-Auth-Token', this.getUserToken());
 
     this.storeUser({id:this.getUserId(),apiKey:this.getUserToken()})
@@ -94,6 +93,7 @@ export class ManagerProvider {
       window.localStorage.setItem('_user_id_', user.id);
       window.localStorage.setItem('_user_token', user.apiKey);
       this.headers.set('X-Auth-Token', user.apiKey)
+      return user;
     })
   }
 
@@ -104,14 +104,13 @@ export class ManagerProvider {
     })
   }
   getUserToken(): string {
-    if(this.platform.is('android')||this.platform.is('mobileweb'))
+
         return   window.localStorage.getItem('_user_token');
-    return this.readCookie('_user_token'); //
+
   }
+
   getUserId(): string {
-    if(this.platform.is('android')||this.platform.is('mobileweb'))
         return   window.localStorage.getItem('_user_id_');
-    return this.readCookie('_user_id_'); //
   }
 
   get(entityName: any, online?: boolean, id?: any, keyIndex?: any, filter: any = {},nbrecritere:number=0) {
@@ -220,7 +219,6 @@ export class ManagerProvider {
   post(entityName: any, entity: any, action: string = 'new', online?: boolean) {
     if (online)
       return new Promise<any>((resolve, reject) => {
-        console.log(JSON.stringify(entity));
         console.log(Config.server + '/' + entityName + '/' + action + '/json');
         this.http.post(Config.server + '/' + entityName + '/' + action + '/json', JSON.stringify(entity), { headers: this.headers })
           .toPromise()
@@ -238,7 +236,6 @@ export class ManagerProvider {
   put(entityName: any, entity: any, online?: boolean) {
     if (online)
       return new Promise<any>((resolve, reject) => {
-        console.log(JSON.stringify(entity));
         console.log(`${Config.server}/${entityName}/${entity.id}/edit/json`);
         this.http.put(`${Config.server}/${entityName}/${entity.id}/edit/json`, JSON.stringify(entity), { headers: this.headers })
           .toPromise()
@@ -256,8 +253,9 @@ export class ManagerProvider {
       return new Promise<any>((resolve, reject) => {
         resolve(entity)
       })
-    if (entity.change && entity.stored && entity.id)
+    if (entity.change && entity.stored&&entity.id)
       return this.put(entityName, entity, online);
+      console.log(JSON.stringify(entity));
     if (!entity.id)
       entity.id = Guid.create().toString();
     return this.post(entityName, entity, 'new', online);

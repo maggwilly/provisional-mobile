@@ -17,7 +17,7 @@ export class PointventesPage {
   filtre:any
   queryText = '';
   nbrecriteres:number;
-  loading:boolean;
+  loading:boolean=true;
   isOnline:boolean;
   constructor(
     public navCtrl: NavController,
@@ -77,22 +77,22 @@ export class PointventesPage {
 
   loadRemoteData() {
     this.countCricteres(this.filtre);
-    let loader = this.notify.loading({
+    /*let loader = this.notify.loading({
       content: "chargement...",
-    });
+    });*/
     this.loading=true;
     this.manager.get('pointvente',true,null,null,this.filtre,this.nbrecriteres).then(data => {
       this.pointventes = data ? data : []
       this.loading=false;
       this.search()
-      loader.dismiss();
+     // loader.dismiss();
       this.localisation.onConnect(this.localisation.isOnline());
     },error=>{
       this.localisation.onConnect(false);
-      loader.dismiss();
+     // loader.dismiss();
       this.notify.onError({ message: "Verifiez votre connexion internet" })
     })
-    loader.present();
+   // loader.present();
   }
 
 
