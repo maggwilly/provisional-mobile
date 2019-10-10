@@ -61,26 +61,30 @@
                 </ion-label>
                 <ion-select [(ngModel)]="pointVente.secteur" name="secteur" #secteur="ngModel">
                         <ion-option value="">Toute la ville</ion-option>
-                    <ion-option *ngFor="let secteur of secteurs" [value]="secteur.id">{{secteur.nom}}</ion-option>
+                    <ion-option *ngFor="let secteur of secteurs" [value]="secteur.id" [hidden]="!secteur.nom">{{secteur.nom}}</ion-option>
                 </ion-select>
             </ion-item>
-            <ion-item *ngIf="!inset" [hidden]="!pointVente.ville" (click)="select()">
-                <ion-label color="primary" floating>
-                    <span>Nom du quartier</span>
-                </ion-label>
-                <ion-input [(ngModel)]="pointVente.quartier" name="quartier" type="text" placeholder=""
+            <ion-item *ngIf="!inset" [hidden]="!pointVente.ville" >
+                <ion-row>
+                    <ion-col col-8>       
+                <ion-input [(ngModel)]="pointVente.quartier" name="quartier" type="text" placeholder="Quartier"
                     #quartier="ngModel"></ion-input>
+                </ion-col>
+                <ion-col col-4>
+                   <button ion-button small outline (click)="select()">Choisir</button>
+                </ion-col>
+                </ion-row>
             </ion-item>
             <ion-item>
-                    <ion-label>J'y suis maintenant</ion-label>
+                    <ion-label>Relever la position</ion-label>
                     <ion-toggle item-right (ionChange)="getCurrentPosition()" [(ngModel)]="pointVente.atnow" name="atnow" #atnow="ngModel" color="primary">
                     </ion-toggle>
             </ion-item>            
-            <button ion-item (click)="getCurrentPosition()" [hidden]="!pointVente.atnow">
+            <button ion-item (click)="getCurrentPosition()" [hidden]="!pointVente.atnow" text-wrap>
                 <ion-icon name="pin" item-left></ion-icon>
                 <h2>Position géographique</h2>
                 <p  *ngIf="!fetching&&pointVente.long&&pointVente.lat">l
-                    atitude: {{pointVente.lat}}, longitude: {{pointVente.long}}</p>
+                    atitude: {{pointVente.lat}}, longitude: {{pointVente.long}}, {{pointVente.accuracy}}</p>
                 <p  *ngIf="fetching">Localisation ...</p>
                 <p  *ngIf="!fetching&&(!pointVente.long||!pointVente.lat)" style="color: red; font-weight: bold;">
                   Connectez-vous et cliquez  pour determiner la position.

@@ -151,11 +151,12 @@ export class PointventesPage {
       let index = -1;
       if (!data)
         return
-      if (data && data.deletedId || data.id) {
+      if (data && (data.deletedId || data.id)) {
         index = this.pointventes.findIndex(item => item.id == data.deletedId || item.id == data.id);
         if (index > -1)
           this.pointventes.splice(index, 1);
-        this.pointventes.splice(0, 0, data);
+          if(data.id)
+          this.pointventes.splice(0,0,data); 
       }
     })
     modal.present()

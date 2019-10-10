@@ -8,13 +8,6 @@ import { BehaviorSubject } from 'rxjs';
 import { LocalisationProvider } from '../localisation/localisation';
 
 
-
-/*
-  Generated class for the UserProvider provider.
-
-  See https://angular.io/guide/dependency-injection for more info on providers
-  and Angular DI.
-*/
 @Injectable()
 export class UserProvider {
   public user
@@ -37,7 +30,6 @@ export class UserProvider {
 
   public resetObserver() {
     this.complete = this.makeComplete(); 
-    //this.user = null;
     console.log(this.manager.getUserId());
     if(!this.manager.getUserId()||"null"==this.manager.getUserId())
         return this.events.publish('auth', null);
@@ -122,9 +114,6 @@ export class UserProvider {
   };
 
 
-
-
-
   getToken() {
     this.firebase.getToken().then(token => {
       this.registrationid = token;
@@ -171,14 +160,13 @@ export class UserProvider {
 
 
   register(user: any) {
-
     if (!user || !user.id || !user.parent || !this.registrationid)
       return
     user.registration = this.registrationid;
     this.firebase.subscribe('user-' + user.parent.id);
     this.manager.put('user', user).then(data => {
     }, error => {
-      //this.notify.onSuccess({message:"PROBLEME ! votre connexion internet est peut-être instable"})
+
     })
   }
 }

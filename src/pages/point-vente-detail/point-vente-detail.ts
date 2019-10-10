@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component,ViewChild,ElementRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, LoadingController, ModalController, Events } from 'ionic-angular';
 import { ManagerProvider } from '../../providers/manager/manager';
 import { Storage } from '@ionic/storage';
 import { AppNotify } from '../../app/app-notify';
-import { blueIcon }  from  '../../app/icons-marker';
+import { blueIcon , redIcon,greenIcon}  from  '../../app/icons-marker';
+import { LocalisationProvider } from '../../providers/localisation/localisation';
 import leaflet from 'leaflet';
 @IonicPage()
 @Component({
@@ -11,6 +12,7 @@ import leaflet from 'leaflet';
   templateUrl: 'point-vente-detail.html',
 })
 export class PointVenteDetailPage {
+  @ViewChild('mapdetail') mapElement: ElementRef;
   pointVente: any = {};
   map: any;
   queryText:string;
@@ -20,6 +22,7 @@ export class PointVenteDetailPage {
     public manager: ManagerProvider,
     public loadingCtrl: LoadingController,
     public modalCtrl: ModalController,
+    public localisation:LocalisationProvider,
     public events: Events,
     public notify: AppNotify,
     public storage: Storage
@@ -48,23 +51,30 @@ export class PointVenteDetailPage {
   }
 
   add() {
-    let commende: any = { lignes: [], date: new Date(), pointVente:this.pointVente };
+    let commende: any = { lignes: [], date: new Date(), pointVente:this.pointVente,total:0 };
     this.navCtrl.push('CommendesViewPage', { commende: commende })
   }
 
-
+  icon(point:any){
+    if(!point.rendezvous||!point.rendezvous.dateat||point.rendezvous.passdays>0)
+    return blueIcon;
+    if(point.rendezvous.passdays<0)
+         return redIcon;
+      else 
+        return greenIcon;
+  }
 
   cancelRdv() {
     let loader = this.notify.loading({
       content: "Annulation...",
     });
-    this.manager.delete('rendezvous', this.pointVente.rendezvous).then((data) => {
+    this.manager.delete('rendezvous', this.pointVente.rendezvous,'delete',this.localisation.isOnline()).then((data) => {
       if (data.ok) {
         loader.dismiss().then(() => {
           this.pointVente.rendezvous = null;
           this.pointVente.change=true;
           this.manager.storeEntityLocally('pointvente',this.pointVente)
-          this.notify.onSuccess({ message: "Annulé" })
+          this.notify.onSuccess({ message: "Le rendez-vous a été annulé" })
         });
       }
     }, error => {
@@ -113,7 +123,7 @@ export class PointVenteDetailPage {
     this.map=null;
     if(!this.pointVente.lat||!this.pointVente.long)
       return
-    this.map = leaflet.map('mapdetail', {
+    this.map = leaflet.map(this.mapElement.nativeElement, {
       center: [this.pointVente.lat, this.pointVente.long],
       zoom: 13
   });
@@ -127,10 +137,11 @@ export class PointVenteDetailPage {
     }).addTo(this.map)
 
       let markerGroup = leaflet.featureGroup();
-    let marker: any = leaflet.marker([this.pointVente.lat, this.pointVente.long], {icon: blueIcon}).bindPopup(
+      let rdv=this.pointVente.rendezvous&&this.pointVente.rendezvous.dateat?`<p>Livraison prévue le <b>${this.pointVente.rendezvous.dateat}</b></p>`:``
+    let marker: any = leaflet.marker([this.pointVente.lat, this.pointVente.long], {icon: this.icon(this.pointVente)}).bindPopup(
       `<h2 style="font-weight: bold; font-size:1.9em">${this.pointVente.nom}</h2>
       <p style="color:dimgray;font-size: 1.0em">${this.pointVente.telephone}, ${this.pointVente.type},${this.pointVente.ville}, ${this.pointVente.quartier}</p>
-      <p style=""> ${this.pointVente.adresse}</p>`)
+      <p style=""> ${this.pointVente.adresse}</p>`+rdv)
       .openPopup()
       .on('click', () => {
         

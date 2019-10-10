@@ -87,13 +87,12 @@ export class SecteursPage {
     let modal = this.modalCtrl.create('SecteurPage', { secteur: secteur, inset: true }, { cssClass: 'inset-modal' })
     modal.onDidDismiss(data => {
       let index = -1;
-      if (data && data.id) {
-        index = this.secteurs.findIndex(item => item.id == data.id);
-        this.secteurs.splice(0, 0, data);
-      } else if (data && data.deletedId) {
-        index = this.secteurs.findIndex(item => item.id == data.deletedId);
-        if (index > -1)
-          this.secteurs.splice(index, 1);
+      if(data&&(data.deletedId||data.id)){
+        index= this.secteurs.findIndex(item=>item.id==data.deletedId||item.id==data.id);
+         if(index>-1)
+        this.secteurs.splice(index,1);
+        if(data.id)
+         this.secteurs.splice(0,0,data); 
       }
     })
     modal.present()

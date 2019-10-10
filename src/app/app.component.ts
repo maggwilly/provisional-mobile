@@ -23,8 +23,6 @@ export class MyApp {
   ) {
    this.setMomentConfig();
     platform.ready().then(() => {
-      console.log(platform.platforms());
-      
       if (platform.is('cordova')&&platform.is('android')) {
         this.userService.getToken();
         this.userService.onNotification();
@@ -42,15 +40,18 @@ export class MyApp {
           this.manager.isAscing = true;
           this.manager.ascync().then(() => {
             this.manager.isAscing = false;
+            console.log('isAscing=false');
+            
+        
           });
         }
       })
 
-     /* this.userService.getAuthenticatedUser().subscribe(user => {
+      this.userService.getAuthenticatedUser().subscribe(user => {
         if (user)
           this.events.publish('app:connection:change', 'connected');
       })
-      */
+      
       statusBar.styleDefault();
       splashScreen.hide();
     });

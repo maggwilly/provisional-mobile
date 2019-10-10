@@ -49,8 +49,10 @@ export class PointVentePage {
     this.location.getCurrentPosition().then((resp) => {
       this.pointVente.lat = resp.coords.latitude;
       this.pointVente.long = resp.coords.longitude;
+      this.pointVente.accuracy= resp.coords.accuracy;
       this.fetching=false;
     }).catch((error) => {
+      this.notify.onError(error);
       this.fetching=false;
       console.log(error);
     });

@@ -5,6 +5,7 @@ import { blueIcon,greenIcon,redIcon }  from  '../../app/icons-marker';
 import leaflet from 'leaflet';
 import 'leaflet-routing-machine'
 import { AppNotify } from '../../app/app-notify';
+import moment from "moment"
 
 /**
  * Generated class for the MapPage page.
@@ -55,8 +56,7 @@ export class MapPage {
    }
 
    loadmap(coords?:any) {
-
-    this.map = leaflet.map('map', {
+    this.map = leaflet.map(this.mapElement.nativeElement, {
       center: [coords.latitude, coords.longitude],
       zoom: 13
   });
@@ -88,6 +88,7 @@ addMarkerPointventes(){
     let markerGroup = leaflet.featureGroup();
     if(!point.lat||!point.long)
         return;
+      
   let marker: any = leaflet.marker([point.lat, point.long], {icon: blueIcon}).bindPopup(
     `<h2 style="font-weight: bold; font-size:1.9em">${point.nom}</h2>
     <p style="color:dimgray;font-size: 1.0em">${point.telephone}, ${point.type},${point.ville}, ${point.quartier}</p>
@@ -104,7 +105,7 @@ addMarkerPointventes(){
 addMarkerRendezvous(){
   this.points.forEach(point => {
     let markerGroup = leaflet.featureGroup();
-    if(!point.lat||!point.long||!point.dateat)
+    if(!point.lat||!point.long)
         return;
   let marker: any = leaflet.marker([point.lat, point.long], {icon: this.icon(point)}).bindPopup(
     `<h2 style="font-weight: bold; font-size:1.9em">${point.nom}</h2>
@@ -121,14 +122,13 @@ addMarkerRendezvous(){
 }
 
 icon(point:any){
+  if(!point.rendezvous||!point.rendezvous.dateat||point.rendezvous.passdays>0)
+  return blueIcon;
   if(point.rendezvous.passdays<0)
-    return redIcon;
-    else if(point.rendezvous.passdays>0)
-      return blueIcon;
-    else
-    return greenIcon;
+       return redIcon;
+    else 
+      return greenIcon;
 }
-
 addMarkerCommendes(){
   this.points.forEach(commende => {
     let markerGroup = leaflet.featureGroup();
@@ -140,7 +140,7 @@ addMarkerCommendes(){
     `<h2 style="font-weight: bold; font-size:1.9em">${commende.pointVente.nom}</h2>
     <p style="color:dimgray;font-size: 1.0em">${commende.pointVente.telephone}, ${commende.pointVente.type},${commende.pointVente.ville}, ${commende.pointVente.quartier}</p>
     <p style=""> ${commende.pointVente.adresse}</p>
-    <p><b>${commende.date}</b>${commende.quantite} colis,${commende.ca} XAF</p>`)
+    <p><b>${commende.date} </b> , ${commende.quantite} colis,${commende.ca} XAF</p>`)
     .openPopup()
     .on('click', () => {
       

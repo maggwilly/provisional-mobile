@@ -1,14 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, ViewController, AlertController, NavParams } from 'ionic-angular';
 import { ManagerProvider } from '../../providers/manager/manager';
-import {Config} from '../../app/config'
 import { AppNotify } from '../../app/app-notify';
-/*
-  Generated class for the Select page.
 
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
 @IonicPage()
 @Component({
   selector: 'quartier',
@@ -18,7 +12,6 @@ export class QuartiersPage {
   queryText: string;
   newQuartiers: any[] = [];
   ville: string = ''
-  apikey=Config.googleApiKey;
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,

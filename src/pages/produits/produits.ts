@@ -77,11 +77,12 @@ export class ProduitsPage {
     let index=-1;
     if(!data)
     return
-    if(data&&data.deletedId||data.id){
+    if(data&&(data.deletedId||data.id)){
       index= this.produits.findIndex(item=>item.id==data.deletedId||item.id==data.id);
        if(index>-1)
       this.produits.splice(index,1);
-      this.produits.splice(0,0,data); 
+      if(data.id)
+       this.produits.splice(0,0,data); 
     }
    }) 
    modal.present()

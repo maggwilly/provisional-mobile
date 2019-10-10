@@ -6,7 +6,7 @@
           </button>      
       <ion-title>Cartographie</ion-title>
       <ion-buttons end>
-          <button ion-button icon-left (click)="refresh()"> 
+          <button ion-button icon-left (click)="refresh(true)"> 
             <ion-icon name="refresh"></ion-icon><span showWhen="core">Actualiser</span> 
           </button> 
           <button ion-button icon-only (click)="openFilter()" [disabled]="!isOnline">
@@ -19,7 +19,7 @@
     <div class="map-title-box">
       <ion-card  class="map-title" item-center>
             <ion-item text-wrap>
-                <strong *ngIf="filtre"><span *ngIf="filtre.afterdate">Entre le {{filtre.afterdate|date:'dd/MM/yyyy'}}</span>
+                <strong *ngIf="filtre"></strong><span *ngIf="filtre.afterdate">Du {{filtre.afterdate|date:'dd/MM/yyyy'}}</span>
                   <span *ngIf="filtre.beforedate"> <span *ngIf="filtre.afterdate">et</span><span *ngIf="!filtre.afterdate">, Avant</span> le {{filtre.beforedate|date:'dd/MM/yyyy'}}</span></strong>
                 <p *ngIf="filtre">
                     <span *ngIf="filtre.type">, {{filtre.type}}</span><span *ngIf="!filtre.type">Toutes catégories</span>
@@ -30,7 +30,12 @@
         </ion-card> 
       </div>  
 
-  <div #map id="map" >
+  <div #mapview id="mapview" >
+      <ion-grid style="justify-content: center; height: 100%;" >
+          <ion-row style="justify-content: center;height: 100%;" justify-content-center align-items-center>
+              <ion-spinner name="ios"></ion-spinner>
+          </ion-row>
+        </ion-grid>
   </div>
   <ion-fab right bottom>
       <button ion-fab  color="danger" (click)="openFilter()"><ion-icon name="funnel" ></ion-icon></button>

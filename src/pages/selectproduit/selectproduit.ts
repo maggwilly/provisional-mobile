@@ -38,10 +38,9 @@ export class SelectproduitPage {
 
   loadData(){ 
     this.loading=true;   
-    this.manager.get('produit',this.localisation.isOnline()).then(data=>{
+    this.manager.get('produit').then(data=>{
       this.produits=data?data:[]
       this.loading=false; 
-      this.localisation.onConnect(this.localisation.isOnline());
     },error=>{
       this.localisation.onConnect(false);
       this.loading=false; 

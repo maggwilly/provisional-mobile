@@ -37,9 +37,9 @@
   <ion-item-sliding  *ngFor="let commende of commendes"  #slidingItem [hidden]="commende.deleted||commende.hide">
   <ion-item (click)="openCart(commende)" text-wrap>
     <div *ngIf="commende.pointVente&&commende.id">
-    <strong>{{commende.pointVente.nom |uppercase}}</strong> -  {{commende.date|date:'dd/MM/yyyy' }} -> {{commende.total}} FCFA
+    <strong>{{commende.pointVente.nom |uppercase}}</strong> -  {{commende.date|date:'dd/MM/yyyy à H:mm' }} -> {{commende.ca}} FCFA  | {{commende.quantite}} colis
     <p><span>{{commende.pointVente.type}}</span><span *ngIf="commende.pointVente.ville">,{{commende.pointVente.ville}}</span><span *ngIf="commende.pointVente.quartier">,{{commende.pointVente.quartier}}</span><span>{{commende.pointVente.adresse}}</span></p>
-    <p>Effectué  {{commende.date|moment:'fromnow'}} <span *ngIf="commende.user&&commende.user.nom"> par {{commende.user.nom}}</span></p>
+    <p> {{commende.date|moment:'fromnow'}} <b *ngIf="commende.user&&commende.user.nom">  {{commende.user.nom}}</b></p>
   </div>
   </ion-item>
   <ion-item-options side="right" [hidden]="commende.terminated">    

@@ -7,15 +7,16 @@
 </ion-header>
 <ion-content>
     <div #mapdetail id="mapdetail" *ngIf="pointVente" fixed>
+        <div #mapempty id="mapempty" *ngIf="!map"> 
+            <ion-grid style="justify-content: center;" justify-content-center align-items-center >
+                <ion-row style="justify-content: center;" justify-content-center align-items-center>
+                    <button round  outline ion-button icon-left (click)="edit()">
+                      <ion-icon name="pin"></ion-icon>Cliquez pour enrégistrer la position</button>
+                </ion-row>
+            </ion-grid>      
+        </div>      
       </div>
-          <div #mapempty id="mapempty" *ngIf="!map"> 
-              <ion-grid style="justify-content: center;" justify-content-center align-items-center >
-                  <ion-row style="justify-content: center;" justify-content-center align-items-center>
-                      <button round  outline ion-button icon-left (click)="edit()">
-                        <ion-icon name="pin"></ion-icon>Cliquez pour enrégistrer la position</button>
-                  </ion-row>
-              </ion-grid>      
-          </div>  
+ 
   <ion-grid style="margin-top:30vh">
   <ion-row >
   <ion-col>
@@ -101,7 +102,7 @@
                          <span  >Chaque {{prevision.fq_of_cmd}} jours </span>
                      </ion-badge> 
                        <ion-badge float-right color="danger" *ngIf="!prevision.last_cmd_date">
-                           <span >jamais </span>
+                           <span >Pas vendu </span>
                        </ion-badge>  
                   <p>
                     <span *ngIf="prevision.last_cmd_date">Derniere livraison {{prevision.last_cmd_date |moment}}: {{prevision.last_cmd_quantity}} {{prevision.unite}}(s)  </span>

@@ -37,11 +37,10 @@
         <ion-item-sliding *ngFor="let pointvente of pointventes"  [hidden]="pointvente.hide||!pointvente.nom" #slidingItem>
         <ion-item #item (click)="show(pointvente,slidingItem)" text-wrap>
             {{pointvente.nom}}  <strong *ngIf="pointvente.quartier">- {{pointvente.quartier}}</strong>
-            <span float-right><small *ngIf="pointvente.firstCommende">Engagé {{pointvente.firstCommende.date|moment}}
-              </small>
+            - ><span  *ngIf="pointvente.firstCommende">Engagé {{pointvente.firstCommende.date|moment}}             
                 <small *ngIf="!pointvente.firstCommende">Créé {{pointvente.date|moment}} </small>
                 <small *ngIf="!pointvente.firstCommende&&pointvente.user&&pointvente.user.nom"> par {{pointvente.user.nom}}</small>    
-              </span>
+            </span>
             <p><a href="tel: {{pointvente.telephone}}">{{pointvente.telephone}}</a>
               <span *ngIf="pointvente.ville">, {{pointvente.ville}}</span>
               <span *ngIf="pointvente.type">{{pointvente.type}}</span>

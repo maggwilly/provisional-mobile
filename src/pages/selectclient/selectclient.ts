@@ -45,10 +45,9 @@ export class SelectclientPage {
 
   loadData(){    
    this.loading=true;
-    this.manager.get('pointvente',this.localisation.isOnline()).then(data=>{
+    this.manager.get('pointvente').then(data=>{
       this.pointventes=data?data:[]  
       this.loading=false; 
-      this.localisation.onConnect(this.localisation.isOnline());
     },error=>{
       this.localisation.onConnect(false);
       this.loading=false;

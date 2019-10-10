@@ -118,7 +118,7 @@
         </ion-label>
         <ion-select [(ngModel)]="filtre.user" name="user" #user="ngModel">
             <ion-option value="">Tout le monde</ion-option>
-            <ion-option *ngFor="let user of users" [value]="user.id">{{user.nom}}</ion-option>
+            <ion-option *ngFor="let user of users" [value]="user.id" [hidden]="!user.nom">{{user.nom}}</ion-option>
         </ion-select>
     </ion-item>
 </ion-content>

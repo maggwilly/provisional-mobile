@@ -13,7 +13,7 @@ import { Storage } from '@ionic/storage';
   templateUrl: 'commendes-view.html',
 })
 export class CommendesViewPage {
-  commende: any = { lignes: [] };
+  commende: any = { lignes: [] ,total:0};
   activeItemSliding: ItemSliding = null;
   editing: boolean = false;
   edited: boolean = false;
@@ -137,7 +137,7 @@ export class CommendesViewPage {
       loader.dismiss().then(() => {
         if (!data.error) {
           this.edited = false;
-          this.commende = data;
+          this.commende.terminated = true;
           this.events.publish('commende.update', data);
           return this.notify.onSuccess({ message: "Enregistrement effectué" })
         }
@@ -191,7 +191,9 @@ export class CommendesViewPage {
         if (index > 0)
           this.commende.lignes.splice(index, 1);
         this.commende.lignes.push(data);
-        this.commende.total += Number(data.total)
+        if (!this.commende.total) 
+           this.commende.total=0;
+        this.commende.total += Number(data.pu*data.quantite)
       })
       modal.present();
     })

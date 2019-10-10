@@ -7,6 +7,8 @@ import { Events, Platform } from 'ionic-angular';
 import { Config } from "../../app/config";
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { Guid } from "guid-typescript";
+
+
 @Injectable()
 export class ManagerProvider {
   private headers = new Headers({ 'Content-Type': 'application/json' });
@@ -15,15 +17,13 @@ export class ManagerProvider {
   public connected: boolean = true;
   constructor(public http: Http, public storage: Storage, public events: Events,public platform: Platform,) {  
     this.headers.set('X-Auth-Token', this.getUserToken());
-
     this.storeUser({id:this.getUserId(),apiKey:this.getUserToken()})
-
     this.storage.keys().then((keys) => {
       this.keys = keys;
     })
-
     this.listenEvents();
   }
+
 
   clearStorage() {
     this.storage.clear();
@@ -50,8 +50,6 @@ export class ManagerProvider {
     promises.push(this.getAascyncEntity())
     return Promise.all(promises);
   }
-
-
 
 
   saveAscyncEntity() {

@@ -34,6 +34,10 @@ export class HomePage {
     public loadingCtrl: LoadingController,
     public storage: Storage) { 
       this.isOnline=this.localisation.isOnline();
+      /*this.localisation.getCurrentPosition().then((position)=>{
+        console.log(position);
+        
+      })*/
       this.events.subscribe('loaded:pointvente:new',()=>{
         /*if(!this.nbrecriteres)
            this.loadData();*/
@@ -177,6 +181,6 @@ export class HomePage {
   }
 
   openMap(){
-    this.navCtrl.push('MapPage',{target: 'rendezvous',points: this.rendezvous,title:`Aperçu des réalités`,filtre: this.filtre});
+    this.navCtrl.push('MapPage',{target: 'rendezvous',points: this.rendezvous,title:`Prévisions de passage`,filtre: this.filtre});
   }
 }

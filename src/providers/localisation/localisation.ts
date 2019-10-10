@@ -17,6 +17,17 @@ export class LocalisationProvider {
   onDevice: boolean;
   lastConnect:boolean=true;
   nbError:number=0;
+
+
+MAX_POSITION_ERRORS_BEFORE_RESET = 3;
+MIN_ACCURACY_IN_METRES = 15000;
+positionWatchId = null;
+watchpositionErrorCount = 0;
+options = {
+  maximumAge: 3000, 
+  timeout: 15000, 
+  enableHighAccuracy: false
+};
   constructor(
     public platform: Platform,
     public network: Network,
@@ -24,20 +35,20 @@ export class LocalisationProvider {
     public diagnostic: Diagnostic,
     private geo: Geolocation,
     public locationAccuracy: LocationAccuracy ) {
-
+      this.network.onConnect().subscribe(() => {
+        this.events.publish('app:connection:change','connected');
+      });
   }
-
 
 
   getCurrentPosition() {
     return new Promise<Geoposition>((resolve,reject) => {
-      console.log(this.platform.platforms()); 
       if (this.platform.is('core')||this.platform.is('mobileweb')) {
         if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition((position) => { 
-            resolve(position) 
+          this.startWatch().then((position) => { 
+                 resolve(position) 
           },error=>{
-            reject({message:"Un problème est survenu durant la géolocalisation par le navigateur. Celà est peut-être lié à votre connexion internet.",source:error})
+            reject({message:error.message,source:error})
           });
          }
            else
@@ -49,16 +60,20 @@ export class LocalisationProvider {
             if (enabled) {
                 this.diagnostic.getLocationMode().then(locationMode => {
                   if (locationMode === HIGH_ACCURACY) {
-                    this.geo.getCurrentPosition({ timeout: 30000, maximumAge: 0, enableHighAccuracy: true }).then(pos => {
+                    this.geo.getCurrentPosition({ timeout: 30000, maximumAge: 0, enableHighAccuracy: false }).then(pos => {
                       resolve(pos);
                     }, error => {
-                      reject({message:"Un problème est survenu durant la géolocalisation. Verifier que l'application a accès à votre localisation. Celà est peut aussi être lié à votre connexion internet.",source:error})
+                      this.startWatch().then(position=>{
+                        resolve(position);
+                      },er=>reject({message:error.message,source:error}))
                     });
                   } else {
                     this.askForHighAccuracy().then(available => {
                          resolve(available);
-                    }, error => {;
-                      reject(error)
+                    }, error => {
+                      this.startWatch().then(position=>{
+                        resolve(position);
+                      },er=>reject({message:error.message,source:error}))
                     });
                   }
                 });
@@ -92,12 +107,20 @@ export class LocalisationProvider {
     return new Promise<Geoposition>((resolve,reject) => {
       this.locationAccuracy
         .request(this.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(() => {
-          this.geo.getCurrentPosition({ timeout: 30000, maximumAge: 0, enableHighAccuracy: true }).then(
+          this.geo.getCurrentPosition({ timeout: 30000, maximumAge: 0, enableHighAccuracy: false }).then(
             position => {
               resolve(position);
-            }, error => reject({message:"Un problème est survenu durant la géolocalisation. Verifier que l'application a accès à votre localisation. Celà est peut aussi être lié à votre connexion internet.",source:error})
+            }, error => {
+              this.startWatch().then(position=>{
+                resolve(position);
+              },er=>reject({message:error.message,source:error}))
+            }
           );
-        }, error => reject({message:"Erreur lors de la requête de permission.",source:error}));
+        },  error => {
+          this.startWatch().then(position=>{
+            resolve(position);
+          },er=>reject({message:error.message,source:error}))
+        });
     });
   }
 
@@ -131,4 +154,49 @@ export class LocalisationProvider {
       this.events.publish('last:status',isOnLine);
     }
   }
+
+startWatch(){
+ return new Promise<Geoposition>((resolve,reject) => {
+  this.positionWatchId = navigator.geolocation.watchPosition((position) => {
+     let pos=this.onWatchPositionSuccess(position);
+      if(pos)
+        resolve(pos);
+       }
+      ,
+       (err) =>{
+        let er= this.onWatchPositionError(err);
+        if (er) 
+        reject({message:er.message,source:er})
+       },
+   this.options);
+  });
+}
+
+   onWatchPositionSuccess(position) {
+    this.watchpositionErrorCount = 0;
+    if(position.coords.accuracy >=this.MIN_ACCURACY_IN_METRES){
+      return;        
+    }
+    // If only single position is required, clear watcher
+    this.clearWatch();
+    return position;
+
+
+}
+
+clearWatch(){
+  navigator.geolocation.clearWatch(this.positionWatchId);
+}
+
+  onWatchPositionError(err) {
+    this.watchpositionErrorCount++;
+    if (err.code == 3 // TIMEOUT
+        && this.watchpositionErrorCount >= this.MAX_POSITION_ERRORS_BEFORE_RESET) {        
+          this.clearWatch();
+          this.startWatch();
+          this.watchpositionErrorCount = 0;
+      return;
+    }
+    return err;
+}
 }

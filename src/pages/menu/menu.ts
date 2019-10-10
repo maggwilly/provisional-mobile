@@ -12,7 +12,7 @@ export class MenuPage {
   rootPage:any= Config.HomePage;
  
   pages:any[]=[
-    {name:'Prévisions', component: Config.HomePage, icon:'home'},
+    {name:'Accueil', component: Config.HomePage, icon:'home'},
     {name:'Liste des clients', component:'PointventesPage',addPage:'PointVentePage', icon:'contacts'},
     {name:'Liste des produits', component:'ProduitsPage',addPage:'ProduitPage', icon:'md-bookmarks'},
     {name:'Zones de vente', component:'SecteursPage', addPage:'SecteurPage',icon:'md-map'},
@@ -66,6 +66,6 @@ export class MenuPage {
   
   openPage(p:any,openAddPage?:boolean){
     this.menu.close()
-    this.nav.push(p.component,{openAddPage:openAddPage})
+    this.nav.setRoot(p.component,{openAddPage:openAddPage})
   } 
 }

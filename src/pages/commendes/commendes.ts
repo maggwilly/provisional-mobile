@@ -178,7 +178,7 @@ export class CommendesPage {
 
   add() {
     this.openAddPage=false;
-    let commende: any = { lignes: [], date: new Date() };
+    let commende: any = { lignes: [], date: new Date(),total:0 };
     let modal = this.modalCtrl.create('SelectclientPage')
     modal.onDidDismiss(data => {
       if (!data)
