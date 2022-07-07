@@ -61,7 +61,7 @@
     "leaflet": "^1.5.1",
     "leaflet-easybutton": "^2.4.0",
     "leaflet-routing-machine": "^3.2.12",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "ng2-google-charts": "^4.0.0",
     "rxjs": "5.5.11",
     "sw-toolbox": "3.6.0",
